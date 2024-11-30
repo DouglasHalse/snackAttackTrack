@@ -1,9 +1,5 @@
 
 kivy[base]
 kivy_examples
-paho-mqtt
-pyttsx3
 numpy
-sounddevice
 pytest
-pytest-mqtt
