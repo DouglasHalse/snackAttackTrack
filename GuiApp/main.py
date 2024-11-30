@@ -4,6 +4,7 @@ from functools import partial
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
@@ -158,9 +159,9 @@ class DeviceRowWidget(BoxLayout):
 class PatronRowWidget(BoxLayout):
     def __init__(self, firstName: str = "", lastName: str = "", employeeID: str = "", **kwargs):
         super().__init__(**kwargs)
-        self.firstName = firstName
-        self.lastName = lastName
-        self.employeeID = employeeID
+        self.patronFirstName = firstName
+        self.patronLastName = lastName
+        self.patronEmployeeID = employeeID
 
 class ManageDevicePopup(Popup):
     def __init__(self, spookStationWidget, manageDevicesPopup, manageDevicesAddedDevice, deviceName, deviceType, **kwargs):
@@ -223,6 +224,41 @@ class ManagePatronsPopup(Popup):
     def OnAddDeviceButtonPressed(self, *largs):
         addPatronPopup = AddPatronPopup(managePatronsPopup=self, snackAttackTrackWidget=self.snackAttackTrackWidget)
         addPatronPopup.open()
+    
+    def populatePatronsList(self):
+        grid = self.ids.manageDevicesAddedDevicesGridListContent
+        grid.clear_widgets()
+
+        for patron in get_all_patrons():
+            name_label = Label(
+                text=f"{patron[1]} {patron[2]}",
+                size_hint=(None, None),
+                size=(130, 50),
+                halign="left",
+                valign="middle",
+                text_size=(130, 50),
+            )
+            sub_end_label = Label(
+                text="Not known",
+                size_hint=(None, None),
+                size=(150, 50),
+                halign="left",
+                valign="middle",
+                text_size=(150, 50),
+            )
+            current_sub_label = Label(
+                text="Not known",
+                size_hint=(None, None),
+                size=(150, 50),
+                halign="left",
+                valign="middle",
+                text_size=(150, 50),
+            )
+
+            grid.add_widget(name_label)
+            grid.add_widget(sub_end_label)
+            grid.add_widget(current_sub_label)
+            
 
 
 class ManageDevicesPopupDevice(BoxLayout):
@@ -246,14 +282,16 @@ class AddPatronPopup(Popup):
 
     def focus_text_input(self, *largs):
         self.ids.addPatronFirstNameInput.focus = True
-        self.ids.addPatronLastNameInput.focus = True
-        self.ids.addPatronEmployeeIDInput.focus = True
 
     def on_open(self):
         self.ids.addPatronFirstNameInput.text = "EMFReader1"
         self.ids.addPatronLastNameInput.text = "LastName"
         self.ids.addPatronEmployeeIDInput.text = "1"
         Clock.schedule_once(self.focus_text_input, 0)
+    
+    def on_dismiss(self):
+        self.managePatronsPopup.populatePatronsList() # TODO inefficient but works
+        return super().on_dismiss()
 
     def AddPatron(self):
         patronFirstName = self.ids.addPatronFirstNameInput.text
@@ -273,7 +311,7 @@ class SnackAttackTrackWidget(BoxLayout):
         create_patreon_table()
 
     def AddNewPatronWidget(self, firstName, lastName, employeeID):
-        newPatronWidget = PatronRowWidget(firstName,lastName,employeeID)
+        newPatronWidget = PatronRowWidget(firstName, lastName, employeeID)
         self.ids.deviceList.add_widget(newPatronWidget)
 
 
@@ -296,6 +334,7 @@ class SnackAttackTrackWidget(BoxLayout):
     def OnManagePatronsButtonPressed(self, *largs):
         managePatronsPopup = ManagePatronsPopup(snackAttackTrackWidget=self)
         managePatronsPopup.open()
+        managePatronsPopup.populatePatronsList()
 
     def displayaboutpopup(self):
         popup = AboutPopup()
