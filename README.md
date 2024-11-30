@@ -48,3 +48,6 @@ Snack Attack Track is a subscription/membership management software meant to run
 #### Start GUI without debugging
 [//]: <> (<area>-tag to escape hyper-link creation)
 1. Run 'bash runGuiUbuntu.<area>sh'
+
+### Debugging gui layouts
+1. Press Ctrl + e to start kivy inspector
