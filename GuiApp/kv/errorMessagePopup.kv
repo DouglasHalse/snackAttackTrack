@@ -1,0 +1,17 @@
+<ErrorMessagePopup>:
+    id: errorMessagePopup
+    title: 'Error'
+    size_hint: (0.5, 0.5)
+    BoxLayout:
+        id: errorMessagePopupBox
+        orientation: 'vertical'
+        size_hint: (1, 1)
+        Label:
+            id: errorMessagePopupLabel
+            text: 'Error message'
+            size_hint: (1, 1)
+        Button:
+            id: errorMessagePopupButton
+            text: 'OK'
+            size_hint: (1, 1)
+            on_press: root.dismiss()

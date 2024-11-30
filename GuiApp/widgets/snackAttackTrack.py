@@ -1,5 +1,4 @@
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.popup import Popup
 
 from .patronRow import PatronRowWidget
 from .deviceRow import DeviceRowWidget
