@@ -2,16 +2,6 @@ echo off
 
 cd /D "%~dp0"
 
-REM Prompt for admin privileges
-REM NET FILE >NUL 2>NUL
-REM if '%errorlevel%' == '0' (
-REM     echo "Running with administrative privileges..."
-REM ) else (
-REM     echo "Please run this script as an administrator."
-REM     pause
-REM     exit /b 1
-REM )
-
 python -m pip install --upgrade pip setuptools virtualenv
 
 REM Create a virtual environment and activate it

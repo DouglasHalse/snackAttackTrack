@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Run SpookStation GUI",
+            "name": "Python: Run Snack Attack Track GUI",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/GuiApp/main.py",
