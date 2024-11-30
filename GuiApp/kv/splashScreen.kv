@@ -1,0 +1,21 @@
+#:kivy 2.1.0     
+
+<SplashScreenWidget>:
+    BoxLayoutButton:
+        size_hint: 1, 1
+        on_press: root.OnScreenTouch()
+        canvas:
+            Color:
+                rgba: .9, .9, .9, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Label:
+            text: 'Tap to login or create user...'
+            text_size: self.size
+            size: self.texture_size
+            halign: 'center'
+            valign: 'middle'
+            font_size: 40
+            color : [0,0,0,1]
+            bold: True
