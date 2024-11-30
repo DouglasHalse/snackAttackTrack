@@ -7,7 +7,7 @@ from kivy.uix.image import Image
 from kivy.lang import Builder
 
 from widgets.snackAttackTrack import SnackAttackTrackWidget
-from database import createPatreonTable, closeDatabase
+from database import createAllTables, closeDatabase
 
 # Size of Raspberry pi touchscreen
 Window.size = (800, 480)
@@ -25,7 +25,7 @@ class snackAttackTrackApp(App):
     def build(self):
         self.title = 'Snack Attack Track'
         Builder.load_file("kv/main.kv")
-        createPatreonTable()
+        createAllTables()
         snackAttackTrackWidget = SnackAttackTrackWidget()
         inspector.create_inspector(Window, snackAttackTrackWidget)
         return snackAttackTrackWidget
