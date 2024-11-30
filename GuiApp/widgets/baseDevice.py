@@ -1,5 +1,6 @@
 from kivy.uix.boxlayout import BoxLayout
 
+
 class BaseDeviceInfoLableWidget(BoxLayout):
     def __init__(self, deviceName: str, **kwargs):
         super().__init__(**kwargs)
@@ -9,7 +10,8 @@ class BaseDeviceInfoLableWidget(BoxLayout):
 class BaseDeviceConnectionIndicatorWidget(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
- 
+
+
 #    def SetColor(self, state: SpookStationDeviceConnectionState, *largs):
 #        if state == SpookStationDeviceConnectionState.Disconnected:
 #            self.ids['deviceConnectionIndicator'].source = "Images/ghost_red.png"

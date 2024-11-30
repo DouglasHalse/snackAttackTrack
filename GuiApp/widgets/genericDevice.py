@@ -1,9 +1,10 @@
 from kivy.uix.boxlayout import BoxLayout
 
-from .emfReader import EMFReaderWidget
+from widgets.emfReader import EMFReaderWidget
+
 
 class GenericDeviceWidget(BoxLayout):
-    def __init__(self, deviceName,  **kwargs):
+    def __init__(self, deviceName, **kwargs):
         super().__init__(**kwargs)
         self.deviceWidget = EMFReaderWidget(deviceName=deviceName)
         self.setGrayedOut(grayedOut=True)
@@ -11,7 +12,7 @@ class GenericDeviceWidget(BoxLayout):
 
     def setGrayedOut(self, grayedOut: bool):
         if grayedOut:
-            self.deviceWidget.canvasOpacity = .5
+            self.deviceWidget.canvasOpacity = 0.5
             self.deviceWidget.disabled = True
         else:
             self.deviceWidget.canvasOpacity = 0

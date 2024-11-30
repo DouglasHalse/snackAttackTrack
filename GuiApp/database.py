@@ -1,5 +1,6 @@
 import sqlite3
 
+
 def createAllTables():
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
@@ -28,7 +29,7 @@ def createAllTables():
             AmountBeforeTransaction REAL NOT NULL, 
             AmountAfterTransaction REAL NOT NULL
         );
-        """
+        """,
     ]
 
     for query in create_queries:
@@ -40,17 +41,22 @@ def createAllTables():
 def addPatron(first_name, last_name, employee_id):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute("""
+    cursor.execute(
+        """
         INSERT INTO Patrons (FirstName, LastName, EmployeeID)
         VALUES (?, ?, ?)
-        """, (first_name, last_name, employee_id))
+        """,
+        (first_name, last_name, employee_id),
+    )
     conn.commit()
+
 
 def getAllPatrons():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM Patrons")
     return cursor.fetchall()
+
 
 def closeDatabase():
     sqlite3.connect("database.db").cursor().close()
