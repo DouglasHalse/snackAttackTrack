@@ -1,4 +1,5 @@
 import sys, os, threading
+import sqlite3
 from functools import partial
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -11,6 +12,34 @@ from kivy.clock import Clock
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '480')
 from enum import Enum
+
+def create_patreon_table():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Patrons (
+        PatronID INTEGER PRIMARY KEY AUTOINCREMENT,
+        FirstName TEXT NOT NULL,
+        LastName TEXT NOT NULL,
+        EmployeeID TEXT NOT NULL
+    )
+    """)
+    conn.commit()
+
+def add_patron(first_name, last_name, employee_id):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO Patrons (FirstName, LastName, EmployeeID)
+        VALUES (?, ?, ?)
+        """, (first_name, last_name, employee_id))
+    conn.commit()
+
+def get_all_patrons():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Patrons")
+    return cursor.fetchall()
 
 class ImageButton(ButtonBehavior, Image):
     pass
@@ -127,10 +156,11 @@ class DeviceRowWidget(BoxLayout):
         self.parent.remove_widget(self)
 
 class PatronRowWidget(BoxLayout):
-    def __init__(self, patronName: str = "", **kwargs):
+    def __init__(self, firstName: str = "", lastName: str = "", employeeID: str = "", **kwargs):
         super().__init__(**kwargs)
-        self.patronName = patronName
-
+        self.firstName = firstName
+        self.lastName = lastName
+        self.employeeID = employeeID
 
 class ManageDevicePopup(Popup):
     def __init__(self, spookStationWidget, manageDevicesPopup, manageDevicesAddedDevice, deviceName, deviceType, **kwargs):
@@ -215,16 +245,22 @@ class AddPatronPopup(Popup):
         self.snackAttackTrackWidget = snackAttackTrackWidget
 
     def focus_text_input(self, *largs):
-        self.ids.addPatronNameInput.focus = True
+        self.ids.addPatronFirstNameInput.focus = True
+        self.ids.addPatronLastNameInput.focus = True
+        self.ids.addPatronEmployeeIDInput.focus = True
 
     def on_open(self):
-        self.ids.addPatronNameInput.text = "EMFReader1"
+        self.ids.addPatronFirstNameInput.text = "EMFReader1"
+        self.ids.addPatronLastNameInput.text = "LastName"
+        self.ids.addPatronEmployeeIDInput.text = "1"
         Clock.schedule_once(self.focus_text_input, 0)
 
     def AddPatron(self):
-        patronName = self.ids.addPatronNameInput.text
-        print("Adding patron " + patronName)
-        self.snackAttackTrackWidget.patrons.append(patronName)
+        patronFirstName = self.ids.addPatronFirstNameInput.text
+        patronLastName = self.ids.addPatronLastNameInput.text
+        patronEmployeeID = self.ids.addPatronEmployeeIDInput.text
+        print("Adding patron " + patronFirstName)
+        add_patron(patronFirstName, patronLastName, patronEmployeeID)
 
 class ErrorMessagePopup(Popup):
     def __init__(self, errorMessage: str, **kwargs):
@@ -234,10 +270,10 @@ class ErrorMessagePopup(Popup):
 class SnackAttackTrackWidget(BoxLayout):
     def __init__(self, **kwargs):
         super(SnackAttackTrackWidget, self).__init__(**kwargs)
-        self.patrons = []
+        create_patreon_table()
 
-    def AddNewPatronWidget(self, patronName):
-        newPatronWidget = PatronRowWidget(patronName)
+    def AddNewPatronWidget(self, firstName, lastName, employeeID):
+        newPatronWidget = PatronRowWidget(firstName,lastName,employeeID)
         self.ids.deviceList.add_widget(newPatronWidget)
 
 
@@ -271,6 +307,7 @@ class snackAttackTrackApp(App):
         return SnackAttackTrackWidget()
 
     def on_stop(self):
+        sqlite3.connect("database.db").cursor().close()
         return super().on_stop()
 
 class AboutPopup(Popup):

@@ -441,9 +441,9 @@
 
 <AddPatronPopup>:
     id: AddPatronPopup
-    title: 'Add a patron'
+    title: 'Add a Patron'
     height: '320dp'
-    width: '300dp'
+    width: '400dp'
     size_hint: None, None
     GridLayout:
         cols: 1
@@ -451,24 +451,41 @@
         spacing: [10, 10]
 
         BoxLayout:
-            id: addPatronNameLabel
+            id: addPatronInputLabel
             size_hint: 1, None
             height: '20dp'
             Label:
-                id: addPatronNameLabel
                 halign: 'left'
                 text_size: self.size
-                text: 'Name:'
-                
-        TextInput:
-            id: addPatronNameInput
+                text: 'Enter Patron Details:'
+        
+        BoxLayout:
+            id: addPatronInputs
             size_hint: 1, None
             height: '40dp'
-            font_size: '20dp'
-            multiline: False
-            focus: True
-            on_text_validate: root.AddPatron()
-        
+            spacing: '10dp'  # Space between input fields
+            
+            TextInput:
+                id: addPatronFirstNameInput
+                size_hint: 1, 1
+                font_size: '16dp'
+                multiline: False
+                hint_text: 'First Name'
+            
+            TextInput:
+                id: addPatronLastNameInput
+                size_hint: 1, 1
+                font_size: '16dp'
+                multiline: False
+                hint_text: 'Last Name'
+            
+            TextInput:
+                id: addPatronEmployeeIDInput
+                size_hint: 1, 1
+                font_size: '16dp'
+                multiline: False
+                hint_text: 'Employee ID'
+
         BoxLayout:
             id: addDeviceAddButtonSpacer
             size_hint: 1, None
