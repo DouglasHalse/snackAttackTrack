@@ -4,6 +4,7 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
+from kivy.lang import Builder
 from kivy.config import Config
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '480')
@@ -21,6 +22,7 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 class snackAttackTrackApp(App):
     def build(self):
         self.title = 'Snack Attack Track'
+        Builder.load_file("kv/main.kv")
         createPatreonTable()
         return SnackAttackTrackWidget()
 
