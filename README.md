@@ -67,3 +67,10 @@ Snack Attack Track is a subscription/membership management software meant to run
 
 ### Debugging gui layouts
 1. Press Ctrl + e to start kivy inspector
+
+### Pre-commit
+This will run pylint and black to format the code and check for any violations of the PEP 8 Python coding standards.
+
+1. pip install black pylint pre-commit or pip install -r requirements.txt
+2. pre-commit install
+3. pre-commit run -a

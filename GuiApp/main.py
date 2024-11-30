@@ -5,9 +5,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
 from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import ScreenManager
 
-from widgets.snackAttackTrack import SnackAttackTrackWidget
 from widgets.splashScreen import SplashScreenWidget
 from widgets.loginScreen import LoginScreenWidget
 from database import createAllTables, closeDatabase
@@ -25,13 +24,16 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class snackAttackTrackApp(App):
+    def __init__(self):
+        self.title = "Snack Attack Track"
+        super().__init__()
+
     def build(self):
-        self.title = 'Snack Attack Track'
         Builder.load_file("kv/main.kv")
         createAllTables()
         sm = ScreenManager()
-        sm.add_widget(SplashScreenWidget(name='splashScreen'))
-        sm.add_widget(LoginScreenWidget(name='loginScreen'))
+        sm.add_widget(SplashScreenWidget(name="splashScreen"))
+        sm.add_widget(LoginScreenWidget(name="loginScreen"))
         inspector.create_inspector(Window, sm)
         return sm
 
@@ -40,5 +42,5 @@ class snackAttackTrackApp(App):
         return super().on_stop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     snackAttackTrackApp().run()

@@ -10,11 +10,11 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class LoginScreenUserWidget(BoxLayoutButton):
-    def __init__(self, name: str,  loginScreenWidget, **kwargs):
-        super(LoginScreenUserWidget, self).__init__(**kwargs)
+    def __init__(self, name: str, loginScreenWidget, **kwargs):
+        super().__init__(**kwargs)
         self.loginScreenWidget = loginScreenWidget
         self.userName = name
-        self.ids['userNameLabel'].text = self.userName
+        self.ids["userNameLabel"].text = self.userName
 
     def Clicked(self, *largs):
         self.loginScreenWidget.UserSelected(self.userName)
@@ -22,20 +22,24 @@ class LoginScreenUserWidget(BoxLayoutButton):
 
 class LoginScreenWidget(Screen):
     def __init__(self, **kwargs):
-        super(LoginScreenWidget, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.AddUsersToLoginScreen()
 
     def AddUsersToLoginScreen(self):
         users = getAllPatrons()
         if users:
-            self.ids['LoginScreenUserGridLayout'].add_widget(Widget()) # Spacer widget
+            self.ids["LoginScreenUserGridLayout"].add_widget(Widget())  # Spacer widget
             for user in users:
                 firstName = user[1]
-                self.ids['LoginScreenUserGridLayout'].add_widget(LoginScreenUserWidget(name=firstName, loginScreenWidget=self))
-                self.ids['LoginScreenUserGridLayout'].add_widget(Widget()) # Spacer widget
+                self.ids["LoginScreenUserGridLayout"].add_widget(
+                    LoginScreenUserWidget(name=firstName, loginScreenWidget=self)
+                )
+                self.ids["LoginScreenUserGridLayout"].add_widget(
+                    Widget()
+                )  # Spacer widget
 
     def clearUsersFromLoginScreen(self):
-        self.ids['LoginScreenUserGridLayout'].clear_widgets()
+        self.ids["LoginScreenUserGridLayout"].clear_widgets()
 
     def createNewUserButtonClicked(self, *largs):
         print("Adding test user")

@@ -1,20 +1,22 @@
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 
-from .addPatronPopup import AddPatronPopup
-
 from database import getAllPatrons
+
+from .addPatronPopup import AddPatronPopup
 
 
 class ManagePatronsPopup(Popup):
-    def __init__(self, snackAttackTrackWidget,  **kwargs):
-        super(ManagePatronsPopup, self).__init__(**kwargs)
+    def __init__(self, snackAttackTrackWidget, **kwargs):
+        super().__init__(**kwargs)
         self.snackAttackTrackWidget = snackAttackTrackWidget
 
-    def OnAddDeviceButtonPressed(self, *largs):
-        addPatronPopup = AddPatronPopup(managePatronsPopup=self, snackAttackTrackWidget=self.snackAttackTrackWidget)
+    def OnAddDeviceButtonPressed(self):
+        addPatronPopup = AddPatronPopup(
+            managePatronsPopup=self, snackAttackTrackWidget=self.snackAttackTrackWidget
+        )
         addPatronPopup.open()
-    
+
     def populatePatronsList(self):
         grid = self.ids.manageDevicesAddedDevicesGridListContent
         grid.clear_widgets()
@@ -48,4 +50,3 @@ class ManagePatronsPopup(Popup):
             grid.add_widget(name_label)
             grid.add_widget(sub_end_label)
             grid.add_widget(current_sub_label)
-            
