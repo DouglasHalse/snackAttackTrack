@@ -1,0 +1,60 @@
+#:kivy 2.1.0     
+
+<LoginScreenUserWidget>:
+    size_hint: None, None
+    height: '120dp'
+    width: '120dp'
+    on_press: root.Clicked()
+    canvas:
+        Color:
+            rgba: .8, .8, .8, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        id: userNameLabel
+        text: 'User'
+        text_size: self.size
+        size: self.texture_size
+        halign: 'center'
+        valign: 'center'
+        font_size: 12
+        color : [0,0,0,1]
+        bold: True
+    
+<LoginScreenWidget>:
+    GridLayout:
+        cols: 1
+        anchor_x: 'center'
+        size_hint:(1,1)
+        GridLayout:
+            rows: 1
+            size_hint: 1, 0.7
+            ScrollView:
+                do_scroll_y: False
+                size_hint: 1, 1
+                GridLayout:
+                    size_hint: 1, None
+                    size_hint_y: None
+                    padding: 10, 100, 10, 10
+                    id: LoginScreenUserGridLayout
+                    rows: 1
+        AnchorLayout:
+            size_hint: 1, 0.3
+            anchor_x: 'center'
+            anchor_y: 'center'
+            BoxLayoutButton:
+                on_press: root.createNewUserButtonClicked()
+                size_hint: None, None
+                height: '50dp'
+                width: '140dp'
+                canvas:
+                    Color:
+                        rgba: 0.7, 0.7, 0.7, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size    
+                Label:
+                    id: manageDeviceCancelLabel
+                    text: 'Create new user'
+                    size_hint: (1, 1)

@@ -5,8 +5,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
 from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 from widgets.snackAttackTrack import SnackAttackTrackWidget
+from widgets.splashScreen import SplashScreenWidget
+from widgets.loginScreen import LoginScreenWidget
 from database import createAllTables, closeDatabase
 
 # Size of Raspberry pi touchscreen
@@ -26,9 +29,11 @@ class snackAttackTrackApp(App):
         self.title = 'Snack Attack Track'
         Builder.load_file("kv/main.kv")
         createAllTables()
-        snackAttackTrackWidget = SnackAttackTrackWidget()
-        inspector.create_inspector(Window, snackAttackTrackWidget)
-        return snackAttackTrackWidget
+        sm = ScreenManager()
+        sm.add_widget(SplashScreenWidget(name='splashScreen'))
+        sm.add_widget(LoginScreenWidget(name='loginScreen'))
+        inspector.create_inspector(Window, sm)
+        return sm
 
     def on_stop(self):
         closeDatabase()
