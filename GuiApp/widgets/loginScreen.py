@@ -2,7 +2,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.widget import Widget
-from database import getAllPatrons, addPatron, UserData
+from database import getAllPatrons, UserData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -25,6 +25,11 @@ class LoginScreenWidget(Screen):
         super().__init__(**kwargs)
         self.AddUsersToLoginScreen()
 
+    def on_enter(self, *args):
+        self.clearUsersFromLoginScreen()
+        self.AddUsersToLoginScreen()
+        return super().on_enter(*args)
+
     def AddUsersToLoginScreen(self):
         userDataList = getAllPatrons()
         if userDataList:
@@ -42,9 +47,7 @@ class LoginScreenWidget(Screen):
 
     def createNewUserButtonClicked(self, *largs):
         print("Adding test user")
-        addPatron("Test", "User", 100)
-        self.clearUsersFromLoginScreen()
-        self.AddUsersToLoginScreen()
+        self.manager.current = "createUserScreen"
 
     def UserSelected(self, userId, *largs):
         mainUserPage = self.manager.get_screen("mainUserPage")

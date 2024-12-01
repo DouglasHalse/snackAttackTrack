@@ -1,0 +1,61 @@
+<CreateUserScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [100, 100, 50, 100]
+        spacing: 25
+        size_hint: None, None
+        size: root.width, root.height
+
+        Label:
+            text: "Create New User"
+            font_size: 24
+            size_hint_y: None
+            height: 30
+
+        Label:
+            id: errorMessage
+            text: ""
+            color: 1, 0, 0, 1
+            opacity: 0
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            size: 400, 200
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            padding: [20, 20, 20, 20]
+            spacing: 10
+
+            TextInput:
+                id: registerFirstName
+                hint_text: "First Name"
+                size_hint_y: None
+                height: 40
+                padding: [10, 10]
+
+            TextInput:
+                id: registerLastName
+                hint_text: "Last Name"
+                size_hint_y: None
+                height: 40
+                padding: [10, 10]
+
+            TextInput:
+                id: registerEmployeeID
+                hint_text: "Employee id, Blipp Card (Optional)"
+                size_hint_y: None
+                height: 40
+                padding: [10, 10]
+
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: 40
+                spacing: 20
+
+                Button:
+                    text: "Register"
+                    on_press: root.registerUser()
+                Button:
+                    text: "Cancel"
+                    on_press: root.cancel()
