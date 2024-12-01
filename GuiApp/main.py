@@ -9,6 +9,7 @@ from kivy.uix.screenmanager import ScreenManager
 
 from widgets.splashScreen import SplashScreenWidget
 from widgets.loginScreen import LoginScreenWidget
+from widgets.mainUserScreen import MainUserScreenWidget
 from database import createAllTables, closeDatabase
 
 # Size of Raspberry pi touchscreen
@@ -34,6 +35,7 @@ class snackAttackTrackApp(App):
         sm = ScreenManager()
         sm.add_widget(SplashScreenWidget(name="splashScreen"))
         sm.add_widget(LoginScreenWidget(name="loginScreen"))
+        sm.add_widget(MainUserScreenWidget(name="mainUserPage"))
         inspector.create_inspector(Window, sm)
         return sm
 

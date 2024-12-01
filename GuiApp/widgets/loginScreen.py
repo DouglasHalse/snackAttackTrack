@@ -2,7 +2,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.widget import Widget
-from database import getAllPatrons, addPatron
+from database import getAllPatrons, addPatron, UserData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -10,14 +10,14 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class LoginScreenUserWidget(BoxLayoutButton):
-    def __init__(self, name: str, loginScreenWidget, **kwargs):
+    def __init__(self, userData: UserData, loginScreenWidget, **kwargs):
         super().__init__(**kwargs)
         self.loginScreenWidget = loginScreenWidget
-        self.userName = name
-        self.ids["userNameLabel"].text = self.userName
+        self.userData = userData
+        self.ids["userNameLabel"].text = self.userData.firstName
 
     def Clicked(self, *largs):
-        self.loginScreenWidget.UserSelected(self.userName)
+        self.loginScreenWidget.UserSelected(self.userData.patronId)
 
 
 class LoginScreenWidget(Screen):
@@ -26,13 +26,12 @@ class LoginScreenWidget(Screen):
         self.AddUsersToLoginScreen()
 
     def AddUsersToLoginScreen(self):
-        users = getAllPatrons()
-        if users:
+        userDataList = getAllPatrons()
+        if userDataList:
             self.ids["LoginScreenUserGridLayout"].add_widget(Widget())  # Spacer widget
-            for user in users:
-                firstName = user[1]
+            for userData in userDataList:
                 self.ids["LoginScreenUserGridLayout"].add_widget(
-                    LoginScreenUserWidget(name=firstName, loginScreenWidget=self)
+                    LoginScreenUserWidget(userData=userData, loginScreenWidget=self)
                 )
                 self.ids["LoginScreenUserGridLayout"].add_widget(
                     Widget()
@@ -47,5 +46,7 @@ class LoginScreenWidget(Screen):
         self.clearUsersFromLoginScreen()
         self.AddUsersToLoginScreen()
 
-    def UserSelected(self, userName, *largs):
-        print("User selected: " + userName)
+    def UserSelected(self, userId, *largs):
+        mainUserPage = self.manager.get_screen("mainUserPage")
+        mainUserPage.setUserId(userId)
+        self.manager.current = "mainUserPage"
