@@ -28,6 +28,25 @@
             "args": [
                 "${file}" "-rP"
             ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/GuiApp"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "pytest: All tests",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${workspaceFolder}/GuiApp/tests",
+                "-rP",
+                "--maxfail=5"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/GuiApp"
+            },
             "console": "integratedTerminal",
             "justMyCode": true
         }
