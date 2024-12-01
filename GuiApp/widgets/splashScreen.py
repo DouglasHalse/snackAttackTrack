@@ -1,7 +1,7 @@
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen
 
 
-class SplashScreenWidget(BoxLayout):
+class SplashScreenWidget(Screen):
     def __init__(self, **kwargs):
         super(SplashScreenWidget, self).__init__(**kwargs)
 
