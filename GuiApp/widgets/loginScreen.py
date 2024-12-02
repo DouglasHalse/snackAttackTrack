@@ -49,7 +49,7 @@ class LoginScreenWidget(Screen):
         print("Adding test user")
         self.manager.current = "createUserScreen"
 
-    def UserSelected(self, userId, *largs):
+    def UserSelected(self, userId: int, *largs):
         mainUserPage = self.manager.get_screen("mainUserPage")
         mainUserPage.setUserId(userId)
         self.manager.current = "mainUserPage"
