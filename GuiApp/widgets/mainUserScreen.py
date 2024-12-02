@@ -40,10 +40,11 @@ class MainUserScreenBody(GridLayout):
 class MainUserScreenWidget(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.userData = None
 
-    def setUserId(self, userId: UserData):
-        userData = getPatronData(userId)
-        header = MainUserScreenHeader(self, userData)
+    def setUserId(self, userId: int):
+        self.userData = getPatronData(userId)
+        header = MainUserScreenHeader(self, self.userData)
         self.ids["mainUserScreenGridLayout"].add_widget(header)
         body = MainUserScreenBody(self)
         self.ids["mainUserScreenGridLayout"].add_widget(body)
@@ -63,6 +64,10 @@ class MainUserScreenWidget(Screen):
     def GoToSettingsScreen(self):
         print("Going to Settings screen")
         # Use screen manager to go to settings screen
+        self.ids["mainUserScreenGridLayout"].clear_widgets()
+        adminScreen = self.manager.get_screen("adminScreen")
+        adminScreen.setUserId(self.userData.patronId)
+        self.manager.current = "adminScreen"
 
     def logout(self):
         self.ids["mainUserScreenGridLayout"].clear_widgets()

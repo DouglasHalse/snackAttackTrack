@@ -1,0 +1,83 @@
+#:kivy 2.1.0     
+
+<AdminScreenHeader>:
+    rows: 1
+    size_hint: 1, 0.2
+    canvas:
+        Color:
+            rgba: 0.8, 0.8, 0.8, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        orientation: "lr-tb"
+        rows: 1
+        size_hint: 1, 1
+        Label:
+            id: welcomeTextLabel
+            text: 'WelcomeText'
+            halign: 'left'
+            valign: 'middle'
+            padding: ['20dp', 0, 0, 0]
+            size_hint: (1, 1)
+            text_size: self.size
+            color: 'black'
+            bold: True
+    GridLayout:
+        orientation: "rl-tb"
+        rows: 1
+        size_hint: 1, 1
+        BoxLayoutButton:
+            size_hint: None, 1
+            width: '120dp'
+            on_press: root.onLogoutButtonPressed()
+            canvas:
+                Color:
+                    rgba: 0.7, 0.1, 0.1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Label:
+                text: 'Log out'
+                size_hint: (1, 1)
+
+<AdminScreenBody>:
+    rows: 1
+    padding: 30
+    spacing: 30
+    BoxLayoutButton:
+        on_press: root.onEditSnacksButtonPressed()
+        canvas:
+            Color:
+                rgba: 0.2, 0.2, 0.2, 1
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+        Label:
+            text: 'Edit snacks'
+            size_hint: (1, 1)
+    BoxLayoutButton:
+        on_press: root.onEditUsersButtonPressed()
+        canvas:
+            Color:
+                rgba: 0.2, 0.2, 0.2, 1
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+        
+        Label:
+            text: 'Edit users'
+            size_hint: (1, 1)
+
+
+<AdminScreenWidget>:
+    canvas:
+        Color:
+            rgba: .9, .9, .9, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        id: adminScreenGridLayout
+        cols: 1
