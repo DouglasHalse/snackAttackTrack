@@ -1,13 +1,13 @@
 #:kivy 2.1.0     
 
 <AboutPopup@Popup>:
-    size_hint:(0.8, 0.8)
+    size_hint: (0.8, 0.8)
     auto_dismiss: True
     title: "About"
     BoxLayout:
-        center_x:(True)
+        center_x: True
         orientation: "vertical"
-        size_hint:(1, 1)
+        size_hint: (1, 1)
         canvas:
             Color:
                 rgba: 0, 0.3, 0, 1
@@ -16,7 +16,7 @@
                 size: self.size
         BoxLayout:
             orientation: "vertical"
-            size_hint:(1, .9)
+            size_hint: (1, .9)
             canvas:
                 Color:
                     rgba: 0.1, 0.1, 0.1, 1
@@ -28,14 +28,13 @@
                 padding: 10
                 halign: 'center'
                 valign: 'middle'
-                text: 'Snack Attack Track is a subscription/membership management software meant to run on a raspberry pi with a touchscreen.'
+                text: 'Snack Attack Track is a subscription/membership management software meant to run on a Raspberry Pi with a touchscreen.'
             Label:
                 text_size: self.size
                 markup: True
                 halign: 'center'
                 valign: 'middle'
-                text: '[b]Contributers[/b] \nDouglas Halse - Haver of ideas \nPhilip Tekin - Script maintainer'     
-            
+                text: '[b]Contributors[/b] \nDouglas Halse - Haver of ideas \nPhilip Tekin - Script maintainer \nBrijesh Thummar - Markdown and code improvements'     
             BoxLayoutButton:
                 size_hint: (None, None)
                 height: '30dp'
@@ -47,7 +46,6 @@
                     Rectangle:
                         pos: self.pos
                         size: self.size
-                
                 Label:
                     text: 'Close'
                     size_hint: (1, 1)
