@@ -50,8 +50,9 @@ class AdminScreenWidget(Screen):
         # Use screen manager to go to edit snacks screen
 
     def GoToEditUsersScreen(self):
-        print("Going to edit users screen")
-        # Use screen manager to go to edit users screen
+        editUsersScreen = self.manager.get_screen("editUsersScreen")
+        editUsersScreen.setUserId(self.userData.patronId)
+        self.manager.current = "editUsersScreen"
 
     def logout(self):
         self.ids["adminScreenGridLayout"].clear_widgets()
