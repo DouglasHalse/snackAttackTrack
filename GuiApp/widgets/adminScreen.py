@@ -14,6 +14,7 @@ class AdminScreenContent(GridLayout):
 
     def onEditUsersButtonPressed(self, *largs):
         print("editusersscreen")
+        self.screenManager.current = "editUsersScreen"
 
 
 class AdminScreen(HeaderBodyScreen):

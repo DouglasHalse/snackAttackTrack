@@ -53,6 +53,7 @@ class LoginScreenWidget(Screen):
         self.manager.get_screen("mainUserPage").setUserData(userData)
         self.manager.get_screen("adminScreen").setUserData(userData)
         self.manager.get_screen("editSnacksScreen").setUserData(userData)
+        self.manager.get_screen("editUsersScreen").setUserData(userData)
 
     def UserSelected(self, userData: UserData, *largs):
         self.setUserDataForAllScreens(userData=userData)
