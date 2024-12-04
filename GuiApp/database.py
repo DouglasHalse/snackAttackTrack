@@ -2,11 +2,12 @@ import sqlite3
 
 
 class UserData:
-    def __init__(self, patronId, firstName, lastName, employeeID):
+    def __init__(self, patronId, firstName, lastName, employeeID, totalCredits):
         self.patronId = patronId
         self.firstName = firstName
         self.lastName = lastName
         self.employeeID = employeeID
+        self.totalCredits = totalCredits
 
 
 class SnackData:
@@ -27,7 +28,8 @@ def createAllTables():
             PatronID INTEGER PRIMARY KEY AUTOINCREMENT,
             FirstName TEXT NOT NULL,
             LastName TEXT NOT NULL,
-            EmployeeID TEXT NOT NULL
+            EmployeeID TEXT NOT NULL,
+            TotalCredits INTEGER NOT NULL DEFAULT 0
         );
         """,
         """
@@ -78,7 +80,8 @@ def getAllPatrons() -> list[UserData]:
         firstName = userEntry[1]
         lastName = userEntry[2]
         employeeID = userEntry[3]
-        userData = UserData(patronId, firstName, lastName, employeeID)
+        totalCredits = userEntry[4]
+        userData = UserData(patronId, firstName, lastName, employeeID, totalCredits)
         userDataList.append(userData)
     return userDataList
 
@@ -92,7 +95,8 @@ def getPatronData(patronID: int) -> UserData:
     firstName = sqlResult[1]
     lastName = sqlResult[2]
     employeeID = sqlResult[3]
-    return UserData(patronId, firstName, lastName, employeeID)
+    totalCredits = sqlResult[4]
+    return UserData(patronId, firstName, lastName, employeeID, totalCredits)
 
 
 def addSnack(itemName, quantity, imageID):
