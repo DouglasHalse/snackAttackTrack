@@ -1,0 +1,116 @@
+#:kivy 2.1.0
+
+<EditUsersScreenHeader>:
+    rows: 1
+    size_hint: 1, 0.2
+    canvas:
+        Color:
+            rgba: 0.8, 0.8, 0.8, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        rows: 1
+        size_hint: 1, 1
+
+        # Welcome Label
+        Label:
+            id: welcomeTextLabel
+            text: 'Welcome, [user] - Edit Users'
+            halign: 'left'
+            valign: 'middle'
+            size_hint_x: None  # Allow flexible width if needed
+            width: self.texture_size[0] + dp(20)  # Dynamically adjust width based on text content
+            size_hint_y: 1
+            text_size: None, None  # Do not constrain text size
+            color: 0, 0, 0, 1
+            bold: True
+
+        # BoxLayout for Button (centered)
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: (1, 1)
+            padding: 20
+            spacing: 0
+            AnchorLayout:
+                anchor_x: "right"
+                anchor_y: "center"
+                Button:
+                    text: 'Go back'
+                    size_hint: None, None
+                    size: '100dp', '40dp'
+                    on_press: root.onLogoutButtonPressed()
+
+<EditUsersScreenBody>:
+    rows: 2
+    padding: 20
+    spacing: 10  # Added some vertical spacing between header and scrollview
+
+    # Header Row
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: 50
+        canvas.before:
+            Color:
+                rgba: 0.8, 0.8, 0.8, 1  # Light gray background
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Label:
+            text: "First Name"
+            bold: True
+            halign: "center"
+            size_hint_x: None
+            width: 200  # Fixed width for better alignment
+        Label:
+            text: "Last Name"
+            bold: True
+            halign: "center"
+            size_hint_x: None
+            width: 200  # Fixed width for better alignment
+        Label:
+            text: "ID"
+            bold: True
+            halign: "center"
+            size_hint_x: None
+            width: 200  # Fixed width for better alignment
+        Label:
+            text: "Total Credits"
+            bold: True
+            halign: "center"
+            size_hint_x: None
+            width: 200  # Fixed width for better alignment
+
+    # ScrollView for patron list
+    ScrollView:
+        spacing: 20
+        size_hint: 1, None
+        height: self.parent.height - 100
+        padding: [0, 10, 10, 0]  # Added some vertical padding to add small space
+        canvas.before:
+            Color:
+                rgba: 0.8, 0.8, 0.8, 1  # Light gray background
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        GridLayout:
+            id: patron_grid
+            cols: 1  # Only 1 column for the BoxLayouts in the grid
+            size_hint_y: None
+            height: self.minimum_height
+            spacing: 10  # Added spacing between rows
+            padding: 10
+
+
+<EditUsersScreenWidget>:
+    canvas:
+        Color:
+            rgba: .9, .9, .9, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        id: editUsersScreenGridLayout
+        cols: 1
