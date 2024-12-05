@@ -2,7 +2,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
-from database import getPatronData, UserData, getAllSnacks
+from database import getPatronData, UserData, addSnack, getAllSnacks, SnackData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -34,9 +34,11 @@ class EditSnacksScreenBody(GridLayout):
 
 
 class SnackEntry(GridLayout):
-    def __init__(self, snackName, **kwargs):
+    def __init__(self, snackData: SnackData, **kwargs):
         super().__init__(**kwargs)
-        self.ids["snackNameLabel"].text = snackName
+        self.ids["snackNameLabel"].text = snackData.snackName
+        self.ids["snackQuantityLabel"].text = str(snackData.quantity)
+
 
 
 class EditSnacksScreen(Screen):
@@ -48,6 +50,7 @@ class EditSnacksScreen(Screen):
 
     def on_enter(self, *args):
         # self.clearSnacksList()
+        #addSnack("banana", 10, "test")
         self.addSnacksFromDatabase()
         return super().on_enter(*args)
 
@@ -58,7 +61,7 @@ class EditSnacksScreen(Screen):
         snacks = getAllSnacks()
         layout = GridLayout(cols=1, padding=10, spacing=10, size_hint=(1, 1), width=500)
         for snack in snacks:
-            layout.add_widget(SnackEntry(snack.itemName))
+            layout.add_widget(SnackEntry(snack))
         self.body.ids["editSnacksScrollView"].add_widget(layout)
 
     def setUserId(self, userId: int):

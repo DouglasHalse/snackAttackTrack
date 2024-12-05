@@ -4,6 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from database import getPatronData, UserData
 
+from kivy.uix.screenmanager import ScreenManager
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
     pass
@@ -38,6 +39,11 @@ class AdminScreenWidget(Screen):
         super().__init__(**kwargs)
         self.userData = None
 
+    def on_leave(self, *args):
+        print("AdminScreenOnLeave")
+        self.ids["adminScreenGridLayout"].clear_widgets()
+        return super().on_leave(*args)
+
     def setUserId(self, userId: int):
         self.userData = getPatronData(userId)
         header = AdminScreenHeader(self, self.userData)
@@ -46,6 +52,8 @@ class AdminScreenWidget(Screen):
         self.ids["adminScreenGridLayout"].add_widget(body)
 
     def GoToEditSnacksScreen(self):
+        self.manager.get_screen("editSnacksScreen").setUserId(self.userData.patronId)
+        self.manager.current = "editSnacksScreen"
         print("Going to edit snacks screen")
         # Use screen manager to go to edit snacks screen
 
@@ -54,5 +62,4 @@ class AdminScreenWidget(Screen):
         # Use screen manager to go to edit users screen
 
     def logout(self):
-        self.ids["adminScreenGridLayout"].clear_widgets()
         self.manager.current = "splashScreen"
