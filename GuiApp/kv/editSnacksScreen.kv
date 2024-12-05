@@ -1,0 +1,147 @@
+#:kivy 2.1.0     
+
+<EditSnacksScreenHeader>:
+    rows: 1
+    size_hint: 1, 0.2
+    canvas:
+        Color:
+            rgba: 0.8, 0.8, 0.8, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        orientation: "lr-tb"
+        rows: 1
+        size_hint: 1, 1
+        Label:
+            id: welcomeTextLabel
+            text: 'WelcomeText'
+            halign: 'left'
+            valign: 'middle'
+            padding: ['20dp', 0, 0, 0]
+            size_hint: (1, 1)
+            text_size: self.size
+            color: 'black'
+            bold: True
+    GridLayout:
+        orientation: "rl-tb"
+        rows: 1
+        size_hint: 1, 1
+        BoxLayoutButton:
+            size_hint: None, 1
+            width: '120dp'
+            on_press: root.onLogoutButtonPressed()
+            canvas:
+                Color:
+                    rgba: 0.7, 0.1, 0.1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Label:
+                text: 'Log out'
+                size_hint: (1, 1)
+
+<EditSnacksScreenBody>:
+    rows: 1
+    size_hint: (1, 1)
+    padding: '20dp'
+    canvas:
+        Color:
+            rgba: 0.3, 0.3, 0.3, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    
+<EditSnackListWidget>:
+    cols: 1
+    size_hint: 1, 1
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+    GridLayout:
+        rows: 1
+        size_hint: 1, None
+        height: '50dp'
+        canvas.after:
+            Color:
+                rgba: .5, .5, .5, 1
+            Line:
+                width: 2
+                rectangle: self.x, self.y, self.width, self.height
+        Label:
+            size_hint: 1, None
+            text: 'Snack name'
+            bold: True
+            height: '50dp'
+        Label:
+            size_hint: 1, None
+            text: 'Quantity'
+            bold: True
+            height: '50dp'
+        Label:
+            size_hint: 1, None
+            text: 'Image ID'
+            bold: True
+            height: '50dp'
+    ScrollView:
+        do_scroll_x: False
+        id: editSnacksScrollView
+
+<SnackEntry>:
+    rows: 1
+    size_hint_y: None
+    height: '50dp'
+    on_press: root.onPress()
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+    Label:
+        id: snackNameLabel
+        text: 'Snack'
+        size_hint: 1, None
+        height: '50dp'
+    Label:
+        id: snackQuantityLabel
+        text: 'Snack'
+        size_hint: 1, None
+        height: '50dp'
+    Label:
+        id: snackImageIdLabel
+        text: 'Snack'
+        size_hint: 1, None
+        height: '50dp'
+
+<AddSnackEntry>:
+    rows: 1
+    size_hint_y: None
+    height: '50dp'
+    on_press: root.onPress()
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+    Label:
+        text: 'Add a snack +'
+        bold: True
+        size_hint: 1, None
+        height: '50dp'
+
+<EditSnacksScreen>:
+    canvas:
+        Color:
+            rgba: .9, .9, .9, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        id: editSnacksGridLayout
+        cols: 1
