@@ -9,6 +9,14 @@ class UserData:
         self.employeeID = employeeID
 
 
+class SnackData:
+    def __init__(self, snackId, snackName, quantity, imageID):
+        self.snackId = snackId
+        self.snackName = snackName
+        self.quantity = quantity
+        self.imageID = imageID
+
+
 def createAllTables():
     connection = sqlite3.connect("database.db")
     cursor = connection.cursor()
@@ -85,6 +93,37 @@ def getPatronData(patronID: int) -> UserData:
     lastName = sqlResult[2]
     employeeID = sqlResult[3]
     return UserData(patronId, firstName, lastName, employeeID)
+
+
+def addSnack(itemName, quantity, imageID):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO Snacks (ItemName, Quantity, ImageID)
+        VALUES (?, ?, ?)
+        """,
+        (itemName, quantity, imageID),
+    )
+    conn.commit()
+
+
+def getAllSnacks() -> list[SnackData]:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Snacks")
+    sqlResult = cursor.fetchall()
+    snackDataList = []
+    for snackEntry in sqlResult:
+        snackId = snackEntry[0]
+        snackName = snackEntry[1]
+        quantity = snackEntry[2]
+        imageId = snackEntry[3]
+        snackData = SnackData(
+            snackId=snackId, snackName=snackName, quantity=quantity, imageID=imageId
+        )
+        snackDataList.append(snackData)
+    return snackDataList
 
 
 def closeDatabase():
