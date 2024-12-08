@@ -9,9 +9,9 @@ from kivy.uix.screenmanager import ScreenManager
 
 from widgets.splashScreen import SplashScreenWidget
 from widgets.loginScreen import LoginScreenWidget
-from widgets.mainUserScreen import MainUserScreenWidget
+from widgets.mainUserScreen import MainUserScreen
 from widgets.createUserScreen import CreateUserScreen
-from widgets.adminScreen import AdminScreenWidget
+from widgets.adminScreen import AdminScreen
 from widgets.editSnacksScreen import EditSnacksScreen
 from database import createAllTables, closeDatabase
 
@@ -38,10 +38,11 @@ class snackAttackTrackApp(App):
         sm = ScreenManager()
         sm.add_widget(SplashScreenWidget(name="splashScreen"))
         sm.add_widget(LoginScreenWidget(name="loginScreen"))
-        sm.add_widget(MainUserScreenWidget(name="mainUserPage"))
+        sm.add_widget(MainUserScreen(name="mainUserPage"))
         sm.add_widget(CreateUserScreen(name="createUserScreen"))
-        sm.add_widget(AdminScreenWidget(name="adminScreen"))
+        sm.add_widget(AdminScreen(name="adminScreen"))
         sm.add_widget(EditSnacksScreen(name="editSnacksScreen"))
+
         inspector.create_inspector(Window, sm)
         return sm
 

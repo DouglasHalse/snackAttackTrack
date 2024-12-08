@@ -1,70 +1,38 @@
-from kivy.uix.screenmanager import Screen
+from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.behaviors import ButtonBehavior
-from database import getPatronData, UserData
+from widgets.headerBodyLayout import HeaderBodyScreen
 
 
-class BoxLayoutButton(ButtonBehavior, BoxLayout):
-    pass
-
-
-class MainUserScreenHeader(GridLayout):
-    def __init__(self, mainUserScreen, userData: UserData, **kwargs):
+class MainUserScreenContent(GridLayout):
+    def __init__(self, screenManager: ScreenManager, **kwargs):
         super().__init__(**kwargs)
-        self.mainUserScreen = mainUserScreen
-        self.ids["welcomeTextLabel"].text = f"Welcome {userData.firstName}!"
+        self.screenManager = screenManager
 
-    def onLogoutButtonPressed(self, *largs):
-        self.mainUserScreen.logout()
-
-    def OnWrenchPressed(self, *largs):
-        self.mainUserScreen.GoToSettingsScreen()
-
-
-class MainUserScreenBody(GridLayout):
-    def __init__(self, mainUserScreen, **kwargs):
-        super().__init__(**kwargs)
-        self.mainUserScreen = mainUserScreen
-
-    def onBuyButtonPressed(self, *largs):
-        self.mainUserScreen.GoToBuyScreen()
-
-    def onTopUpButtonPressed(self, *largs):
-        self.mainUserScreen.GoToTopUpScreen()
-
-    def onHistoryButtonPressed(self, *largs):
-        self.mainUserScreen.GoToHistoryScreen()
-
-
-class MainUserScreenWidget(Screen):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.userData = None
-
-    def setUserId(self, userId: int):
-        self.userData = getPatronData(userId)
-        header = MainUserScreenHeader(self, self.userData)
-        self.ids["mainUserScreenGridLayout"].add_widget(header)
-        body = MainUserScreenBody(self)
-        self.ids["mainUserScreenGridLayout"].add_widget(body)
-
-    def GoToBuyScreen(self):
+    def onBuyButtonPressed(self):
         print("Going to Buy screen")
         # Use screen manager to go to buy screen
 
-    def GoToTopUpScreen(self):
+    def onTopUpButtonPressed(self):
         print("Going to Top up screen")
         # Use screen manager to go to buy screen
 
-    def GoToHistoryScreen(self):
+    def onHistoryButtonPressed(self):
         print("Going to History screen")
         # Use screen manager to go to buy screen
+
+
+class MainUserScreen(HeaderBodyScreen):
+    def __init__(self, **kwargs):
+        super().__init__(enableSettingsButton=True, **kwargs)
+        self.headerSuffix = "Main user screen"
+
+    def on_enter(self, *args):
+        super().on_enter(*args)
+        self.body.add_widget(MainUserScreenContent(screenManager=self.manager))
 
     def GoToSettingsScreen(self):
         print("Going to Settings screen")
         # Use screen manager to go to settings screen
-        self.ids["mainUserScreenGridLayout"].clear_widgets()
         adminScreen = self.manager.get_screen("adminScreen")
         adminScreen.setUserId(self.userData.patronId)
         self.manager.current = "adminScreen"
