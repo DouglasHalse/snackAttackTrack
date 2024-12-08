@@ -19,7 +19,7 @@ class EditSnacksScreenContent(GridLayout):
     def addSnacksFromDatabase(self):
         snacks = getAllSnacks()
         layout = GridLayout(cols=1, padding="10dp", spacing=10, size_hint_y=None)
-        for snack in snacks[1:3]:
+        for snack in snacks:
             layout.add_widget(
                 SnackEntry(screenManager=self.screenManager, snackData=snack)
             )
@@ -43,6 +43,7 @@ class SnackEntry(BoxLayoutButton):
         self.screenManager = screenManager
         self.ids["snackNameLabel"].text = snackData.snackName
         self.ids["snackQuantityLabel"].text = str(snackData.quantity)
+        self.ids["snackPriceLabel"].text = f"{snackData.pricePerItem:.2f}"
         self.ids["snackImageIdLabel"].text = str(snackData.imageID)
 
     def onPress(self, *largs):
@@ -56,5 +57,5 @@ class AddSnackEntry(BoxLayoutButton):
         self.screenManager = screenManager
 
     def onPress(self, *largs):
-        print("Going to add snack screen")
+        self.screenManager.current = "addSnackScreen"
         # Use screen manager to go to add snack screen
