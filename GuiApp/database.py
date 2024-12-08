@@ -11,11 +11,12 @@ class UserData:
 
 
 class SnackData:
-    def __init__(self, snackId, snackName, quantity, imageID):
+    def __init__(self, snackId, snackName, quantity, imageID, pricePerItem):
         self.snackId = snackId
         self.snackName = snackName
         self.quantity = quantity
         self.imageID = imageID
+        self.pricePerItem = pricePerItem
 
 
 def createAllTables():
@@ -37,7 +38,8 @@ def createAllTables():
             ItemID INTEGER PRIMARY KEY AUTOINCREMENT,
             ItemName TEXT NOT NULL,
             Quantity INTEGER NOT NULL,
-            ImageID TEXT NOT NULL
+            ImageID TEXT NOT NULL,
+            PricePerItem REAL NOT NULL
         );
         """,
         """
@@ -99,15 +101,15 @@ def getPatronData(patronID: int) -> UserData:
     return UserData(patronId, firstName, lastName, employeeID, totalCredits)
 
 
-def addSnack(itemName, quantity, imageID):
+def addSnack(itemName, quantity, imageID, pricePerItem):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute(
         """
-        INSERT INTO Snacks (ItemName, Quantity, ImageID)
-        VALUES (?, ?, ?)
+        INSERT INTO Snacks (ItemName, Quantity, ImageID, PricePerItem)
+        VALUES (?, ?, ?, ?)
         """,
-        (itemName, quantity, imageID),
+        (itemName, quantity, imageID, pricePerItem),
     )
     conn.commit()
 
@@ -123,8 +125,13 @@ def getAllSnacks() -> list[SnackData]:
         snackName = snackEntry[1]
         quantity = snackEntry[2]
         imageId = snackEntry[3]
+        pricePerItem = snackEntry[4]
         snackData = SnackData(
-            snackId=snackId, snackName=snackName, quantity=quantity, imageID=imageId
+            snackId=snackId,
+            snackName=snackName,
+            quantity=quantity,
+            imageID=imageId,
+            pricePerItem=pricePerItem,
         )
         snackDataList.append(snackData)
     return snackDataList
