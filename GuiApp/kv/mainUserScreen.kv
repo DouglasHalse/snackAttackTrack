@@ -1,55 +1,6 @@
 #:kivy 2.1.0     
 
-<MainUserScreenHeader>:
-    rows: 1
-    size_hint: 1, 0.2
-    canvas:
-        Color:
-            rgba: 0.8, 0.8, 0.8, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    GridLayout:
-        orientation: "lr-tb"
-        rows: 1
-        size_hint: 1, 1
-        Label:
-            id: welcomeTextLabel
-            text: 'WelcomeText'
-            halign: 'left'
-            valign: 'middle'
-            padding: ['20dp', 0, 0, 0]
-            size_hint: (1, 1)
-            text_size: self.size
-            color: 'black'
-            bold: True
-    GridLayout:
-        orientation: "rl-tb"
-        rows: 1
-        size_hint: 1, 1
-        BoxLayoutButton:
-            size_hint: None, 1
-            width: '120dp'
-            on_press: root.onLogoutButtonPressed()
-            canvas:
-                Color:
-                    rgba: 0.7, 0.1, 0.1, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-            
-            Label:
-                text: 'Log out'
-                size_hint: (1, 1)
-
-        ImageButton:
-            width: '48dp'
-            size_hint_x: None
-            source: 'Images/manage_devices.png'
-            color: 'white'
-            on_press: root.OnWrenchPressed()
-
-<MainUserScreenBody>:
+<MainUserScreenContent>:
     rows: 1
     padding: 30
     spacing: 30
@@ -88,15 +39,3 @@
         Label:
             text: 'History'
             size_hint: (1, 1)
-
-
-<MainUserScreenWidget>:
-    canvas:
-        Color:
-            rgba: .9, .9, .9, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    GridLayout:
-        id: mainUserScreenGridLayout
-        cols: 1

@@ -17,7 +17,7 @@ class LoginScreenUserWidget(BoxLayoutButton):
         self.ids["userNameLabel"].text = self.userData.firstName
 
     def Clicked(self, *largs):
-        self.loginScreenWidget.UserSelected(self.userData.patronId)
+        self.loginScreenWidget.UserSelected(self.userData)
 
 
 class LoginScreenWidget(Screen):
@@ -49,7 +49,13 @@ class LoginScreenWidget(Screen):
         print("Adding test user")
         self.manager.current = "createUserScreen"
 
-    def UserSelected(self, userId: int, *largs):
-        mainUserPage = self.manager.get_screen("mainUserPage")
-        mainUserPage.setUserId(userId)
+    def setUserDataForAllScreens(self, userData: UserData):
+        self.manager.get_screen("mainUserPage").setUserData(userData)
+        self.manager.get_screen("adminScreen").setUserData(userData)
+        self.manager.get_screen("editSnacksScreen").setUserData(userData)
+
+    def UserSelected(self, userData: UserData, *largs):
+        self.setUserDataForAllScreens(userData=userData)
+        # mainUserPage = self.manager.get_screen("mainUserPage")
+        # mainUserPage.setUserId(userId)
         self.manager.current = "mainUserPage"

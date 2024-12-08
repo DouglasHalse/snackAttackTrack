@@ -1,56 +1,26 @@
-from kivy.uix.screenmanager import Screen
+from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
-from database import getPatronData, UserData
+from widgets.headerBodyLayout import HeaderBodyScreen
 
 
-class AdminScreenHeader(GridLayout):
-    def __init__(self, adminScreen, userData: UserData, **kwargs):
+class AdminScreenContent(GridLayout):
+    def __init__(self, screenManager: ScreenManager, **kwargs):
         super().__init__(**kwargs)
-        self.mainUserScreen = adminScreen
-        self.ids[
-            "welcomeTextLabel"
-        ].text = f"Welcome {userData.firstName} - admin screen"
-
-    def onLogoutButtonPressed(self, *largs):
-        self.mainUserScreen.logout()
-
-
-class AdminScreenBody(GridLayout):
-    def __init__(self, adminScreen, **kwargs):
-        super().__init__(**kwargs)
-        self.adminScreen = adminScreen
+        self.screenManager = screenManager
 
     def onEditSnacksButtonPressed(self, *largs):
-        self.adminScreen.GoToEditSnacksScreen()
+        print("editsnacksscreen")
+        self.screenManager.current = "editSnacksScreen"
 
     def onEditUsersButtonPressed(self, *largs):
-        self.adminScreen.GoToEditUsersScreen()
+        print("editusersscreen")
 
 
-class AdminScreenWidget(Screen):
+class AdminScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.userData = None
+        self.headerSuffix = "Admin screen"
 
-    def on_leave(self, *args):
-        self.ids["adminScreenGridLayout"].clear_widgets()
-        return super().on_leave(*args)
-
-    def setUserId(self, userId: int):
-        self.userData = getPatronData(userId)
-        header = AdminScreenHeader(self, self.userData)
-        self.ids["adminScreenGridLayout"].add_widget(header)
-        body = AdminScreenBody(self)
-        self.ids["adminScreenGridLayout"].add_widget(body)
-
-    def GoToEditSnacksScreen(self):
-        self.manager.get_screen("editSnacksScreen").setUserId(self.userData.patronId)
-        self.manager.current = "editSnacksScreen"
-        # Use screen manager to go to edit snacks screen
-
-    def GoToEditUsersScreen(self):
-        print("Going to edit users screen")
-        # Use screen manager to go to edit users screen
-
-    def logout(self):
-        self.manager.current = "splashScreen"
+    def on_enter(self, *args):
+        super().on_enter(*args)
+        self.body.add_widget(AdminScreenContent(screenManager=self.manager))
