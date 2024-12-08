@@ -5,5 +5,5 @@ class SplashScreenWidget(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def OnScreenTouch(self):
+    def onPressed(self):
         print("Screen touched")
