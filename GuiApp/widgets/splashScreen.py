@@ -6,4 +6,4 @@ class SplashScreenWidget(Screen):
         super().__init__(**kwargs)
 
     def OnScreenTouch(self):
-        print("Screen touched")
+        self.manager.current = "loginScreen"

@@ -32,23 +32,24 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 class snackAttackTrackApp(App):
     def __init__(self):
         self.title = "Snack Attack Track"
+        self.sm = None
         super().__init__()
 
     def build(self):
         Builder.load_file("kv/main.kv")
         createAllTables()
-        sm = ScreenManager()
-        sm.add_widget(SplashScreenWidget(name="splashScreen"))
-        sm.add_widget(LoginScreenWidget(name="loginScreen"))
-        sm.add_widget(MainUserScreen(name="mainUserPage"))
-        sm.add_widget(CreateUserScreen(name="createUserScreen"))
-        sm.add_widget(AdminScreen(name="adminScreen"))
-        sm.add_widget(EditSnacksScreen(name="editSnacksScreen"))
-        sm.add_widget(EditUsersScreen(name="editUsersScreen"))
-        sm.add_widget(AddSnackScreen(name="addSnackScreen"))
+        self.sm = ScreenManager()
+        self.sm.add_widget(SplashScreenWidget(name="splashScreen"))
+        self.sm.add_widget(LoginScreenWidget(name="loginScreen"))
+        self.sm.add_widget(MainUserScreen(name="mainUserPage"))
+        self.sm.add_widget(CreateUserScreen(name="createUserScreen"))
+        self.sm.add_widget(AdminScreen(name="adminScreen"))
+        self.sm.add_widget(EditSnacksScreen(name="editSnacksScreen"))
+        self.sm.add_widget(EditUsersScreen(name="editUsersScreen"))
+        self.sm.add_widget(AddSnackScreen(name="addSnackScreen"))
 
-        inspector.create_inspector(Window, sm)
-        return sm
+        inspector.create_inspector(Window, self.sm)
+        return self.sm
 
     def on_stop(self):
         closeDatabase()
