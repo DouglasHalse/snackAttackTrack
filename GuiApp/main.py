@@ -53,27 +53,28 @@ class CustomScreenManager(ScreenManager):
 class snackAttackTrackApp(App):
     def __init__(self):
         self.title = "Snack Attack Track"
+        self.sm = None
         super().__init__()
 
     def build(self):
         Builder.load_file("kv/main.kv")
         createAllTables()
-        sm = CustomScreenManager()
-        sm.add_widget(SplashScreenWidget(name="splashScreen"))
-        sm.add_widget(LoginScreen(name="loginScreen"))
-        sm.add_widget(MainUserScreen(name="mainUserPage"))
-        sm.add_widget(CreateUserScreen(name="createUserScreen"))
-        sm.add_widget(AdminScreen(name="adminScreen"))
-        sm.add_widget(EditSnacksScreen(name="editSnacksScreen"))
-        sm.add_widget(EditUsersScreen(name="editUsersScreen"))
-        sm.add_widget(AddSnackScreen(name="addSnackScreen"))
-        sm.add_widget(TopUpAmountScreen(name="topUpAmountScreen"))
-        sm.add_widget(TopUpPaymentScreen(name="topUpPaymentScreen"))
-        sm.add_widget(BuyScreen(name="buyScreen"))
-        sm.add_widget(EditUserScreen(name="editUserScreen"))
+        self.sm = CustomScreenManager()
+        self.sm.add_widget(SplashScreenWidget(name="splashScreen"))
+        self.sm.add_widget(LoginScreen(name="loginScreen"))
+        self.sm.add_widget(MainUserScreen(name="mainUserPage"))
+        self.sm.add_widget(CreateUserScreen(name="createUserScreen"))
+        self.sm.add_widget(AdminScreen(name="adminScreen"))
+        self.sm.add_widget(EditSnacksScreen(name="editSnacksScreen"))
+        self.sm.add_widget(EditUsersScreen(name="editUsersScreen"))
+        self.sm.add_widget(AddSnackScreen(name="addSnackScreen"))
+        self.sm.add_widget(TopUpAmountScreen(name="topUpAmountScreen"))
+        self.sm.add_widget(TopUpPaymentScreen(name="topUpPaymentScreen"))
+        self.sm.add_widget(BuyScreen(name="buyScreen"))
+        self.sm.add_widget(EditUserScreen(name="editUserScreen"))
 
-        inspector.create_inspector(Window, sm)
-        return sm
+        inspector.create_inspector(Window, self.sm)
+        return self.sm
 
     def on_stop(self):
         closeDatabase()
