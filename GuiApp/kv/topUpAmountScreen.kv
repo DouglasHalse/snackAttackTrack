@@ -1,0 +1,101 @@
+#:kivy 2.1.0     
+
+<TopUpAmountScreenContent>:
+    cols: 1
+    padding: 30
+    spacing: 30
+    GridLayout:
+        rows: 1
+        size_hint: (1, 0.5)
+        padding: [40, 0, 40, 0]
+        GridLayout:
+            cols: 1
+            Label:
+                size_hint: (1, 0.3)
+                font_size: 32
+                bold: True
+                halign: 'center'
+                text: "Current \ncredits:"
+            TextInput:
+                id: creditsCurrent
+                disabled: True
+                write_tab: False
+                hint_text: "??"
+                size_hint_y: None
+                height: 40
+                padding: [10, 10]
+        GridLayout:
+            cols: 1
+            Label:
+                font_size: 32
+                bold: True
+                text: "+"
+        GridLayout:
+            cols: 1
+            Label:
+                font_size: 32
+                bold: True
+                halign: 'center'
+                text: "Add \ncredits:"
+            TextInput:
+                id: creditsToAdd
+                write_tab: False
+                hint_text: "Enter amount"
+                size_hint_y: None
+                height: 40
+                padding: [10, 10]
+        GridLayout:
+            cols: 1
+            Label:
+                font_size: 32
+                bold: True
+                text: "="
+        GridLayout:
+            cols: 1
+            Label:
+                font_size: 32
+                bold: True
+                halign: 'center'
+                text: "Credits \nafterwards:"
+            TextInput:
+                id: creditsAfterwards
+                disabled: True
+                write_tab: False
+                hint_text: "??"
+                size_hint_y: None
+                height: 40
+                padding: [10, 10]
+    
+    GridLayout:
+        rows: 1
+        size_hint: (1, 0.5)
+        padding: [40, 60, 40, 0]
+        spacing: 100
+        BoxLayoutButton:
+            on_press: root.onConfirm()
+            size_hint: (0.5, 1)
+            canvas:
+                Color:
+                    rgba: 0.0, 0.9, 0.0, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Label:
+                bold: True
+                text: 'Confirm'
+                size_hint: (1, 1)
+        BoxLayoutButton:
+            on_press: root.onCancel()
+            size_hint: (0.5, 1)
+            canvas:
+                Color:
+                    rgba: 0.9, 0.0, 0.0, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Label:
+                bold: True
+                text: 'Cancel'
+                size_hint: (1, 1)

@@ -55,6 +55,7 @@ class LoginScreenWidget(Screen):
         self.manager.get_screen("editSnacksScreen").setUserData(userData)
         self.manager.get_screen("editUsersScreen").setUserData(userData)
         self.manager.get_screen("addSnackScreen").setUserData(userData)
+        self.manager.get_screen("topUpAmountScreen").setUserData(userData)
 
     def UserSelected(self, userData: UserData, *largs):
         self.setUserDataForAllScreens(userData=userData)
