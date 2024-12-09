@@ -6,3 +6,6 @@ pytest
 black
 pylint
 pre-commit
+matplotlib
+numpy
+pillow

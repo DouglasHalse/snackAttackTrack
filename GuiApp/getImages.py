@@ -19,48 +19,23 @@ async def navigateScreensCoroutine():
 
     await asyncio.sleep(DELAY)
 
-    addPatron("Test", "User", 9001)
-    addSnack("TestSnack", 42, "TestImage", 10)
+    addPatron("FirstName1", "LastName1", 9001)
+    addPatron("FirstName2", "LastName2", 9002)
+    addPatron("FirstName3", "LastName3", 9003)
+    addSnack("Snack1", 42, "TestImage1", 10)
+    addSnack("Snack2", 5, "TestImage2", 12)
+    addSnack("Snack3", 16, "TestImage3", 15)
 
-    await asyncio.sleep(DELAY)
-    app.sm.export_to_png(PATH + app.sm.current + ".png")
-    app.sm.current_screen.OnScreenTouch()
-    await asyncio.sleep(DELAY)
-    assert app.sm.current == "loginScreen"
-
-    await asyncio.sleep(DELAY)
-    app.sm.export_to_png(PATH + app.sm.current + ".png")
-    app.sm.current_screen.ids["LoginScreenUserGridLayout"].children[1].Clicked()
-    await asyncio.sleep(DELAY)
-    assert app.sm.current == "mainUserPage"
-
-    await asyncio.sleep(DELAY)
-    app.sm.export_to_png(PATH + app.sm.current + ".png")
-    app.sm.current_screen.ids["screenLayout"].children[1].ids["rightContent"].children[
-        0
-    ].onPressed()
-    await asyncio.sleep(DELAY)
-    assert app.sm.current == "adminScreen"
-
-    await asyncio.sleep(DELAY)
-    app.sm.export_to_png(PATH + app.sm.current + ".png")
-    app.sm.current_screen.ids["screenLayout"].children[0].children[
-        0
-    ].onEditSnacksButtonPressed()
-    await asyncio.sleep(DELAY)
-    assert app.sm.current == "editSnacksScreen"
+    for screen in app.sm.screens:
+        await asyncio.sleep(DELAY)
+        app.sm.export_to_png(PATH + app.sm.current + ".png")
+        app.sm.current = screen.name
+        await asyncio.sleep(DELAY)
+        assert app.sm.current == screen.name
 
 
 async def runAppCoroutine():
     await app.async_run()
-
-
-async def task1():
-    print("Task1")
-
-
-async def task2():
-    print("Task2")
 
 
 async def main():

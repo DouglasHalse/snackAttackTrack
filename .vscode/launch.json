@@ -21,6 +21,18 @@
             "justMyCode": true
         },
         {
+            "name": "Python: Run image diff",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/.github/workflows/scripts/diffImages.py",
+            "args": [
+                "${workspaceFolder}/preMerge",
+                "${workspaceFolder}/postMerge",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "pytest: Current File",
             "type": "python",
             "request": "launch",
