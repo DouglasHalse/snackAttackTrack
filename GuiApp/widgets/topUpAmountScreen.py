@@ -36,8 +36,8 @@ class TopUpAmountScreen(HeaderBodyScreen):
         super().__init__(enableSettingsButton=True, **kwargs)
         self.headerSuffix = "Top up amount screen"
 
-    def on_enter(self, *args):
-        super().on_enter(*args)
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
         self.body.add_widget(
             TopUpAmountScreenContent(screenManager=self.manager, userData=self.userData)
         )

@@ -22,6 +22,6 @@ class AdminScreen(HeaderBodyScreen):
         super().__init__(**kwargs)
         self.headerSuffix = "Admin screen"
 
-    def on_enter(self, *args):
-        super().on_enter(*args)
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
         self.body.add_widget(AdminScreenContent(screenManager=self.manager))
