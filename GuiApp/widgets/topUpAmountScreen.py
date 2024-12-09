@@ -9,19 +9,23 @@ class TopUpAmountScreenContent(GridLayout):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.userData = userData
-        self.ids["creditsCurrent"].text = str(self.userData.totalCredits)
-        self.ids["creditsAfterwards"].text = str(self.userData.totalCredits)
+        self.ids["creditsCurrent"].text = f"{self.userData.totalCredits:.2f}"
+        self.ids["creditsAfterwards"].text = f"{self.userData.totalCredits:.2f}"
         self.ids["creditsToAdd"].bind(text=self.updateCreditsAfterwards)
 
     def updateCreditsAfterwards(self, instance, text):
         currentCredits = float(self.ids["creditsCurrent"].text)
         creditsToAdd = float(self.ids["creditsToAdd"].text)
-        self.ids["creditsAfterwards"].text = str(currentCredits + creditsToAdd)
+        newTotal = currentCredits + creditsToAdd
+        self.ids["creditsAfterwards"].text = f"{newTotal:.2f}"
 
     def onConfirm(self, *largs):
-        print("Going to top up payment screen")
-        # Switch to Top up payment screen
-        # creditsToAdd = float(self.ids["creditsToAdd"].text)
+        # TODO Sanitize user input
+        creditsToAdd = float(self.ids["creditsToAdd"].text)
+        self.screenManager.get_screen("topUpPaymentScreen").setAmountToBePayed(
+            creditsToAdd
+        )
+        self.screenManager.current = "topUpPaymentScreen"
 
     def onCancel(self, *largs):
         self.screenManager.current = "mainUserPage"

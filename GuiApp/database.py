@@ -137,5 +137,22 @@ def getAllSnacks() -> list[SnackData]:
     return snackDataList
 
 
+def addCredits(userId: int, amount: float):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT TotalCredits FROM Patrons WHERE PatronID = {userId}")
+    sqlResult = cursor.fetchone()
+    currentCredits = float(sqlResult[0])
+    newTotalCredits = currentCredits + amount
+    cursor.execute(
+        f"""
+        UPDATE Patrons
+        SET TotalCredits = {newTotalCredits}
+        WHERE PatronID = {userId}
+        """
+    )
+    conn.commit()
+
+
 def closeDatabase():
     sqlite3.connect("database.db").cursor().close()
