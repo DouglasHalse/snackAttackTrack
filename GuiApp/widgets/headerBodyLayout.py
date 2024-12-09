@@ -69,7 +69,7 @@ class HeaderBodyScreen(UserScreen):
         self.header = None
         self.body = None
 
-    def on_enter(self, *args):
+    def on_pre_enter(self, *args):
         self.header = Header(
             screenManager=self.manager,
             userData=self.userData,
@@ -82,7 +82,7 @@ class HeaderBodyScreen(UserScreen):
         self.body = Body(screenManager=self.manager)
         self.ids["screenLayout"].add_widget(self.body)
 
-        return super().on_enter(*args)
+        return super().on_pre_enter(*args)
 
     def on_leave(self, *args):
         self.ids["screenLayout"].clear_widgets()

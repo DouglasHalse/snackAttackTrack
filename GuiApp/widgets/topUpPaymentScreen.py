@@ -46,8 +46,8 @@ class TopUpPaymentScreen(HeaderBodyScreen):
     def setAmountToBePayed(self, amount: float):
         self.amountToBePayed = amount
 
-    def on_enter(self, *args):
-        super().on_enter(*args)
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
         self.body.add_widget(
             TopUpPaymentScreenContent(
                 screenManager=self.manager,

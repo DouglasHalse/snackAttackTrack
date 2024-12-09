@@ -25,6 +25,6 @@ class MainUserScreen(HeaderBodyScreen):
         super().__init__(enableSettingsButton=True, **kwargs)
         self.headerSuffix = "Main user screen"
 
-    def on_enter(self, *args):
-        super().on_enter(*args)
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
         self.body.add_widget(MainUserScreenContent(screenManager=self.manager))

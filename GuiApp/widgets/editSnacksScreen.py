@@ -32,8 +32,8 @@ class EditSnacksScreen(HeaderBodyScreen):
         super().__init__(**kwargs)
         self.headerSuffix = "Edit snacks screen"
 
-    def on_enter(self, *args):
-        super().on_enter(*args)
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
         self.body.add_widget(EditSnacksScreenContent(screenManager=self.manager))
 
 
