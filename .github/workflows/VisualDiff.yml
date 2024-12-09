@@ -6,7 +6,9 @@ on:
     branches:
       - main
   pull_request:
-
+    branches:
+        - main
+        - VisualDiff-Test
 jobs:
     GetPreMergeImages:
         name: Get images from target branch
@@ -75,9 +77,19 @@ jobs:
         needs: [GetPostMergeImages]
 
         steps:
-          - name: Diff snapshots
-            id: visual-snapshots-diff
-            uses: getsentry/action-visual-snapshot@v1
+          
+          - uses: actions/download-artifact@v4
             with:
-              snapshot-path: imagesOutput/adminScreen.png
-              githubToken: ${{ secrets.GITHUB_TOKEN }}
+              name: my-artifact
+              path: your/destination/dir
+          - name: Display structure of downloaded files
+            run: ls -R your/destination/dir
+          
+          - name: Upload failed tests
+            if: ${{ failure() }}
+            uses: edunad/actions-image@v2.0.0
+            with:
+                path: './failed_tests/**/*.png'
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                title: 'Failed E2E tests 🙀'
+                annotationLevel: 'failure'
