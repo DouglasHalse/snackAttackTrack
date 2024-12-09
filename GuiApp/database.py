@@ -30,7 +30,7 @@ def createAllTables():
             FirstName TEXT NOT NULL,
             LastName TEXT NOT NULL,
             EmployeeID TEXT NOT NULL,
-            TotalCredits INTEGER NOT NULL DEFAULT 0
+            TotalCredits REAL NOT NULL DEFAULT 0
         );
         """,
         """

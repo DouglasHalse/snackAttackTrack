@@ -13,8 +13,7 @@ class MainUserScreenContent(GridLayout):
         # Use screen manager to go to buy screen
 
     def onTopUpButtonPressed(self):
-        print("Going to Top up screen")
-        # Use screen manager to go to buy screen
+        self.screenManager.current = "topUpAmountScreen"
 
     def onHistoryButtonPressed(self):
         print("Going to History screen")
@@ -29,14 +28,3 @@ class MainUserScreen(HeaderBodyScreen):
     def on_enter(self, *args):
         super().on_enter(*args)
         self.body.add_widget(MainUserScreenContent(screenManager=self.manager))
-
-    def GoToSettingsScreen(self):
-        print("Going to Settings screen")
-        # Use screen manager to go to settings screen
-        adminScreen = self.manager.get_screen("adminScreen")
-        adminScreen.setUserId(self.userData.patronId)
-        self.manager.current = "adminScreen"
-
-    def logout(self):
-        self.ids["mainUserScreenGridLayout"].clear_widgets()
-        self.manager.current = "splashScreen"
