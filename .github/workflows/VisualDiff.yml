@@ -1,0 +1,151 @@
+name: VisualDiff
+
+permissions:
+  contents: write
+  actions: read
+  checks: write
+  pull-requests: write
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+        - main
+jobs:
+    GetPreMergeImages:
+        name: Get images from target branch
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v3
+            with: 
+                ref: ${{ github.base_ref }}
+
+          - name: Set up Python
+            uses: actions/setup-python@v4
+            with:
+                python-version: 3.9
+
+          - name: Install requirements
+            run: |
+                python -m pip install --upgrade pip
+                bash setupDevEnvironmentUbuntu.sh
+
+          - name: GetImages
+            uses: GabrielBB/xvfb-action@v1
+            with:
+                run: bash runGetImages.sh
+
+          - name: Save images
+            uses: actions/upload-artifact@v4
+            with:
+                name: preMergeScreenshot
+                path: imagesOutput/
+
+    GetPostMergeImages:
+        name: Get images from proposed change
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v3
+            with: 
+                ref: ${{ github.head_ref }}
+
+          - name: Set up Python
+            uses: actions/setup-python@v4
+            with:
+                python-version: 3.9
+
+          - name: Install requirements
+            run: |
+                python -m pip install --upgrade pip
+                bash setupDevEnvironmentUbuntu.sh
+
+          - name: GetImages
+            uses: GabrielBB/xvfb-action@v1
+            with:
+                run: bash runGetImages.sh
+
+          - name: Save images
+            uses: actions/upload-artifact@v4
+            with:
+                name: postMergeScreenshot
+                path: imagesOutput/
+
+    CompareImages:
+        name: Compare images
+        runs-on: ubuntu-latest
+        needs: [GetPostMergeImages, GetPreMergeImages]
+        steps:
+          - name: Checkout scripts
+            uses: actions/checkout@v3
+            with: 
+                sparse-checkout: |
+                    .github
+                ref: ${{ github.head_ref }}
+
+          - name: Download post-merge artifact
+            uses: actions/download-artifact@v4
+            with:
+              name: postMergeScreenshot
+              path: postImages/
+
+          - name: Display structure of postImages
+            run: ls -R postImages/
+      
+          - name: Download pre-merge artifact
+            uses: actions/download-artifact@v4
+            with:
+              name: preMergeScreenshot
+              path: preImages/
+
+          - name: Display structure of preImages
+            run: ls -R preImages/
+        
+          - name: Install requirements
+            run: |
+                python -m pip install numpy pillow matplotlib
+
+          - name: Run comparison script
+            id: compare_script
+            run: |
+                python .github/workflows/scripts/diffImages.py preImages/ postImages/
+                if [ ! -d diff_images ]; then
+                    echo "No differences found."
+                    echo "::set-output name=has_diffs::false" 
+                else
+                    echo "::set-output name=has_diffs::true" 
+                fi
+
+          - name: Save images
+            if: steps.compare_script.outputs.has_diffs == 'true'
+            uses: actions/upload-artifact@v4
+            with:
+                name: DiffImages
+                path: diff_images/all_diffs_plot.png
+
+          - uses: McCzarny/upload-image@v1.3.0
+            id: upload_image
+            if: github.event_name == 'pull_request' && steps.compare_script.outputs.has_diffs == 'true'
+            with:
+                path: |
+                    diff_images/all_diffs_plot.png
+                uploadMethod: imgbb
+                expiration: 600
+                apiKey: '${{ secrets.IMGBB_API_KEY }}'
+
+          - name: 'Comment PR'
+            uses: actions/github-script@v7.0.1
+            if: github.event_name == 'pull_request' && steps.compare_script.outputs.has_diffs == 'true'
+            with:
+                script: |
+                  github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: 'Hey boss, i found some diffs in the gui. Here is a summary of what i found:\n![0](${{fromJson(steps.upload_image.outputs.urls)[0]}})'
+                  });
