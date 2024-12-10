@@ -1,8 +1,9 @@
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.widget import Widget
+
+from widgets.customScreenManager import CustomScreenManager
 from database import getAllPatrons, UserData
 
 
@@ -11,7 +12,9 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class LoginScreenUserWidget(BoxLayoutButton):
-    def __init__(self, userData: UserData, screenManager: ScreenManager, **kwargs):
+    def __init__(
+        self, userData: UserData, screenManager: CustomScreenManager, **kwargs
+    ):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.userData = userData
@@ -19,7 +22,7 @@ class LoginScreenUserWidget(BoxLayoutButton):
 
     def Clicked(self, *largs):
         self.screenManager.login(self.userData.patronId)
-        self.screenManager.current = "mainUserPage"
+        self.screenManager.transitionToScreen("mainUserPage")
 
 
 class LoginScreen(Screen):
@@ -46,4 +49,4 @@ class LoginScreen(Screen):
                 )  # Spacer widget
 
     def createNewUserButtonClicked(self, *largs):
-        self.manager.current = "createUserScreen"
+        self.manager.transitionToScreen("createUserScreen")

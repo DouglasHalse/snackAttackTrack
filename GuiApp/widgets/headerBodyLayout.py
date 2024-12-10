@@ -1,8 +1,9 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
+
+from widgets.customScreenManager import CustomScreenManager
 
 
 class ImageButton(ButtonBehavior, Image):
@@ -12,48 +13,71 @@ class ImageButton(ButtonBehavior, Image):
 class Header(GridLayout):
     def __init__(
         self,
-        screenManager: ScreenManager,
+        screenManager: CustomScreenManager,
         enableSettingsButton: bool = False,
+        previousScreen=None,
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
+        self.screenManager: CustomScreenManager = screenManager
         self.currentPatron = self.screenManager.getCurrentPatron()
         self.ids["welcomeTextLabel"].text = f"Welcome {self.currentPatron.firstName}"
         if enableSettingsButton:
             self.ids["rightContent"].add_widget(
                 SettingsButton(screenManager=self.screenManager)
             )
+        if previousScreen:
+            backButton = BackButton(
+                previousScreen=previousScreen, screenManager=self.screenManager
+            )
+            self.ids["leftContent"].add_widget(backButton, index=1)
 
     def onLogoutButtonPressed(self, *largs):
-        self.screenManager.current = "splashScreen"
+        self.screenManager.transitionToScreen(
+            "splashScreen", transitionDirection="right"
+        )
 
     def setSuffix(self, suffix: str):
         self.ids["welcomeTextLabel"].text += " - " + suffix
 
 
 class Body(GridLayout):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
 
 
+class BackButton(ImageButton):
+    def __init__(self, previousScreen, screenManager: CustomScreenManager, **kwargs):
+        super().__init__(**kwargs)
+        self.previousScreen = previousScreen
+        self.screenManager: CustomScreenManager = screenManager
+
+    def onPressed(self, *largs):
+        self.screenManager.transitionToScreen(
+            self.previousScreen, transitionDirection="right"
+        )
+
+
 class SettingsButton(ImageButton):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
 
     def onPressed(self, *largs):
-        self.screenManager.current = "adminScreen"
+        self.screenManager.transitionToScreen("adminScreen")
 
 
 class HeaderBodyScreen(Screen):
     header: Header
     body: Body
 
-    def __init__(self, enableSettingsButton: bool = False, **kwargs):
+    def __init__(
+        self, enableSettingsButton: bool = False, previousScreen=None, **kwargs
+    ):
         super().__init__(**kwargs)
         self.enableSettingsButton = enableSettingsButton
+        self.previousScreen = previousScreen
         self.headerSuffix = None
         self.header = None
         self.body = None
@@ -63,6 +87,7 @@ class HeaderBodyScreen(Screen):
         self.header = Header(
             screenManager=self.manager,
             enableSettingsButton=self.enableSettingsButton,
+            previousScreen=self.previousScreen,
         )
         if self.headerSuffix:
             self.header.setSuffix(self.headerSuffix)

@@ -12,4 +12,4 @@ class SplashScreenWidget(Screen):
         super().__init__(**kwargs)
 
     def onPress(self):
-        self.manager.current = "loginScreen"
+        self.manager.transitionToScreen("loginScreen")

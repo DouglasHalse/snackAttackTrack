@@ -1,5 +1,6 @@
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
+
+from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from database import addCredits
 
@@ -7,7 +8,7 @@ from database import addCredits
 class TopUpPaymentScreenContent(GridLayout):
     def __init__(
         self,
-        screenManager: ScreenManager,
+        screenManager: CustomScreenManager,
         amountToBePayed: float,
         **kwargs,
     ):
@@ -22,15 +23,19 @@ class TopUpPaymentScreenContent(GridLayout):
     def onConfirm(self, *largs):
         addCredits(self.userData.patronId, self.amountToBePayed)
         self.screenManager.refreshCurrentPatron()  # Refresh current patron with new credits
-        self.screenManager.current = "mainUserPage"
+        self.screenManager.transitionToScreen(
+            "mainUserPage", transitionDirection="right"
+        )
 
     def onCancel(self, *largs):
-        self.screenManager.current = "mainUserPage"
+        self.screenManager.transitionToScreen(
+            "mainUserPage", transitionDirection="right"
+        )
 
 
 class TopUpPaymentScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(enableSettingsButton=True, **kwargs)
+        super().__init__(previousScreen="topUpAmountScreen", **kwargs)
         self.headerSuffix = "Top up payment screen"
         self.amountToBePayed = 0.0
 

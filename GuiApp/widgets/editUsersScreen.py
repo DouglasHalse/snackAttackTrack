@@ -1,7 +1,7 @@
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
+from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
 from database import getAllPatrons, UserData
@@ -12,7 +12,7 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class EditUsersScreenContent(GridLayout):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.addUsersFromDatabase()
@@ -29,7 +29,7 @@ class EditUsersScreenContent(GridLayout):
 
 class EditUsersScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(previousScreen="adminScreen", **kwargs)
         self.headerSuffix = "Edit users screen"
 
     def on_pre_enter(self, *args):
@@ -38,7 +38,9 @@ class EditUsersScreen(HeaderBodyScreen):
 
 
 class UserEntry(BoxLayoutButton):
-    def __init__(self, screenManager: ScreenManager, patronData: UserData, **kwargs):
+    def __init__(
+        self, screenManager: CustomScreenManager, patronData: UserData, **kwargs
+    ):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.patronData = patronData
@@ -49,4 +51,4 @@ class UserEntry(BoxLayoutButton):
 
     def onPress(self, *largs):
         self.screenManager.setPatronToEdit(patronToEdit=self.patronData)
-        self.screenManager.current = "editUserScreen"
+        self.screenManager.transitionToScreen("editUserScreen")

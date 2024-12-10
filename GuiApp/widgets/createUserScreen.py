@@ -30,7 +30,7 @@ class CreateUserScreen(Screen):
 
             addPatron(registerFirstName, registerLastName, registerEmployeeID)
 
-            self.manager.current = "loginScreen"
+            self.manager.transitionToScreen("loginScreen", transitionDirection="right")
 
     def cancel(self):
         """Handle the cancel action."""
@@ -41,4 +41,4 @@ class CreateUserScreen(Screen):
         self.ids.errorMessage.text = ""
         self.ids.errorMessage.opacity = 0
 
-        self.manager.current = "loginScreen"
+        self.manager.transitionToScreen("loginScreen", transitionDirection="right")

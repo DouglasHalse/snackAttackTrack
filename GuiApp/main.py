@@ -2,8 +2,8 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.modules import inspector
 from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager
 
+from widgets.customScreenManager import CustomScreenManager
 from widgets.splashScreen import SplashScreenWidget
 from widgets.loginScreen import LoginScreen
 from widgets.mainUserScreen import MainUserScreen
@@ -16,38 +16,10 @@ from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
 from widgets.buyScreen import BuyScreen
 from widgets.editUserScreen import EditUserScreen
-from database import createAllTables, closeDatabase, UserData, getPatronData
+from database import createAllTables, closeDatabase
 
 # Size of Raspberry pi touchscreen
 Window.size = (800, 480)
-
-
-class CustomScreenManager(ScreenManager):
-    def __init__(self):
-        super().__init__()
-        self._currentPatron: UserData = None
-        self._patronToEdit: UserData = None
-
-    def login(self, patronId):
-        self._currentPatron = getPatronData(patronID=patronId)
-
-    def logout(self):
-        self._currentPatron = None
-
-    def setPatronToEdit(self, patronToEdit: UserData):
-        self._patronToEdit = patronToEdit
-
-    def getPatronToEdit(self) -> UserData:
-        return self._patronToEdit
-
-    def resetPatronToEdit(self):
-        self._patronToEdit = None
-
-    def getCurrentPatron(self) -> UserData:
-        return self._currentPatron
-
-    def refreshCurrentPatron(self):
-        self._currentPatron = getPatronData(patronID=self._currentPatron.patronId)
 
 
 class snackAttackTrackApp(App):

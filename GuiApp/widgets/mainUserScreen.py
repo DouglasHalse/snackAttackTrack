@@ -1,18 +1,19 @@
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
+
+from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
 
 class MainUserScreenContent(GridLayout):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
+        self.screenManager: CustomScreenManager = screenManager
 
     def onBuyButtonPressed(self):
-        self.screenManager.current = "buyScreen"
+        self.screenManager.transitionToScreen("buyScreen")
 
     def onTopUpButtonPressed(self):
-        self.screenManager.current = "topUpAmountScreen"
+        self.screenManager.transitionToScreen("topUpAmountScreen")
 
     def onHistoryButtonPressed(self):
         print("Going to History screen")
@@ -21,7 +22,9 @@ class MainUserScreenContent(GridLayout):
 
 class MainUserScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(enableSettingsButton=True, **kwargs)
+        super().__init__(
+            previousScreen="loginScreen", enableSettingsButton=True, **kwargs
+        )
         self.headerSuffix = "Main user screen"
 
     def on_pre_enter(self, *args):
