@@ -1,8 +1,8 @@
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.popup import Popup
+from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
 from database import UserData, updatePatronData, removePatron
@@ -13,7 +13,7 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class EditUserScreenContent(GridLayout):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.patronToEdit: UserData = self.screenManager.getPatronToEdit()
@@ -36,10 +36,14 @@ class EditUserScreenContent(GridLayout):
         )
         updatePatronData(patronId=self.patronToEdit.patronId, newUserData=newUserData)
         self.screenManager.refreshCurrentPatron()
-        self.screenManager.current = "editUsersScreen"
+        self.screenManager.transitionToScreen(
+            "editUsersScreen", transitionDirection="right"
+        )
 
     def onCancel(self):
-        self.screenManager.current = "editUsersScreen"
+        self.screenManager.transitionToScreen(
+            "editUsersScreen", transitionDirection="right"
+        )
 
     def onRemove(self):
         popup = RemoveUserConfirmationPopup(
@@ -59,12 +63,12 @@ class EditUserScreen(HeaderBodyScreen):
 
     def on_leave(self, *args):
         super().on_leave(*args)
-        self.manager.resetPatronToEdit()
+        self.screenManager.resetPatronToEdit()
 
 
 class RemoveUserConfirmationPopup(Popup):
     def __init__(
-        self, screenManager: ScreenManager, patronToRemove: UserData, **kwargs
+        self, screenManager: CustomScreenManager, patronToRemove: UserData, **kwargs
     ):
         super().__init__(**kwargs)
         self.screenManager = screenManager
@@ -79,4 +83,6 @@ class RemoveUserConfirmationPopup(Popup):
     def onRemove(self):
         removePatron(self.patronToRemove.patronId)
         self.dismiss()
-        self.screenManager.current = "editUsersScreen"
+        self.screenManager.transitionToScreen(
+            "editUsersScreen", transitionDirection="right"
+        )

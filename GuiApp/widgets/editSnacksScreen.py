@@ -1,8 +1,8 @@
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from database import getAllSnacks, SnackData
+from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
 
@@ -11,7 +11,7 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class EditSnacksScreenContent(GridLayout):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.addSnacksFromDatabase()
@@ -29,7 +29,7 @@ class EditSnacksScreenContent(GridLayout):
 
 class EditSnacksScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(previousScreen="adminScreen", **kwargs)
         self.headerSuffix = "Edit snacks screen"
 
     def on_pre_enter(self, *args):
@@ -38,7 +38,9 @@ class EditSnacksScreen(HeaderBodyScreen):
 
 
 class SnackEntry(BoxLayoutButton):
-    def __init__(self, screenManager: ScreenManager, snackData: SnackData, **kwargs):
+    def __init__(
+        self, screenManager: CustomScreenManager, snackData: SnackData, **kwargs
+    ):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.ids["snackNameLabel"].text = snackData.snackName
@@ -52,10 +54,9 @@ class SnackEntry(BoxLayoutButton):
 
 
 class AddSnackEntry(BoxLayoutButton):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
 
     def onPress(self, *largs):
-        self.screenManager.current = "addSnackScreen"
-        # Use screen manager to go to add snack screen
+        self.screenManager.transitionToScreen("addSnackScreen")

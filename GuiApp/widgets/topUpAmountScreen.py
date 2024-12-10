@@ -1,10 +1,11 @@
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
+
+from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
 
 class TopUpAmountScreenContent(GridLayout):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.userData = self.screenManager.getCurrentPatron()
@@ -24,15 +25,17 @@ class TopUpAmountScreenContent(GridLayout):
         self.screenManager.get_screen("topUpPaymentScreen").setAmountToBePayed(
             creditsToAdd
         )
-        self.screenManager.current = "topUpPaymentScreen"
+        self.screenManager.transitionToScreen("topUpPaymentScreen")
 
     def onCancel(self, *largs):
-        self.screenManager.current = "mainUserPage"
+        self.screenManager.transitionToScreen(
+            "mainUserPage", transitionDirection="right"
+        )
 
 
 class TopUpAmountScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(enableSettingsButton=True, **kwargs)
+        super().__init__(previousScreen="mainUserPage", **kwargs)
         self.headerSuffix = "Top up amount screen"
 
     def on_pre_enter(self, *args):

@@ -1,5 +1,4 @@
 from enum import Enum
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
@@ -11,6 +10,7 @@ from database import (
     subtractSnackQuantity,
     subtractPatronCredits,
 )
+from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
 
@@ -30,7 +30,7 @@ class SnackList(GridLayout):
 
 
 class BuyScreenContent(GridLayout):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.snackDict = {}
@@ -128,15 +128,19 @@ class BuyScreenContent(GridLayout):
         subtractPatronCredits(
             patronID=currentPatron.patronId, creditsToSubtract=totalPrice
         )
-        self.screenManager.current = "mainUserPage"
+        self.screenManager.transitionToScreen(
+            "mainUserPage", transitionDirection="right"
+        )
 
     def onCancel(self):
-        self.screenManager.current = "mainUserPage"
+        self.screenManager.transitionToScreen(
+            "mainUserPage", transitionDirection="right"
+        )
 
 
 class BuyScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(previousScreen="mainUserPage", **kwargs)
         self.headerSuffix = "Buy snacks screen"
 
     def on_pre_enter(self, *args):

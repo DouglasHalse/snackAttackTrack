@@ -1,11 +1,12 @@
-from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
+
+from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from database import addSnack
 
 
 class AddSnackScreenContent(GridLayout):
-    def __init__(self, screenManager: ScreenManager, **kwargs):
+    def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.ids["snackNameTextInput"].bind(text=self.updateText)
@@ -42,15 +43,21 @@ class AddSnackScreenContent(GridLayout):
             imageID="None",
             pricePerItem=pricePerItem,
         )
-        self.screenManager.current = "editSnacksScreen"
+        self.screenManager.transitionToScreen(
+            "editSnacksScreen", transitionDirection="right"
+        )
 
     def onCancel(self, *largs):
-        self.screenManager.current = "editSnacksScreen"
+        self.screenManager.transitionToScreen(
+            "editSnacksScreen", transitionDirection="right"
+        )
 
 
 class AddSnackScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(enableSettingsButton=True, **kwargs)
+        super().__init__(
+            previousScreen="editSnacksScreen", enableSettingsButton=True, **kwargs
+        )
         self.headerSuffix = "Add snack screen"
 
     def on_pre_enter(self, *args):
