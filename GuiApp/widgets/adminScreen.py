@@ -19,7 +19,7 @@ class AdminScreenContent(GridLayout):
 
 class AdminScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(previousScreen="mainUserPage", **kwargs)
         self.headerSuffix = "Admin screen"
 
     def on_pre_enter(self, *args):

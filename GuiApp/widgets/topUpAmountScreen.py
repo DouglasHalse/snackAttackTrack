@@ -33,7 +33,9 @@ class TopUpAmountScreenContent(GridLayout):
 
 class TopUpAmountScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(enableSettingsButton=True, **kwargs)
+        super().__init__(
+            previousScreen="mainUserPage", enableSettingsButton=True, **kwargs
+        )
         self.headerSuffix = "Top up amount screen"
 
     def on_pre_enter(self, *args):

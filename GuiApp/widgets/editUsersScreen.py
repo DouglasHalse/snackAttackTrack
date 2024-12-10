@@ -29,7 +29,7 @@ class EditUsersScreenContent(GridLayout):
 
 class EditUsersScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(previousScreen="adminScreen", **kwargs)
         self.headerSuffix = "Edit users screen"
 
     def on_pre_enter(self, *args):

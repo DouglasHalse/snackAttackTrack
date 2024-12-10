@@ -39,7 +39,9 @@ class TopUpPaymentScreenContent(GridLayout):
 
 class TopUpPaymentScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(enableSettingsButton=True, **kwargs)
+        super().__init__(
+            previousScreen="topUpAmountScreen", enableSettingsButton=True, **kwargs
+        )
         self.headerSuffix = "Top up payment screen"
         self.amountToBePayed = 0.0
 

@@ -29,7 +29,7 @@ class EditSnacksScreenContent(GridLayout):
 
 class EditSnacksScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(previousScreen="adminScreen", **kwargs)
         self.headerSuffix = "Edit snacks screen"
 
     def on_pre_enter(self, *args):

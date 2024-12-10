@@ -22,9 +22,12 @@ class MainUserScreenContent(GridLayout):
 
 class MainUserScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(enableSettingsButton=True, **kwargs)
+        super().__init__(
+            previousScreen="loginScreen", enableSettingsButton=True, **kwargs
+        )
         self.headerSuffix = "Main user screen"
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
         self.body.add_widget(MainUserScreenContent(screenManager=self.manager))
+        print(self.app.title)
