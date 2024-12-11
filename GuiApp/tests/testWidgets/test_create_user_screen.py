@@ -6,7 +6,7 @@ from kivy.lang import Builder
 import pytest
 
 from GuiApp.widgets.createUserScreen import CreateUserScreen
-from GuiApp.widgets.loginScreen import LoginScreenWidget
+from GuiApp.widgets.loginScreen import LoginScreen
 from GuiApp.database import UserData
 
 
@@ -24,7 +24,7 @@ def fixture_screen_manager(mock_get_all_patrons):
     sm = ScreenManager()
 
     create_user_screen = CreateUserScreen(name="createUserScreen")
-    create_login_screen = LoginScreenWidget(name="loginScreen")
+    create_login_screen = LoginScreen(name="loginScreen")
 
     # mock_get_all_patrons.getAllPatrons.assert_called_once() This should work, i just don't know why
 

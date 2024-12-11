@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from widgets.headerBodyLayout import HeaderBodyScreen
-from database import addCredits, getPatronData
+from database import addCredits
 
 
 class TopUpPaymentScreenContent(GridLayout):
@@ -9,28 +9,19 @@ class TopUpPaymentScreenContent(GridLayout):
         self,
         screenManager: ScreenManager,
         amountToBePayed: float,
-        userId: int,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.amountToBePayed = amountToBePayed
-        self.userId = userId
+        self.userData = self.screenManager.getCurrentPatron()
         self.ids[
             "amountLabel"
         ].text = f"Select {self.amountToBePayed:.2f} SEK as amount"
 
     def onConfirm(self, *largs):
-        addCredits(self.userId, self.amountToBePayed)
-        # TODO update UserData in a better way
-        newUserData = getPatronData(patronID=self.userId)
-        self.screenManager.get_screen("mainUserPage").setUserData(newUserData)
-        self.screenManager.get_screen("adminScreen").setUserData(newUserData)
-        self.screenManager.get_screen("editSnacksScreen").setUserData(newUserData)
-        self.screenManager.get_screen("editUsersScreen").setUserData(newUserData)
-        self.screenManager.get_screen("addSnackScreen").setUserData(newUserData)
-        self.screenManager.get_screen("topUpAmountScreen").setUserData(newUserData)
-        self.screenManager.get_screen("topUpPaymentScreen").setUserData(newUserData)
+        addCredits(self.userData.patronId, self.amountToBePayed)
+        self.screenManager.refreshCurrentPatron()  # Refresh current patron with new credits
         self.screenManager.current = "mainUserPage"
 
     def onCancel(self, *largs):
@@ -52,6 +43,5 @@ class TopUpPaymentScreen(HeaderBodyScreen):
             TopUpPaymentScreenContent(
                 screenManager=self.manager,
                 amountToBePayed=self.amountToBePayed,
-                userId=self.userData.patronId,
             )
         )

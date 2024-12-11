@@ -1,14 +1,13 @@
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from widgets.headerBodyLayout import HeaderBodyScreen
-from database import UserData
 
 
 class TopUpAmountScreenContent(GridLayout):
-    def __init__(self, screenManager: ScreenManager, userData: UserData, **kwargs):
+    def __init__(self, screenManager: ScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
-        self.userData = userData
+        self.userData = self.screenManager.getCurrentPatron()
         self.ids["creditsCurrent"].text = f"{self.userData.totalCredits:.2f}"
         self.ids["creditsAfterwards"].text = f"{self.userData.totalCredits:.2f}"
         self.ids["creditsToAdd"].bind(text=self.updateCreditsAfterwards)
@@ -38,6 +37,4 @@ class TopUpAmountScreen(HeaderBodyScreen):
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
-        self.body.add_widget(
-            TopUpAmountScreenContent(screenManager=self.manager, userData=self.userData)
-        )
+        self.body.add_widget(TopUpAmountScreenContent(screenManager=self.manager))
