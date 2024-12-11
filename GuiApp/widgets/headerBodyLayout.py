@@ -4,8 +4,6 @@ from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
 
-from database import UserData
-
 
 class ImageButton(ButtonBehavior, Image):
     pass
@@ -15,13 +13,13 @@ class Header(GridLayout):
     def __init__(
         self,
         screenManager: ScreenManager,
-        userData: UserData,
         enableSettingsButton: bool = False,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.screenManager = screenManager
-        self.ids["welcomeTextLabel"].text = f"Welcome {userData.firstName}"
+        self.currentPatron = self.screenManager.getCurrentPatron()
+        self.ids["welcomeTextLabel"].text = f"Welcome {self.currentPatron.firstName}"
         if enableSettingsButton:
             self.ids["rightContent"].add_widget(
                 SettingsButton(screenManager=self.screenManager)
@@ -49,16 +47,7 @@ class SettingsButton(ImageButton):
         self.screenManager.current = "adminScreen"
 
 
-class UserScreen(Screen):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.userData = None
-
-    def setUserData(self, user: UserData):
-        self.userData = user
-
-
-class HeaderBodyScreen(UserScreen):
+class HeaderBodyScreen(Screen):
     header: Header
     body: Body
 
@@ -70,9 +59,9 @@ class HeaderBodyScreen(UserScreen):
         self.body = None
 
     def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
         self.header = Header(
             screenManager=self.manager,
-            userData=self.userData,
             enableSettingsButton=self.enableSettingsButton,
         )
         if self.headerSuffix:
@@ -81,8 +70,6 @@ class HeaderBodyScreen(UserScreen):
 
         self.body = Body(screenManager=self.manager)
         self.ids["screenLayout"].add_widget(self.body)
-
-        return super().on_pre_enter(*args)
 
     def on_leave(self, *args):
         self.ids["screenLayout"].clear_widgets()

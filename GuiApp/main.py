@@ -1,14 +1,11 @@
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.modules import inspector
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.image import Image
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager
 
 from widgets.splashScreen import SplashScreenWidget
-from widgets.loginScreen import LoginScreenWidget
+from widgets.loginScreen import LoginScreen
 from widgets.mainUserScreen import MainUserScreen
 from widgets.createUserScreen import CreateUserScreen
 from widgets.adminScreen import AdminScreen
@@ -17,18 +14,28 @@ from widgets.editUsersScreen import EditUsersScreen
 from widgets.addSnackScreen import AddSnackScreen
 from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
-from database import createAllTables, closeDatabase
+from database import createAllTables, closeDatabase, UserData, getPatronData
 
 # Size of Raspberry pi touchscreen
 Window.size = (800, 480)
 
 
-class ImageButton(ButtonBehavior, Image):
-    pass
+class CustomScreenManager(ScreenManager):
+    def __init__(self):
+        super().__init__()
+        self._currentPatron: UserData = None
 
+    def login(self, patronId):
+        self._currentPatron = getPatronData(patronID=patronId)
 
-class BoxLayoutButton(ButtonBehavior, BoxLayout):
-    pass
+    def logout(self):
+        self._currentPatron = None
+
+    def getCurrentPatron(self) -> UserData:
+        return self._currentPatron
+
+    def refreshCurrentPatron(self):
+        self._currentPatron = getPatronData(patronID=self._currentPatron.patronId)
 
 
 class snackAttackTrackApp(App):
@@ -39,9 +46,9 @@ class snackAttackTrackApp(App):
     def build(self):
         Builder.load_file("kv/main.kv")
         createAllTables()
-        sm = ScreenManager()
+        sm = CustomScreenManager()
         sm.add_widget(SplashScreenWidget(name="splashScreen"))
-        sm.add_widget(LoginScreenWidget(name="loginScreen"))
+        sm.add_widget(LoginScreen(name="loginScreen"))
         sm.add_widget(MainUserScreen(name="mainUserPage"))
         sm.add_widget(CreateUserScreen(name="createUserScreen"))
         sm.add_widget(AdminScreen(name="adminScreen"))

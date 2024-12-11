@@ -1,3 +1,4 @@
+from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
@@ -10,25 +11,27 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class LoginScreenUserWidget(BoxLayoutButton):
-    def __init__(self, userData: UserData, loginScreenWidget, **kwargs):
+    def __init__(self, userData: UserData, screenManager: ScreenManager, **kwargs):
         super().__init__(**kwargs)
-        self.loginScreenWidget = loginScreenWidget
+        self.screenManager = screenManager
         self.userData = userData
         self.ids["userNameLabel"].text = self.userData.firstName
 
     def Clicked(self, *largs):
-        self.loginScreenWidget.UserSelected(self.userData)
+        self.screenManager.login(self.userData.patronId)
+        self.screenManager.current = "mainUserPage"
 
 
-class LoginScreenWidget(Screen):
+class LoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.AddUsersToLoginScreen()
 
-    def on_enter(self, *args):
-        self.clearUsersFromLoginScreen()
+    def on_pre_enter(self, *args):
         self.AddUsersToLoginScreen()
         return super().on_enter(*args)
+
+    def on_leave(self, *args):
+        self.ids["LoginScreenUserGridLayout"].clear_widgets()
 
     def AddUsersToLoginScreen(self):
         userDataList = getAllPatrons()
@@ -36,30 +39,11 @@ class LoginScreenWidget(Screen):
             self.ids["LoginScreenUserGridLayout"].add_widget(Widget())  # Spacer widget
             for userData in userDataList:
                 self.ids["LoginScreenUserGridLayout"].add_widget(
-                    LoginScreenUserWidget(userData=userData, loginScreenWidget=self)
+                    LoginScreenUserWidget(userData=userData, screenManager=self.manager)
                 )
                 self.ids["LoginScreenUserGridLayout"].add_widget(
                     Widget()
                 )  # Spacer widget
 
-    def clearUsersFromLoginScreen(self):
-        self.ids["LoginScreenUserGridLayout"].clear_widgets()
-
     def createNewUserButtonClicked(self, *largs):
-        print("Adding test user")
         self.manager.current = "createUserScreen"
-
-    def setUserDataForAllScreens(self, userData: UserData):
-        self.manager.get_screen("mainUserPage").setUserData(userData)
-        self.manager.get_screen("adminScreen").setUserData(userData)
-        self.manager.get_screen("editSnacksScreen").setUserData(userData)
-        self.manager.get_screen("editUsersScreen").setUserData(userData)
-        self.manager.get_screen("addSnackScreen").setUserData(userData)
-        self.manager.get_screen("topUpAmountScreen").setUserData(userData)
-        self.manager.get_screen("topUpPaymentScreen").setUserData(userData)
-
-    def UserSelected(self, userData: UserData, *largs):
-        self.setUserDataForAllScreens(userData=userData)
-        # mainUserPage = self.manager.get_screen("mainUserPage")
-        # mainUserPage.setUserId(userId)
-        self.manager.current = "mainUserPage"
