@@ -9,8 +9,7 @@ class MainUserScreenContent(GridLayout):
         self.screenManager = screenManager
 
     def onBuyButtonPressed(self):
-        print("Going to Buy screen")
-        # Use screen manager to go to buy screen
+        self.screenManager.current = "buyScreen"
 
     def onTopUpButtonPressed(self):
         self.screenManager.current = "topUpAmountScreen"
