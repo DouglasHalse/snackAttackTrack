@@ -12,11 +12,11 @@ class UserData:
 
 class SnackData:
     def __init__(self, snackId, snackName, quantity, imageID, pricePerItem):
-        self.snackId = snackId
-        self.snackName = snackName
-        self.quantity = quantity
-        self.imageID = imageID
-        self.pricePerItem = pricePerItem
+        self.snackId: int = snackId
+        self.snackName: str = snackName
+        self.quantity: int = quantity
+        self.imageID: str = imageID
+        self.pricePerItem: float = pricePerItem
 
 
 def createAllTables():
@@ -101,6 +101,18 @@ def getPatronData(patronID: int) -> UserData:
     return UserData(patronId, firstName, lastName, employeeID, totalCredits)
 
 
+def subtractPatronCredits(patronID: int, creditsToSubtract: float):
+    patronData = getPatronData(patronID=patronID)
+    oldCreditsAmount = patronData.totalCredits
+    newCreditsAmount = oldCreditsAmount - creditsToSubtract
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        f"UPDATE Patrons Set TotalCredits = {newCreditsAmount} WHERE PatronID = {patronID}"
+    )
+    conn.commit()
+
+
 def addSnack(itemName, quantity, imageID, pricePerItem):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -110,6 +122,44 @@ def addSnack(itemName, quantity, imageID, pricePerItem):
         VALUES (?, ?, ?, ?)
         """,
         (itemName, quantity, imageID, pricePerItem),
+    )
+    conn.commit()
+
+
+def getSnack(snackId: int) -> SnackData:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM Snacks WHERE ItemID = {snackId}")
+    sqlResult = cursor.fetchone()
+    snackId = sqlResult[0]
+    snackName = sqlResult[1]
+    quantity = sqlResult[2]
+    imageId = sqlResult[3]
+    pricePerItem = sqlResult[4]
+    return SnackData(
+        snackId=snackId,
+        snackName=snackName,
+        quantity=quantity,
+        imageID=imageId,
+        pricePerItem=pricePerItem,
+    )
+
+
+def removeSnack(snackId: int):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE FROM Snacks WHERE ItemID = {snackId}")
+    conn.commit()
+
+
+def subtractSnackQuantity(snackId: int, quantity: int):
+    snack = getSnack(snackId=snackId)
+    oldQuantity = snack.quantity
+    newQuantity = oldQuantity - quantity
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        f"UPDATE Snacks Set Quantity = {newQuantity} WHERE ItemID = {snackId}"
     )
     conn.commit()
 

@@ -14,6 +14,7 @@ from widgets.editUsersScreen import EditUsersScreen
 from widgets.addSnackScreen import AddSnackScreen
 from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
+from widgets.buyScreen import BuyScreen
 from database import createAllTables, closeDatabase, UserData, getPatronData
 
 # Size of Raspberry pi touchscreen
@@ -57,6 +58,7 @@ class snackAttackTrackApp(App):
         sm.add_widget(AddSnackScreen(name="addSnackScreen"))
         sm.add_widget(TopUpAmountScreen(name="topUpAmountScreen"))
         sm.add_widget(TopUpPaymentScreen(name="topUpPaymentScreen"))
+        sm.add_widget(BuyScreen(name="buyScreen"))
 
         inspector.create_inspector(Window, sm)
         return sm
