@@ -9,11 +9,9 @@ class AdminScreenContent(GridLayout):
         self.screenManager = screenManager
 
     def onEditSnacksButtonPressed(self, *largs):
-        print("editsnacksscreen")
         self.screenManager.current = "editSnacksScreen"
 
     def onEditUsersButtonPressed(self, *largs):
-        print("editusersscreen")
         self.screenManager.current = "editUsersScreen"
 
 
