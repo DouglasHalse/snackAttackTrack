@@ -101,6 +101,22 @@ def getPatronData(patronID: int) -> UserData:
     return UserData(patronId, firstName, lastName, employeeID, totalCredits)
 
 
+def updatePatronData(patronId: int, newUserData: UserData):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        f"UPDATE Patrons Set FirstName = '{newUserData.firstName}', LastName = '{newUserData.lastName}', EmployeeID = {newUserData.employeeID}, TotalCredits = {newUserData.totalCredits} WHERE PatronID = {patronId}"
+    )
+    conn.commit()
+
+
+def removePatron(patronId: int):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE from Patrons WHERE PatronID = {patronId}")
+    conn.commit()
+
+
 def subtractPatronCredits(patronID: int, creditsToSubtract: float):
     patronData = getPatronData(patronID=patronID)
     oldCreditsAmount = patronData.totalCredits

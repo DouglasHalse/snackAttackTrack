@@ -22,7 +22,7 @@ class EditUsersScreenContent(GridLayout):
         layout = GridLayout(cols=1, padding="10dp", spacing=10, size_hint_y=None)
         for user in users:
             layout.add_widget(
-                UserEntry(screenManager=self.screenManager, userData=user)
+                UserEntry(screenManager=self.screenManager, patronData=user)
             )
         self.ids["editUsersScrollView"].add_widget(layout)
 
@@ -38,13 +38,15 @@ class EditUsersScreen(HeaderBodyScreen):
 
 
 class UserEntry(BoxLayoutButton):
-    def __init__(self, screenManager: ScreenManager, userData: UserData, **kwargs):
+    def __init__(self, screenManager: ScreenManager, patronData: UserData, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
-        self.ids["userFirstNameLabel"].text = userData.firstName
-        self.ids["userLastNameLabel"].text = userData.lastName
-        self.ids["userIdLabel"].text = userData.employeeID
-        self.ids["userTotalCreditsLabel"].text = str(userData.totalCredits)
+        self.patronData = patronData
+        self.ids["userFirstNameLabel"].text = patronData.firstName
+        self.ids["userLastNameLabel"].text = patronData.lastName
+        self.ids["userIdLabel"].text = patronData.employeeID
+        self.ids["userTotalCreditsLabel"].text = f"{patronData.totalCredits:.2f}"
 
     def onPress(self, *largs):
-        print("Going to edit user screen")
+        self.screenManager.setPatronToEdit(patronToEdit=self.patronData)
+        self.screenManager.current = "editUserScreen"
