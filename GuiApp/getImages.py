@@ -20,6 +20,7 @@ async def navigateScreensCoroutine():
     await asyncio.sleep(DELAY)
 
     addPatron("FirstName1", "LastName1", 9001)
+
     addPatron("FirstName2", "LastName2", 9002)
     addPatron("FirstName3", "LastName3", 9003)
     addSnack("Snack1", 42, "TestImage1", 10)
