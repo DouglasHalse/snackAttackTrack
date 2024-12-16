@@ -13,7 +13,6 @@ from widgets.editSnacksScreen import EditSnacksScreen
 from widgets.editUsersScreen import EditUsersScreen
 from widgets.addSnackScreen import AddSnackScreen
 from widgets.topUpAmountScreen import TopUpAmountScreen
-from widgets.topUpPaymentScreen import TopUpPaymentScreen
 from widgets.buyScreen import BuyScreen
 from widgets.editUserScreen import EditUserScreen
 from database import createAllTables, closeDatabase, UserData, getPatronData
@@ -69,7 +68,6 @@ class snackAttackTrackApp(App):
         self.sm.add_widget(EditUsersScreen(name="editUsersScreen"))
         self.sm.add_widget(AddSnackScreen(name="addSnackScreen"))
         self.sm.add_widget(TopUpAmountScreen(name="topUpAmountScreen"))
-        self.sm.add_widget(TopUpPaymentScreen(name="topUpPaymentScreen"))
         self.sm.add_widget(BuyScreen(name="buyScreen"))
         self.sm.add_widget(EditUserScreen(name="editUserScreen"))
 
