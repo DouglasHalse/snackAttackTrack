@@ -63,6 +63,7 @@ class snackAttackTrackApp(App):
         self.sm.add_widget(SplashScreenWidget(name="splashScreen"))
         self.sm.add_widget(LoginScreen(name="loginScreen"))
         self.sm.add_widget(MainUserScreen(name="mainUserPage"))
+        self.sm.add_widget(MainUserScreen(name="mainUserPage2"))
         self.sm.add_widget(CreateUserScreen(name="createUserScreen"))
         self.sm.add_widget(AdminScreen(name="adminScreen"))
         self.sm.add_widget(EditSnacksScreen(name="editSnacksScreen"))
