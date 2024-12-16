@@ -22,7 +22,7 @@ class MainUserScreenContent(GridLayout):
 class MainUserScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
         super().__init__(enableSettingsButton=True, **kwargs)
-        self.headerSuffix = "Main user screen"
+        self.headerSuffix = "Main user screen deluxe supreme"
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
