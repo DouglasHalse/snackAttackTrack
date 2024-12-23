@@ -1,3 +1,5 @@
+import re
+
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from widgets.headerBodyLayout import HeaderBodyScreen
@@ -13,7 +15,6 @@ class AddSnackScreenContent(GridLayout):
         self.ids["snackTotalPriceTextInput"].bind(text=self.updateText)
 
     def updateText(self, instance, text):
-        # TODO sanitize input
         snackName = self.ids["snackNameTextInput"].text
         if snackName == "":
             snackName = "?"
@@ -25,17 +26,25 @@ class AddSnackScreenContent(GridLayout):
         if totalPrice == "" or quantity == "?":
             totalPrice = "?"
         else:
-            pricePerItem = float(totalPrice) / float(quantity)
+            try:
+                pricePerItem = float(totalPrice) / float(quantity)
+            except ValueError:
+                return
 
         self.ids["numberOfItemsLabel"].text = f"{quantity} of {snackName}"
         self.ids["pricePerItemLabel"].text = f"{pricePerItem:.2f} credits per item"
 
     def onConfirm(self, *largs):
-        # TODO sanitize input
         snackName = self.ids["snackNameTextInput"].text
-        quantity = int(self.ids["snackQuantityTextInput"].text)
-        totalPrice = float(self.ids["snackTotalPriceTextInput"].text)
-        pricePerItem = totalPrice / float(quantity)
+        if re.search("^[a-zA-Z_åäöÅÄÖ]+( [a-zA-Z_åäöÅÄÖ]+)*$", snackName) is None:
+            return
+        try:
+            quantity = int(self.ids["snackQuantityTextInput"].text)
+            totalPrice = float(self.ids["snackTotalPriceTextInput"].text)
+            pricePerItem = totalPrice / float(quantity)
+        except ValueError:
+            return
+
         addSnack(
             itemName=snackName,
             quantity=quantity,
