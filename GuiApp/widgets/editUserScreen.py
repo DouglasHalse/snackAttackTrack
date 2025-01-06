@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
@@ -5,7 +7,7 @@ from kivy.uix.popup import Popup
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
-from database import UserData, updatePatronData, removePatron
+from database import UserData, updatePatronData, removePatron, addEditTransaction
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -34,6 +36,13 @@ class EditUserScreenContent(GridLayout):
             employeeID=newcardId,
             totalCredits=newCredits,
         )
+        if self.patronToEdit.totalCredits != newCredits:
+            addEditTransaction(
+                patronID=self.patronToEdit.patronId,
+                amountBeforeTransaction=self.patronToEdit.totalCredits,
+                amountAfterTransaction=newCredits,
+                transactionDate=datetime.now(),
+            )
         updatePatronData(patronId=self.patronToEdit.patronId, newUserData=newUserData)
         self.screenManager.refreshCurrentPatron()
         self.screenManager.transitionToScreen(
@@ -63,7 +72,7 @@ class EditUserScreen(HeaderBodyScreen):
 
     def on_leave(self, *args):
         super().on_leave(*args)
-        self.screenManager.resetPatronToEdit()
+        self.manager.resetPatronToEdit()
 
 
 class RemoveUserConfirmationPopup(Popup):

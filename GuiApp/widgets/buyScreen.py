@@ -1,4 +1,5 @@
 from enum import Enum
+from datetime import datetime
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
@@ -9,6 +10,7 @@ from database import (
     removeSnack,
     subtractSnackQuantity,
     subtractPatronCredits,
+    addPurchaseTransaction,
 )
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
@@ -110,11 +112,20 @@ class BuyScreenContent(GridLayout):
         # TODO: Verify enough items are in the database?
         # TODO: Verify user has enough credits
         totalPrice = 0.0
+        snacksBought = []
         for snackDictEntry in self.snackDict.items():
             snackId = snackDictEntry[0]
             snack = getSnack(snackId)
             snackPrice = snack.pricePerItem
             snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
+            snackBought = SnackData(
+                snackId=snackId,
+                snackName=snack.snackName,
+                quantity=snackInShoppingCart,
+                imageID=snack.imageID,
+                pricePerItem=snackPrice,
+            )
+            snacksBought.append(snackBought)
             totalPrice += snackPrice * snackInShoppingCart
             if snackInShoppingCart > 0:
                 if snackInShoppingCart == snack.quantity:
@@ -125,6 +136,13 @@ class BuyScreenContent(GridLayout):
                     )
 
         currentPatron = self.screenManager.getCurrentPatron()
+        addPurchaseTransaction(
+            patronID=currentPatron.patronId,
+            amountBeforeTransaction=currentPatron.totalCredits,
+            amountAfterTransaction=currentPatron.totalCredits - totalPrice,
+            transactionDate=datetime.now(),
+            transactionItems=snacksBought,
+        )
         subtractPatronCredits(
             patronID=currentPatron.patronId, creditsToSubtract=totalPrice
         )

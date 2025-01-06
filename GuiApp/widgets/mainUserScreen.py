@@ -16,8 +16,7 @@ class MainUserScreenContent(GridLayout):
         self.screenManager.transitionToScreen("topUpAmountScreen")
 
     def onHistoryButtonPressed(self):
-        print("Going to History screen")
-        # Use screen manager to go to buy screen
+        self.screenManager.transitionToScreen("historyScreen")
 
 
 class MainUserScreen(HeaderBodyScreen):
