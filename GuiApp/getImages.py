@@ -2,7 +2,7 @@ import os
 import asyncio
 
 from main import snackAttackTrackApp
-from database import addPatron, addSnack, getAllPatrons
+from database import addPatron, addSnack, getAllPatrons, getAllSnacks
 
 
 DELAY = 0.5
@@ -29,9 +29,11 @@ async def navigateScreensCoroutine():
     await asyncio.sleep(DELAY)
 
     patrons = getAllPatrons()
+    snacks = getAllSnacks()
 
     app.sm.login(patrons[0].patronId)
     app.sm.setPatronToEdit(patrons[1])
+    app.sm.setSnackToEdit(snacks[0])
 
     for screen in app.sm.screens:
         await asyncio.sleep(DELAY)

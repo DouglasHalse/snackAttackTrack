@@ -43,14 +43,15 @@ class SnackEntry(BoxLayoutButton):
     ):
         super().__init__(**kwargs)
         self.screenManager = screenManager
+        self.snackData = snackData
         self.ids["snackNameLabel"].text = snackData.snackName
         self.ids["snackQuantityLabel"].text = str(snackData.quantity)
         self.ids["snackPriceLabel"].text = f"{snackData.pricePerItem:.2f}"
         self.ids["snackImageIdLabel"].text = str(snackData.imageID)
 
     def onPress(self, *largs):
-        print("Going to edit snack screen")
-        # Use screen manager to go to edit snack screen
+        self.screenManager.setSnackToEdit(snackToEdit=self.snackData)
+        self.screenManager.transitionToScreen("editSnackScreen")
 
 
 class AddSnackEntry(BoxLayoutButton):

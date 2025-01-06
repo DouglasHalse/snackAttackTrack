@@ -321,6 +321,15 @@ def updatePatronData(patronId: int, newUserData: UserData):
     conn.commit()
 
 
+def updateSnackData(snackId: int, newSnackData: SnackData):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        f"UPDATE Snacks Set ItemName = '{newSnackData.snackName}', Quantity = {newSnackData.quantity}, ImageID = '{newSnackData.imageID}', PricePerItem = {newSnackData.pricePerItem} WHERE ItemID = {snackId}"
+    )
+    conn.commit()
+
+
 def removePatron(patronId: int):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -331,6 +340,13 @@ def removePatron(patronId: int):
     for transactionId in patronsTransactionIds:
         removeTransactionItems(transactionId)
     removeTransactions(patronId)
+
+
+def removeSnack(snackId: int):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE from Snacks WHERE ItemID = {snackId}")
+    conn.commit()
 
 
 def subtractPatronCredits(patronID: int, creditsToSubtract: float):
@@ -375,13 +391,6 @@ def getSnack(snackId: int) -> SnackData:
         imageID=imageId,
         pricePerItem=pricePerItem,
     )
-
-
-def removeSnack(snackId: int):
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-    cursor.execute(f"DELETE FROM Snacks WHERE ItemID = {snackId}")
-    conn.commit()
 
 
 def subtractSnackQuantity(snackId: int, quantity: int):
