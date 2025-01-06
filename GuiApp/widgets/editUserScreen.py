@@ -44,7 +44,10 @@ class EditUserScreenContent(GridLayout):
                 transactionDate=datetime.now(),
             )
         updatePatronData(patronId=self.patronToEdit.patronId, newUserData=newUserData)
+
+        # Update current patron with new data
         self.screenManager.refreshCurrentPatron()
+
         self.screenManager.transitionToScreen(
             "editUsersScreen", transitionDirection="right"
         )
