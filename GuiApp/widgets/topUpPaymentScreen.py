@@ -1,8 +1,10 @@
+from datetime import datetime
+
 from kivy.uix.gridlayout import GridLayout
 
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
-from database import addCredits
+from database import addCredits, addTopUpTransaction
 
 
 class TopUpPaymentScreenContent(GridLayout):
@@ -21,6 +23,12 @@ class TopUpPaymentScreenContent(GridLayout):
         ].text = f"Select {self.amountToBePayed:.2f} SEK as amount"
 
     def onConfirm(self, *largs):
+        addTopUpTransaction(
+            patronID=self.userData.patronId,
+            amountBeforeTransaction=self.userData.totalCredits,
+            amountAfterTransaction=self.userData.totalCredits + self.amountToBePayed,
+            transactionDate=datetime.now(),
+        )
         addCredits(self.userData.patronId, self.amountToBePayed)
         self.screenManager.refreshCurrentPatron()  # Refresh current patron with new credits
         self.screenManager.transitionToScreen(

@@ -1,4 +1,22 @@
 import sqlite3
+from enum import Enum
+from datetime import datetime
+
+
+class TransactionType(Enum):
+    PURCHASE = "PURCHASE"
+    TOP_UP = "TOP_UP"
+    EDIT = "EDIT"
+
+
+def transactionTypeToPresentableString(transactionType: TransactionType) -> str:
+    if transactionType == TransactionType.PURCHASE.value:
+        return "Purchase"
+    if transactionType == TransactionType.TOP_UP.value:
+        return "Top-up"
+    if transactionType == TransactionType.EDIT.value:
+        return "Edit"
+    return "Unknown"
 
 
 class UserData:
@@ -11,12 +29,35 @@ class UserData:
 
 
 class SnackData:
-    def __init__(self, snackId, snackName, quantity, imageID, pricePerItem):
+    def __init__(
+        self,
+        snackId: int,
+        snackName: str,
+        quantity: int,
+        imageID: str,
+        pricePerItem: float,
+    ):
         self.snackId: int = snackId
         self.snackName: str = snackName
         self.quantity: int = quantity
         self.imageID: str = imageID
         self.pricePerItem: float = pricePerItem
+
+
+class HistoryData:
+    def __init__(
+        self,
+        transactionType: TransactionType,
+        transactionDate: datetime,
+        amountBeforeTransaction: float,
+        amountAfterTransaction: float,
+        transactionItems: list[SnackData],
+    ):
+        self.transactionType: TransactionType = transactionType
+        self.transactionDate: datetime = transactionDate
+        self.amountBeforeTransaction: float = amountBeforeTransaction
+        self.amountAfterTransaction: float = amountAfterTransaction
+        self.transactionItems: list[SnackData] = transactionItems
 
 
 def createAllTables():
@@ -43,11 +84,24 @@ def createAllTables():
         );
         """,
         """
-        CREATE TABLE IF NOT EXISTS Payments (
-            PatronID INTEGER PRIMARY KEY, 
+        CREATE TABLE IF NOT EXISTS Transactions (
+            TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
+            TransactionType TEXT NOT NULL,
+            PatronID INTEGER NOT NULL, 
             TransactionDate TEXT NOT NULL, 
             AmountBeforeTransaction REAL NOT NULL, 
-            AmountAfterTransaction REAL NOT NULL
+            AmountAfterTransaction REAL NOT NULL,
+            FOREIGN KEY(PatronID) REFERENCES Patrons(PatronID)
+        );
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS TransactionItems (
+            TransactionItemId INTEGER PRIMARY KEY AUTOINCREMENT,
+            TransactionID INTEGER NOT NULL,
+            ItemName TEXT NOT NULL,
+            Quantity INTEGER NOT NULL,
+            PricePerItem REAL NOT NULL,
+            FOREIGN KEY(TransactionID) REFERENCES Transactions(TransactionID)
         );
         """,
     ]
@@ -56,6 +110,163 @@ def createAllTables():
         cursor.execute(query)
 
     connection.commit()
+
+
+def addPurchaseTransaction(
+    patronID: int,
+    amountBeforeTransaction: float,
+    amountAfterTransaction: float,
+    transactionDate: str,
+    transactionItems: list[SnackData],
+):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO Transactions (TransactionType, PatronID, TransactionDate, AmountBeforeTransaction, AmountAfterTransaction)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            TransactionType.PURCHASE.value,
+            patronID,
+            transactionDate,
+            amountBeforeTransaction,
+            amountAfterTransaction,
+        ),
+    )
+    transactionID = cursor.lastrowid
+    for transactionItem in transactionItems:
+        cursor.execute(
+            """
+            INSERT INTO TransactionItems (TransactionID, ItemName, Quantity, PricePerItem)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                transactionID,
+                transactionItem.snackName,
+                transactionItem.quantity,
+                transactionItem.pricePerItem,
+            ),
+        )
+    conn.commit()
+
+
+def addTopUpTransaction(
+    patronID: int,
+    amountBeforeTransaction: float,
+    amountAfterTransaction: float,
+    transactionDate: str,
+):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO Transactions (TransactionType, PatronID, TransactionDate, AmountBeforeTransaction, AmountAfterTransaction)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            TransactionType.TOP_UP.value,
+            patronID,
+            transactionDate,
+            amountBeforeTransaction,
+            amountAfterTransaction,
+        ),
+    )
+    conn.commit()
+
+
+def addEditTransaction(
+    patronID: int,
+    amountBeforeTransaction: float,
+    amountAfterTransaction: float,
+    transactionDate: str,
+):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO Transactions (TransactionType, PatronID, TransactionDate, AmountBeforeTransaction, AmountAfterTransaction)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            TransactionType.EDIT.value,
+            patronID,
+            transactionDate,
+            amountBeforeTransaction,
+            amountAfterTransaction,
+        ),
+    )
+    conn.commit()
+
+
+def getTransactionItems(transactionID: int) -> list[SnackData]:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        f"SELECT * FROM TransactionItems WHERE TransactionID = {transactionID}"
+    )
+    sqlResult = cursor.fetchall()
+    transactionItems = []
+    for transactionItemEntry in sqlResult:
+        itemName = transactionItemEntry[2]
+        quantity = transactionItemEntry[3]
+        pricePerItem = transactionItemEntry[4]
+        transactionItems.append(SnackData(-1, itemName, quantity, "", pricePerItem))
+    return transactionItems
+
+
+def removeTransactionItems(transactionID: int):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        f"DELETE FROM TransactionItems WHERE TransactionID = {transactionID}"
+    )
+    conn.commit()
+
+
+def getTransactions(patronID: int):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM Transactions WHERE PatronID = {patronID}")
+    sqlResult = cursor.fetchall()
+    transactionList = []
+    for transactionEntry in sqlResult:
+        transactionID = transactionEntry[0]
+        transactionType = transactionEntry[1]
+        transactionDate = transactionEntry[3]
+        amountBeforeTransaction = transactionEntry[4]
+        amountAfterTransaction = transactionEntry[5]
+        transactionItems = getTransactionItems(transactionID)
+        parsedDatetime = datetime.strptime(transactionDate, "%Y-%m-%d %H:%M:%S.%f")
+        transactionData = HistoryData(
+            transactionType,
+            parsedDatetime,
+            amountBeforeTransaction,
+            amountAfterTransaction,
+            transactionItems,
+        )
+        transactionList.append(transactionData)
+    return transactionList
+
+
+def getTransactionIds(patronID: int):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        f"SELECT TransactionID FROM Transactions WHERE PatronID = {patronID}"
+    )
+    sqlResult = cursor.fetchall()
+    transactionIds = []
+    for transactionEntry in sqlResult:
+        transactionIds.append(transactionEntry[0])
+    return transactionIds
+
+
+def removeTransactions(patronID: int):
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"DELETE FROM Transactions WHERE PatronID = {patronID}")
+    conn.commit()
 
 
 def addPatron(first_name, last_name, employee_id):
@@ -115,6 +326,11 @@ def removePatron(patronId: int):
     cursor = conn.cursor()
     cursor.execute(f"DELETE from Patrons WHERE PatronID = {patronId}")
     conn.commit()
+
+    patronsTransactionIds = getTransactionIds(patronId)
+    for transactionId in patronsTransactionIds:
+        removeTransactionItems(transactionId)
+    removeTransactions(patronId)
 
 
 def subtractPatronCredits(patronID: int, creditsToSubtract: float):
