@@ -14,6 +14,7 @@ from database import (
 )
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.popups.purchaseCompletedPopup import PurchaseCompletedPopup
 
 
 class ItemLocation(Enum):
@@ -136,16 +137,23 @@ class BuyScreenContent(GridLayout):
                     )
 
         currentPatron = self.screenManager.getCurrentPatron()
+        patronsCreditsBeforePurchase = currentPatron.totalCredits
+        patronsCreditsAfterPurchase = patronsCreditsBeforePurchase - totalPrice
         addPurchaseTransaction(
             patronID=currentPatron.patronId,
-            amountBeforeTransaction=currentPatron.totalCredits,
-            amountAfterTransaction=currentPatron.totalCredits - totalPrice,
+            amountBeforeTransaction=patronsCreditsBeforePurchase,
+            amountAfterTransaction=patronsCreditsAfterPurchase,
             transactionDate=datetime.now(),
             transactionItems=snacksBought,
         )
         subtractPatronCredits(
             patronID=currentPatron.patronId, creditsToSubtract=totalPrice
         )
+        popup = PurchaseCompletedPopup(
+            creditsBeforePurchase=patronsCreditsBeforePurchase,
+            creditsAfterPurchase=patronsCreditsAfterPurchase,
+        )
+        popup.open()
         self.screenManager.transitionToScreen(
             "mainUserPage", transitionDirection="right"
         )

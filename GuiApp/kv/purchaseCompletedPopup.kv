@@ -1,0 +1,42 @@
+#:kivy 2.1.0     
+
+<PurchaseCompletedPopup>:
+    size_hint: (0.8, 0.8)
+    auto_dismiss: True
+    title: "Purchase complete"
+
+    GridLayout:
+        center_x: True
+        cols: 1
+        size_hint: (1, 1)
+        canvas:
+            Color:
+                rgba: 0, 0.3, 0, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: (1, .9)
+            canvas:
+                Color:
+                    rgba: 0.1, 0.1, 0.1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text_size: self.size
+                padding: 10
+                halign: 'center'
+                valign: 'middle'
+                font_size: 42
+                text: 'Thank you for your purchase.'
+                
+            Label:
+                id: creditsLabel
+                text_size: self.size
+                padding: 10
+                halign: 'center'
+                valign: 'middle'
+                font_size: 32
+                text: 'Your credits: ??'
