@@ -3,7 +3,7 @@ from kivy.uix.screenmanager import SlideTransition
 from kivy.properties import StringProperty
 from kivy.properties import ObjectProperty
 
-from database import UserData, getPatronData
+from database import UserData, SnackData, getPatronData
 
 
 class CustomScreenManager(ScreenManager):
@@ -11,6 +11,7 @@ class CustomScreenManager(ScreenManager):
         super().__init__()
         self._currentPatron: UserData = None
         self._patronToEdit: UserData = None
+        self._snackToEdit: SnackData = None
         self.current: StringProperty
         self.transition: ObjectProperty
 
@@ -28,6 +29,15 @@ class CustomScreenManager(ScreenManager):
 
     def resetPatronToEdit(self):
         self._patronToEdit = None
+
+    def setSnackToEdit(self, snackToEdit: SnackData):
+        self._snackToEdit = snackToEdit
+
+    def getSnackToEdit(self) -> SnackData:
+        return self._snackToEdit
+
+    def resetSnackToEdit(self):
+        self._snackToEdit = None
 
     def getCurrentPatron(self) -> UserData:
         return self._currentPatron

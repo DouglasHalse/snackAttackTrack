@@ -1,0 +1,145 @@
+#:kivy 2.1.0
+
+<EditSnackScreenContent>:
+    cols: 1
+    size_hint: (1, 1)
+    GridLayout:
+        cols: 1
+        size_hint: (1, 0.75)
+        padding: [120, 40, 120, 0]
+        Label:
+            text_size: self.size
+            size_hint_y: None
+            height: 30
+            text: "Snack name"
+            bold: True
+        TextInput:
+            id: snackNameInput
+            write_tab: False
+            hint_text: "SNACK NAME"
+            size_hint_y: None
+            height: 40
+            padding: [10, 10]
+        Label:
+            text_size: self.size
+            size_hint_y: None
+            height: 30
+            text: "Quantity"
+            bold: True
+        TextInput:
+            id: snackQuantityInput
+            write_tab: False
+            hint_text: "QUANTITY"
+            size_hint_y: None
+            height: 40
+            padding: [10, 10]
+        Label:
+            text_size: self.size
+            size_hint_y: None
+            height: 30
+            text: "Price per item"
+            bold: True
+        TextInput:
+            id: snackPriceInput
+            write_tab: False
+            hint_text: "PRICE"
+            size_hint_y: None
+            height: 40
+            padding: [10, 10]
+    GridLayout:
+        rows: 1
+        size_hint: (1, 0.25)
+        padding: [40, 10, 40, 10]
+        spacing: 20
+        BoxLayoutButton:
+            on_press: root.onConfirm()
+            size_hint: (0.25, 1)
+            canvas:
+                Color:
+                    rgba: 0.0, 0.9, 0.0, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Label:
+                text: 'Confirm'
+                size_hint: (1, 1)
+        BoxLayoutButton:
+            on_press: root.onCancel()
+            size_hint: (0.25, 1)
+            canvas:
+                Color:
+                    rgba: 0.5, 0.0, 0.0, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Label:
+                text: 'Cancel'
+                size_hint: (1, 1)
+        BoxLayoutButton:
+            on_press: root.onRemove()
+            size_hint: (0.25, 1)
+            canvas:
+                Color:
+                    rgba: 0.9, 0.0, 0.0, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            Label:
+                text: 'Remove'
+                size_hint: (1, 1)
+
+
+<RemoveSnackConfirmationPopup>:
+    title: "Remove snack"
+    size_hint: (None,None)
+    size: (700,400)
+    GridLayout:
+        cols: 1
+        Label:
+            size_hint: (1, 0.5)
+            id: areYouSureLabel
+            text_size: self.size
+            size_hint_y: None
+            font_size: 32
+            halign: 'center'
+            text: "Are you sure you want to \nremove FIRSTNAME?"
+            bold: True
+        GridLayout:
+            rows: 1
+            size_hint: (1, 0.5)
+            padding: [40, 60, 40, 60]
+            spacing: 40
+            BoxLayoutButton:
+                on_press: root.onCancel()
+                size_hint: (0.5, 1)
+                canvas:
+                    Color:
+                        rgba: 0.5, 0.0, 0.0, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                
+                Label:
+                    text: 'Cancel'
+                    bold: True
+                    font_size: 32
+                    size_hint: (1, 1)
+            BoxLayoutButton:
+                on_press: root.onRemove()
+                size_hint: (0.5, 1)
+                canvas:
+                    Color:
+                        rgba: 0.9, 0.0, 0.0, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                
+                Label:
+                    text: 'Remove'
+                    bold: True
+                    font_size: 32
+                    size_hint: (1, 1)
+            
