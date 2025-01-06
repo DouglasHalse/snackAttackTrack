@@ -30,7 +30,10 @@ class TopUpPaymentScreenContent(GridLayout):
             transactionDate=datetime.now(),
         )
         addCredits(self.userData.patronId, self.amountToBePayed)
-        self.screenManager.refreshCurrentPatron()  # Refresh current patron with new credits
+
+        # Update current patron with new data
+        self.screenManager.refreshCurrentPatron()
+
         self.screenManager.transitionToScreen(
             "mainUserPage", transitionDirection="right"
         )

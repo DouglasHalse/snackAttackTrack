@@ -149,6 +149,10 @@ class BuyScreenContent(GridLayout):
         subtractPatronCredits(
             patronID=currentPatron.patronId, creditsToSubtract=totalPrice
         )
+
+        # Update current patron with new data
+        self.screenManager.refreshCurrentPatron()
+
         popup = PurchaseCompletedPopup(
             creditsBeforePurchase=patronsCreditsBeforePurchase,
             creditsAfterPurchase=patronsCreditsAfterPurchase,
