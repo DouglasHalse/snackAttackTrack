@@ -1,0 +1,107 @@
+#:kivy 2.1.0     
+
+<PurchaseSummaryHeading@Label>:
+    font_size: 18
+    text_size: self.size
+    size_hint_y: None
+    height: 20
+    halign: 'left'
+    valign: 'middle'
+    bold: True
+
+<PurchaseSummaryData@Label>:
+    font_size: 16
+    text_size: self.size
+    size_hint_y: None
+    height: 20
+    halign: 'left'
+    valign: 'middle'
+
+<PurchaseSummaryPopup@Popup>:
+    size_hint: (0.8, 0.9)
+    auto_dismiss: True
+    title: "Purchase summary"
+    GridLayout:
+        cols: 1
+        size_hint: (1, 1)
+        padding: '10dp'
+        GridLayout:
+            rows: 1
+            size_hint: (1, 0.8)
+            padding: '10dp'
+            GridLayout:
+                cols: 1
+                size_hint: (0.5, 1)
+                padding: [5, 0, 5, 0]
+                spacing: 10
+                GridLayout:
+                    cols: 1
+                    spacing: 5
+                    PurchaseSummaryHeading:
+                        text: 'Purchase date:'
+                    PurchaseSummaryData:
+                        text: 'DATA NOT SET'
+                        id: purchaseDateLabel
+                GridLayout:
+                    cols: 1
+                    spacing: 5
+                    PurchaseSummaryHeading:
+                        text: 'Credits before purchase:'
+                    PurchaseSummaryData:
+                        text: 'DATA NOT SET'
+                        id: creditsBeforeLabel
+                GridLayout:
+                    cols: 1
+                    spacing: 5
+                    PurchaseSummaryHeading:
+                        text: 'Credits after purchase:'
+                    PurchaseSummaryData:
+                        text: 'DATA NOT SET'
+                        id: creditsAfterLabel
+                GridLayout:
+                    cols: 1
+                    spacing: 5
+                    PurchaseSummaryHeading:
+                        text: 'Total number of items bought:'
+                    PurchaseSummaryData:
+                        text: 'DATA NOT SET'
+                        id: numberOfItemsBoughtLabel
+                GridLayout:
+                    cols: 1
+                    spacing: 5
+                    PurchaseSummaryHeading:
+                        text: 'Total price of items bought:'
+                    PurchaseSummaryData:
+                        text: 'DATA NOT SET'
+                        id: totalPriceLabel
+            GridLayout:
+                id: purchaseSummaryContent
+                cols: 1
+                size_hint: (0.5, 1)
+                spacing: 5
+                Label:
+                    text_size: self.size
+                    size_hint_y: None
+                    height: 20
+                    text: "Items bought:"
+                    bold: True
+        GridLayout:
+            rows: 1
+            size_hint: (1, 0.2)
+            padding: '10dp'
+            orientation: 'rl-tb'
+            BoxLayoutButton:
+                on_press: root.dismiss()
+                size_hint: (None, 1)
+                width: '180dp'
+                canvas:
+                    Color:
+                        rgba: 0.5, 0.0, 0.0, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                
+                Label:
+                    bold: True
+                    text: 'Close'
+                    size_hint: (1, 1)
