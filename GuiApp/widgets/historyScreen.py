@@ -4,9 +4,11 @@ from database import (
     getTransactions,
     transactionTypeToPresentableString,
     getTransaction,
+    TransactionType,
 )
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.popups.purchaseSummaryPopup import PurchaseSummaryPopup
 from widgets.clickableTable import ClickableTable
 
 
@@ -43,9 +45,12 @@ class HistoryScreenContent(GridLayout):
 
     def onHistoryEntryPressed(self, transactionId):
         transaction = getTransaction(transactionId)
-        print(
-            f"History entry pressed: {transactionId} ({transaction.transactionType.value})"
-        )
+        if transaction.transactionType == TransactionType.PURCHASE:
+            PurchaseSummaryPopup(historyData=transaction).open()
+        else:
+            print(
+                f"History entry pressed: {transactionId} ({transaction.transactionType.value})"
+            )
 
 
 class HistoryScreen(HeaderBodyScreen):

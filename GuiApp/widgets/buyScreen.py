@@ -103,10 +103,15 @@ class BuyScreenContent(GridLayout):
         totalPrice = 0.0
         snacksBought = []
         for snackDictEntry in self.snackDict.items():
+            snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
+            # Skip snacks that are not in the shopping cart
+            if snackInShoppingCart == 0:
+                continue
+
             snackId = snackDictEntry[0]
             snack = getSnack(snackId)
             snackPrice = snack.pricePerItem
-            snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
+
             snackBought = SnackData(
                 snackId=snackId,
                 snackName=snack.snackName,
@@ -116,13 +121,12 @@ class BuyScreenContent(GridLayout):
             )
             snacksBought.append(snackBought)
             totalPrice += snackPrice * snackInShoppingCart
-            if snackInShoppingCart > 0:
-                if snackInShoppingCart == snack.quantity:
-                    removeSnack(snackId=snack.snackId)
-                else:
-                    subtractSnackQuantity(
-                        snackId=snack.snackId, quantity=snackInShoppingCart
-                    )
+            if snackInShoppingCart == snack.quantity:
+                removeSnack(snackId=snack.snackId)
+            else:
+                subtractSnackQuantity(
+                    snackId=snack.snackId, quantity=snackInShoppingCart
+                )
 
         currentPatron = self.screenManager.getCurrentPatron()
         patronsCreditsBeforePurchase = currentPatron.totalCredits
