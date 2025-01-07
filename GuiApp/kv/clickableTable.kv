@@ -1,0 +1,76 @@
+#:kivy 2.1.0
+
+<ClickableTableColumnLabel>:
+    size_hint: 1, None
+    text: 'COLUMN NAME'
+    bold: True
+    height: '50dp'
+
+<ClickableTableColumnEntryLabel>:
+    text: 'ENTRY NAME'
+    size_hint: 1, None
+    height: '50dp'
+
+<ClickableTableEntry>:
+    rows: 1
+    size_hint_y: None
+    height: '50dp'
+    on_press: root.onPress()
+    markup: True
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+
+<ClickableTableCustomEntry>:
+    rows: 1
+    size_hint_y: None
+    height: '50dp'
+    on_press: root.onPress()
+    markup: True
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+
+<ClickableTable>:
+    rows: 1
+    spacing: 30
+    GridLayout:
+        cols: 1
+        spacing: 5
+        GridLayout:
+            cols: 1
+            size_hint: 1, 1
+            canvas.after:
+                Color:
+                    rgba: .5, .5, .5, 1
+                Line:
+                    width: 2
+                    rectangle: self.x, self.y, self.width, self.height
+            GridLayout:
+                rows: 1
+                size_hint: 1, None
+                height: '50dp'
+                id: tableHeader
+                canvas.after:
+                    Color:
+                        rgba: .5, .5, .5, 1
+                    Line:
+                        width: 2
+                        rectangle: self.x, self.y, self.width, self.height
+
+            ScrollView:
+                size_hint: 1, 1
+                do_scroll_x: False
+                GridLayout:
+                    id: tableContent
+                    cols: 1
+                    padding: "10dp"
+                    spacing: 10
+                    size_hint_y: None
+                    height: self.minimum_height

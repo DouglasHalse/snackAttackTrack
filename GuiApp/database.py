@@ -10,11 +10,11 @@ class TransactionType(Enum):
 
 
 def transactionTypeToPresentableString(transactionType: TransactionType) -> str:
-    if transactionType == TransactionType.PURCHASE.value:
+    if transactionType == TransactionType.PURCHASE:
         return "Purchase"
-    if transactionType == TransactionType.TOP_UP.value:
+    if transactionType == TransactionType.TOP_UP:
         return "Top-up"
-    if transactionType == TransactionType.EDIT.value:
+    if transactionType == TransactionType.EDIT:
         return "Edit"
     return "Unknown"
 
@@ -47,12 +47,14 @@ class SnackData:
 class HistoryData:
     def __init__(
         self,
+        transactionId: int,
         transactionType: TransactionType,
         transactionDate: datetime,
         amountBeforeTransaction: float,
         amountAfterTransaction: float,
         transactionItems: list[SnackData],
     ):
+        self.transactionId: int = transactionId
         self.transactionType: TransactionType = transactionType
         self.transactionDate: datetime = transactionDate
         self.amountBeforeTransaction: float = amountBeforeTransaction
@@ -232,13 +234,14 @@ def getTransactions(patronID: int):
     transactionList = []
     for transactionEntry in sqlResult:
         transactionID = transactionEntry[0]
-        transactionType = transactionEntry[1]
+        transactionType = TransactionType(transactionEntry[1])
         transactionDate = transactionEntry[3]
         amountBeforeTransaction = transactionEntry[4]
         amountAfterTransaction = transactionEntry[5]
         transactionItems = getTransactionItems(transactionID)
         parsedDatetime = datetime.strptime(transactionDate, "%Y-%m-%d %H:%M:%S.%f")
         transactionData = HistoryData(
+            transactionID,
             transactionType,
             parsedDatetime,
             amountBeforeTransaction,
@@ -247,6 +250,28 @@ def getTransactions(patronID: int):
         )
         transactionList.append(transactionData)
     return transactionList
+
+
+def getTransaction(transactionID: int) -> HistoryData:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM Transactions WHERE TransactionID = {transactionID}")
+    sqlResult = cursor.fetchone()
+    transactionID = sqlResult[0]
+    transactionType = TransactionType(sqlResult[1])
+    transactionDate = sqlResult[3]
+    amountBeforeTransaction = sqlResult[4]
+    amountAfterTransaction = sqlResult[5]
+    transactionItems = getTransactionItems(transactionID)
+    parsedDatetime = datetime.strptime(transactionDate, "%Y-%m-%d %H:%M:%S.%f")
+    return HistoryData(
+        transactionID,
+        transactionType,
+        parsedDatetime,
+        amountBeforeTransaction,
+        amountAfterTransaction,
+        transactionItems,
+    )
 
 
 def getTransactionIds(patronID: int):

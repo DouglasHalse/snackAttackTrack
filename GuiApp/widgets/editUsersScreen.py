@@ -3,8 +3,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.clickableTable import ClickableTable
 
-from database import getAllPatrons, UserData
+
+from database import getAllPatrons, getPatronData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -15,14 +17,30 @@ class EditUsersScreenContent(GridLayout):
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
+        self.usersTable = ClickableTable(
+            ["First name", "Last name", "User ID", "Total credits"],
+            onEntryPressedCallback=self.onUserEntryPressed,
+        )
+        self.add_widget(self.usersTable)
         self.addUsersFromDatabase()
 
     def addUsersFromDatabase(self):
         users = getAllPatrons()
         for user in users:
-            self.ids["editUsersScrollViewLayout"].add_widget(
-                UserEntry(screenManager=self.screenManager, patronData=user)
+            self.usersTable.addEntry(
+                entryContents=[
+                    user.firstName,
+                    user.lastName,
+                    user.employeeID,
+                    f"{user.totalCredits:.2f}",
+                ],
+                entryIdentifier=user.patronId,
             )
+
+    def onUserEntryPressed(self, identifier):
+        userToEdit = getPatronData(patronID=identifier)
+        self.screenManager.setPatronToEdit(patronToEdit=userToEdit)
+        self.screenManager.transitionToScreen("editUserScreen")
 
 
 class EditUsersScreen(HeaderBodyScreen):
@@ -33,20 +51,3 @@ class EditUsersScreen(HeaderBodyScreen):
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
         self.body.add_widget(EditUsersScreenContent(screenManager=self.manager))
-
-
-class UserEntry(BoxLayoutButton):
-    def __init__(
-        self, screenManager: CustomScreenManager, patronData: UserData, **kwargs
-    ):
-        super().__init__(**kwargs)
-        self.screenManager = screenManager
-        self.patronData = patronData
-        self.ids["userFirstNameLabel"].text = patronData.firstName
-        self.ids["userLastNameLabel"].text = patronData.lastName
-        self.ids["userIdLabel"].text = patronData.employeeID
-        self.ids["userTotalCreditsLabel"].text = f"{patronData.totalCredits:.2f}"
-
-    def onPress(self, *largs):
-        self.screenManager.setPatronToEdit(patronToEdit=self.patronData)
-        self.screenManager.transitionToScreen("editUserScreen")

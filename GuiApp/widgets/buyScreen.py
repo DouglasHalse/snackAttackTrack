@@ -1,8 +1,6 @@
 from enum import Enum
 from datetime import datetime
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.behaviors import ButtonBehavior
 from database import (
     getAllSnacks,
     SnackData,
@@ -15,21 +13,12 @@ from database import (
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.purchaseCompletedPopup import PurchaseCompletedPopup
+from widgets.clickableTable import ClickableTable
 
 
 class ItemLocation(Enum):
     INVENTORY = 0
     SHOPPINGCART = 1
-
-
-class BoxLayoutButton(ButtonBehavior, BoxLayout):
-    pass
-
-
-class SnackList(GridLayout):
-    def __init__(self, heading: str, **kwargs):
-        super().__init__(**kwargs)
-        self.ids["snackListHeading"].text = heading
 
 
 class BuyScreenContent(GridLayout):
@@ -43,17 +32,35 @@ class BuyScreenContent(GridLayout):
                 ItemLocation.SHOPPINGCART: 0,
             }
 
-        self.snackListInventory = SnackList(heading="Inventory")
-        self.snackListShoppingCart = SnackList(heading="Shopping Cart")
+        self.snackListInventory = ClickableTable(
+            ["Snack name", "Quantity", "Price"],
+            onEntryPressedCallback=self.itemClickedInInventory,
+        )
+        self.snackListShoppingCart = ClickableTable(
+            ["Snack name", "Quantity", "Price"],
+            onEntryPressedCallback=self.itemClickedInShoppingCart,
+        )
 
-        self.ids["shoppingItemSelection"].add_widget(self.snackListInventory)
-        self.ids["shoppingItemSelection"].add_widget(self.snackListShoppingCart)
+        self.ids["inventoryItemSelection"].add_widget(self.snackListInventory)
+        self.ids["shoppingCartItemSelection"].add_widget(self.snackListShoppingCart)
 
         self.updateSnackLists()
 
+    def itemClickedInInventory(self, snackId: int):
+        self.snackDict[snackId][ItemLocation.INVENTORY] -= 1
+        self.snackDict[snackId][ItemLocation.SHOPPINGCART] += 1
+        self.updateSnackLists()
+        self.updateTotalPrice()
+
+    def itemClickedInShoppingCart(self, snackId: int):
+        self.snackDict[snackId][ItemLocation.SHOPPINGCART] -= 1
+        self.snackDict[snackId][ItemLocation.INVENTORY] += 1
+        self.updateSnackLists()
+        self.updateTotalPrice()
+
     def updateSnackLists(self):
-        self.snackListInventory.ids["snacksScrollViewLayout"].clear_widgets()
-        self.snackListShoppingCart.ids["snacksScrollViewLayout"].clear_widgets()
+        self.snackListInventory.clearEntries()
+        self.snackListShoppingCart.clearEntries()
 
         for snackDictEntry in self.snackDict.items():
             snackId = snackDictEntry[0]
@@ -62,31 +69,23 @@ class BuyScreenContent(GridLayout):
             snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
 
             if snackInInventory:
-                self.snackListInventory.ids["snacksScrollViewLayout"].add_widget(
-                    SnackShoppingEntry(
-                        buyScreenContent=self,
-                        snackData=snack,
-                        itemLocation=ItemLocation.INVENTORY,
-                    )
+                self.snackListInventory.addEntry(
+                    entryContents=[
+                        snack.snackName,
+                        str(snackInInventory),
+                        f"{snack.pricePerItem:.2f}",
+                    ],
+                    entryIdentifier=snackId,
                 )
             if snackInShoppingCart:
-                self.snackListShoppingCart.ids["snacksScrollViewLayout"].add_widget(
-                    SnackShoppingEntry(
-                        buyScreenContent=self,
-                        snackData=snack,
-                        itemLocation=ItemLocation.SHOPPINGCART,
-                    )
+                self.snackListShoppingCart.addEntry(
+                    entryContents=[
+                        snack.snackName,
+                        str(snackInShoppingCart),
+                        f"{snack.pricePerItem:.2f}",
+                    ],
+                    entryIdentifier=snackId,
                 )
-
-    def snackClicked(self, snackId: int, itemLocation: ItemLocation):
-        if itemLocation == ItemLocation.INVENTORY:
-            self.snackDict[snackId][ItemLocation.INVENTORY] -= 1
-            self.snackDict[snackId][ItemLocation.SHOPPINGCART] += 1
-        else:
-            self.snackDict[snackId][ItemLocation.SHOPPINGCART] -= 1
-            self.snackDict[snackId][ItemLocation.INVENTORY] += 1
-        self.updateSnackLists()
-        self.updateTotalPrice()
 
     def updateTotalPrice(self):
         totalPrice = 0.0
@@ -165,27 +164,3 @@ class BuyScreen(HeaderBodyScreen):
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
         self.body.add_widget(BuyScreenContent(screenManager=self.manager))
-
-
-class SnackShoppingEntry(BoxLayoutButton):
-    def __init__(
-        self,
-        buyScreenContent: BuyScreenContent,
-        snackData: SnackData,
-        itemLocation: ItemLocation,
-        **kwargs,
-    ):
-        super().__init__(**kwargs)
-        self.buyScreenContent = buyScreenContent
-        self.snackData = snackData
-        self.itemLocation = itemLocation
-        self.ids["snackNameLabel"].text = self.snackData.snackName
-        self.ids["snackQuantityLabel"].text = str(
-            self.buyScreenContent.snackDict[self.snackData.snackId][self.itemLocation]
-        )
-        self.ids["snackPriceLabel"].text = f"{self.snackData.pricePerItem:.2f}"
-
-    def onPress(self, *largs):
-        self.buyScreenContent.snackClicked(
-            snackId=self.snackData.snackId, itemLocation=self.itemLocation
-        )
