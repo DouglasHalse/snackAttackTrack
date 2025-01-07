@@ -1,20 +1,25 @@
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.behaviors import ButtonBehavior
 
-from database import getTransactions, HistoryData, transactionTypeToPresentableString
+from database import (
+    getTransactions,
+    transactionTypeToPresentableString,
+    getTransaction,
+)
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
-
-
-class BoxLayoutButton(ButtonBehavior, BoxLayout):
-    pass
+from widgets.clickableTable import ClickableTable
 
 
 class HistoryScreenContent(GridLayout):
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
+
+        self.historyTable = ClickableTable(
+            ["Date", "Credits before", "Credits after", "Type"],
+            onEntryPressedCallback=self.onHistoryEntryPressed,
+        )
+
         currentPatron = self.screenManager.getCurrentPatron()
         self.transactions = getTransactions(currentPatron.patronId)
 
@@ -24,9 +29,23 @@ class HistoryScreenContent(GridLayout):
         )
 
         for transaction in self.transactions:
-            self.ids["historyScrollViewLayout"].add_widget(
-                HistoryEntry(historyData=transaction)
+            self.historyTable.addEntry(
+                entryContents=[
+                    transaction.transactionDate.strftime("%Y-%m-%d %H:%M:%S"),
+                    f"{transaction.amountBeforeTransaction:.2f}",
+                    f"{transaction.amountAfterTransaction:.2f}",
+                    transactionTypeToPresentableString(transaction.transactionType),
+                ],
+                entryIdentifier=transaction.transactionId,
             )
+
+        self.add_widget(self.historyTable)
+
+    def onHistoryEntryPressed(self, transactionId):
+        transaction = getTransaction(transactionId)
+        print(
+            f"History entry pressed: {transactionId} ({transaction.transactionType.value})"
+        )
 
 
 class HistoryScreen(HeaderBodyScreen):
@@ -37,28 +56,3 @@ class HistoryScreen(HeaderBodyScreen):
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
         self.body.add_widget(HistoryScreenContent(screenManager=self.manager))
-
-
-class HistoryEntry(BoxLayoutButton):
-    def __init__(
-        self,
-        historyData: HistoryData,
-        **kwargs,
-    ):
-        super().__init__(**kwargs)
-        self.historyData = historyData
-        self.ids["historyDateLabel"].text = historyData.transactionDate.strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-        self.ids[
-            "historyCreditsBeforeLabel"
-        ].text = f"{historyData.amountBeforeTransaction:.2f}"
-        self.ids[
-            "historyCreditsAfterLabel"
-        ].text = f"{historyData.amountAfterTransaction:.2f}"
-        self.ids["historyTypeLabel"].text = transactionTypeToPresentableString(
-            historyData.transactionType
-        )
-
-    def onPress(self, *largs):
-        print("History entry pressed")
