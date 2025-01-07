@@ -52,12 +52,8 @@ class BuyScreenContent(GridLayout):
         self.updateSnackLists()
 
     def updateSnackLists(self):
-        inventoryLayout = GridLayout(
-            cols=1, padding="10dp", spacing=10, size_hint_y=None
-        )
-        shoppingCartLayout = GridLayout(
-            cols=1, padding="10dp", spacing=10, size_hint_y=None
-        )
+        self.snackListInventory.ids["snacksScrollViewLayout"].clear_widgets()
+        self.snackListShoppingCart.ids["snacksScrollViewLayout"].clear_widgets()
 
         for snackDictEntry in self.snackDict.items():
             snackId = snackDictEntry[0]
@@ -66,7 +62,7 @@ class BuyScreenContent(GridLayout):
             snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
 
             if snackInInventory:
-                inventoryLayout.add_widget(
+                self.snackListInventory.ids["snacksScrollViewLayout"].add_widget(
                     SnackShoppingEntry(
                         buyScreenContent=self,
                         snackData=snack,
@@ -74,20 +70,13 @@ class BuyScreenContent(GridLayout):
                     )
                 )
             if snackInShoppingCart:
-                shoppingCartLayout.add_widget(
+                self.snackListShoppingCart.ids["snacksScrollViewLayout"].add_widget(
                     SnackShoppingEntry(
                         buyScreenContent=self,
                         snackData=snack,
                         itemLocation=ItemLocation.SHOPPINGCART,
                     )
                 )
-
-        self.snackListInventory.ids["snacksScrollView"].clear_widgets()
-        self.snackListShoppingCart.ids["snacksScrollView"].clear_widgets()
-        self.snackListInventory.ids["snacksScrollView"].add_widget(inventoryLayout)
-        self.snackListShoppingCart.ids["snacksScrollView"].add_widget(
-            shoppingCartLayout
-        )
 
     def snackClicked(self, snackId: int, itemLocation: ItemLocation):
         if itemLocation == ItemLocation.INVENTORY:
