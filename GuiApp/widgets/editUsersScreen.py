@@ -19,12 +19,10 @@ class EditUsersScreenContent(GridLayout):
 
     def addUsersFromDatabase(self):
         users = getAllPatrons()
-        layout = GridLayout(cols=1, padding="10dp", spacing=10, size_hint_y=None)
         for user in users:
-            layout.add_widget(
+            self.ids["editUsersScrollViewLayout"].add_widget(
                 UserEntry(screenManager=self.screenManager, patronData=user)
             )
-        self.ids["editUsersScrollView"].add_widget(layout)
 
 
 class EditUsersScreen(HeaderBodyScreen):

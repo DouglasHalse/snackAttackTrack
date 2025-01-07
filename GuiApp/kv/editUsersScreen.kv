@@ -52,7 +52,13 @@
                 height: '50dp'
         ScrollView:
             do_scroll_x: False
-            id: editUsersScrollView
+            GridLayout:
+                id: editUsersScrollViewLayout
+                cols: 1
+                padding: "10dp"
+                spacing: 10
+                size_hint_y: None
+                height: self.minimum_height
 
 <UserEntry>:
     rows: 1

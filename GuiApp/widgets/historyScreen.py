@@ -17,17 +17,16 @@ class HistoryScreenContent(GridLayout):
         self.screenManager = screenManager
         currentPatron = self.screenManager.getCurrentPatron()
         self.transactions = getTransactions(currentPatron.patronId)
+
         # Redorder transactions so that the most recent transactions are at the top
         self.transactions = sorted(
             self.transactions, key=lambda x: x.transactionDate, reverse=True
         )
-        historyItemsLayout = GridLayout(
-            cols=1, padding="10dp", spacing=10, size_hint_y=None
-        )
-        for transaction in self.transactions:
-            historyItemsLayout.add_widget(HistoryEntry(historyData=transaction))
 
-        self.ids["historyScrollView"].add_widget(historyItemsLayout)
+        for transaction in self.transactions:
+            self.ids["historyScrollViewLayout"].add_widget(
+                HistoryEntry(historyData=transaction)
+            )
 
 
 class HistoryScreen(HeaderBodyScreen):

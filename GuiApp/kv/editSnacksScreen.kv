@@ -51,7 +51,13 @@
                 height: '50dp'
         ScrollView:
             do_scroll_x: False
-            id: editSnacksScrollView
+            GridLayout:
+                id: editSnacksScrollViewLayout
+                cols: 1
+                padding: "10dp"
+                spacing: 10
+                size_hint_y: None
+                height: self.minimum_height
 
 <SnackEntry>:
     rows: 1

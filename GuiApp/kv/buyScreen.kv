@@ -50,7 +50,13 @@
             ScrollView:
                 size_hint: 1, 1
                 do_scroll_x: False
-                id: snacksScrollView
+                GridLayout:
+                    id: snacksScrollViewLayout
+                    cols: 1
+                    padding: "10dp"
+                    spacing: 10
+                    size_hint_y: None
+                    height: self.minimum_height
 
 
 <BuyScreenContent>:

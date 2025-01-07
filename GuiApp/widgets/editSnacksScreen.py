@@ -18,13 +18,15 @@ class EditSnacksScreenContent(GridLayout):
 
     def addSnacksFromDatabase(self):
         snacks = getAllSnacks()
-        layout = GridLayout(cols=1, padding="10dp", spacing=10, size_hint_y=None)
+
         for snack in snacks:
-            layout.add_widget(
+            self.ids["editSnacksScrollViewLayout"].add_widget(
                 SnackEntry(screenManager=self.screenManager, snackData=snack)
             )
-        layout.add_widget(AddSnackEntry(screenManager=self.screenManager))
-        self.ids["editSnacksScrollView"].add_widget(layout)
+
+        self.ids["editSnacksScrollViewLayout"].add_widget(
+            AddSnackEntry(screenManager=self.screenManager)
+        )
 
 
 class EditSnacksScreen(HeaderBodyScreen):
