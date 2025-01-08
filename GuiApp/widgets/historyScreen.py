@@ -10,6 +10,7 @@ from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.purchaseSummaryPopup import PurchaseSummaryPopup
 from widgets.popups.editSummaryPopup import EditSummaryPopup
+from widgets.popups.topUpSummaryPopup import TopUpSummaryPopup
 from widgets.clickableTable import ClickableTable
 
 
@@ -50,6 +51,8 @@ class HistoryScreenContent(GridLayout):
             PurchaseSummaryPopup(historyData=transaction).open()
         elif transaction.transactionType == TransactionType.EDIT:
             EditSummaryPopup(historyData=transaction).open()
+        elif transaction.transactionType == TransactionType.TOP_UP:
+            TopUpSummaryPopup(historyData=transaction).open()
         else:
             print(
                 f"History entry pressed: {transactionId} ({transaction.transactionType.value})"

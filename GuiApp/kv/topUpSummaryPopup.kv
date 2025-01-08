@@ -1,0 +1,76 @@
+#:kivy 2.1.0     
+
+<TopUpSummaryHeading@Label>:
+    font_size: 18
+    text_size: self.size
+    size_hint_y: None
+    height: 20
+    halign: 'left'
+    valign: 'middle'
+    bold: True
+
+<TopUpSummaryData@Label>:
+    font_size: 16
+    text_size: self.size
+    size_hint_y: None
+    height: 20
+    halign: 'left'
+    valign: 'middle'
+
+<TopUpSummaryPopup>:
+    size_hint: (0.4, 0.65)
+    auto_dismiss: True
+    title: "Top-up summary"
+    GridLayout:
+        cols: 1
+        size_hint: (1, 1)
+        padding: '10dp'
+        GridLayout:
+            cols: 1
+            size_hint: (1, 0.7)
+            padding: [5, 0, 5, 0]
+            spacing: 10
+            GridLayout:
+                cols: 1
+                spacing: 5
+                TopUpSummaryHeading:
+                    text: 'Top-up date:'
+                TopUpSummaryData:
+                    text: 'DATA NOT SET'
+                    id: topUpDateLabel
+            GridLayout:
+                cols: 1
+                spacing: 5
+                TopUpSummaryHeading:
+                    text: 'Credits before Top-up:'
+                TopUpSummaryData:
+                    text: 'DATA NOT SET'
+                    id: creditsBeforeTopUpLabel
+            GridLayout:
+                cols: 1
+                spacing: 5
+                TopUpSummaryHeading:
+                    text: 'Credits after Top-up:'
+                TopUpSummaryData:
+                    text: 'DATA NOT SET'
+                    id: creditsAfterTopUpLabel
+        GridLayout:
+            rows: 1
+            size_hint: (1, 0.3)
+            padding: '10dp'
+            orientation: 'rl-tb'
+            BoxLayoutButton:
+                on_press: root.dismiss()
+                size_hint: (None, 1)
+                width: '180dp'
+                canvas:
+                    Color:
+                        rgba: 0.5, 0.0, 0.0, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                
+                Label:
+                    bold: True
+                    text: 'Close'
+                    size_hint: (1, 1)
