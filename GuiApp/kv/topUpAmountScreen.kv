@@ -7,7 +7,7 @@
     GridLayout:
         rows: 1
         size_hint: (1, 0.5)
-        padding: [40, 0, 40, 0]
+        padding: [40, 0, 40, 60]
         GridLayout:
             cols: 1
             Label:
@@ -67,35 +67,16 @@
                 padding: [10, 10]
     
     GridLayout:
+        size_hint: (1, None)
+        height: self.minimum_height
         rows: 1
-        size_hint: (1, 0.5)
-        padding: [40, 60, 40, 0]
-        spacing: 100
-        BoxLayoutButton:
+        padding: [30, 0]
+        LargeConfirmButton:
+            anchor_x: "left"
             on_press: root.onConfirm()
-            size_hint: (0.5, 1)
-            canvas:
-                Color:
-                    rgba: 0.0, 0.9, 0.0, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-            
-            Label:
-                bold: True
-                text: 'Confirm'
-                size_hint: (1, 1)
-        BoxLayoutButton:
+        Widget: # Horizontal Spacer
+            size_hint: (1, None)
+            height: 100
+        LargeCancelButton:
+            anchor_x: "right"
             on_press: root.onCancel()
-            size_hint: (0.5, 1)
-            canvas:
-                Color:
-                    rgba: 0.9, 0.0, 0.0, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-            
-            Label:
-                bold: True
-                text: 'Cancel'
-                size_hint: (1, 1)

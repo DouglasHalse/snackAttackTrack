@@ -23,12 +23,11 @@
     title: "Purchase summary"
     GridLayout:
         cols: 1
-        size_hint: (1, 1)
         padding: '10dp'
+        spacing: '10dp'
         GridLayout:
             rows: 1
-            size_hint: (1, 0.8)
-            padding: '10dp'
+            padding: [5, 0, 5, 0]
             GridLayout:
                 cols: 1
                 size_hint: (0.5, 1)
@@ -87,21 +86,8 @@
                     bold: True
         GridLayout:
             rows: 1
-            size_hint: (1, 0.2)
-            padding: '10dp'
+            size_hint: (1, None)
+            height: self.minimum_height
             orientation: 'rl-tb'
-            BoxLayoutButton:
+            SmallCloseButton:
                 on_press: root.dismiss()
-                size_hint: (None, 1)
-                width: '180dp'
-                canvas:
-                    Color:
-                        rgba: 0.5, 0.0, 0.0, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                
-                Label:
-                    bold: True
-                    text: 'Close'
-                    size_hint: (1, 1)

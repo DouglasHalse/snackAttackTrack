@@ -9,7 +9,7 @@
         size: self.texture_size
     GridLayout:
         cols: 1
-        size_hint: (1, 0.7)
+        spacing: 10
         GridLayout:
             cols: 1
             spacing: 10
@@ -44,35 +44,13 @@
                 font_size: 28
         GridLayout:
             rows: 1
-            size_hint: (1, 0.3)
-            padding: [10, 30, 10, 0]
-            spacing: 50
-            BoxLayoutButton:
+            size_hint: (1, None)
+            height: self.minimum_height
+            SmallConfirmButton:
                 on_press: root.onConfirm()
-                size_hint: (0.5, 1)
-                canvas:
-                    Color:
-                        rgba: 0.0, 0.9, 0.0, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                
-                Label:
-                    bold: True
-                    text: 'Confirm'
-                    size_hint: (1, 1)
-            BoxLayoutButton:
+            Widget: # Horizontal Spacer
+                size_hint: (1, None)
+                height: 50
+            SmallCancelButton:
                 on_press: root.onCancel()
-                size_hint: (0.5, 1)
-                canvas:
-                    Color:
-                        rgba: 0.9, 0.0, 0.0, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                
-                Label:
-                    bold: True
-                    text: 'Cancel'
-                    size_hint: (1, 1)
                 
