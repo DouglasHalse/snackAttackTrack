@@ -1,0 +1,110 @@
+#:kivy 2.1.0     
+
+<ConfirmButton>
+    canvas:
+        Color:
+            rgba: 0.0, 0.4, 0.0, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        bold: True
+        text: 'Confirm'
+        size_hint: (1, 1)
+
+<SmallConfirmButton@ConfirmButton>:
+    size_hint: (None, None)
+    width: 150
+    height: 50
+
+<MediumConfirmButton@ConfirmButton>:
+    size_hint: (None, None)
+    width: 200
+    height: 75
+
+<LargeConfirmButton@ConfirmButton>:
+    size_hint: (None, None)
+    width: 300
+    height: 100
+
+
+<BuyButton>
+    canvas:
+        Color:
+            rgba: 0.0, 0.4, 0.0, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        bold: True
+        text: 'Buy'
+        size_hint: (1, 1)
+
+<SmallBuyButton@BuyButton>:
+    size_hint: (None, None)
+    width: 150
+    height: 50
+
+
+<CancelButton>
+    canvas:
+        Color:
+            rgba: 0.5, 0.0, 0.0, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        bold: True
+        text: 'Cancel'
+        size_hint: (1, 1)
+
+<SmallCancelButton@CancelButton>:
+    size_hint: (None, None)
+    width: 150
+    height: 50
+
+<MediumCancelButton@CancelButton>:
+    size_hint: (None, None)
+    width: 200
+    height: 75
+
+<LargeCancelButton@CancelButton>:
+    size_hint: (None, None)
+    width: 300
+    height: 100
+
+
+<CloseButton>:
+    canvas:
+        Color:
+            rgba: 0.5, 0.0, 0.0, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        bold: True
+        text: 'Close'
+        size_hint: (1, 1)
+
+<SmallCloseButton@CloseButton>:
+    size_hint: (None, None)
+    width: 150
+    height: 50
+
+
+<RemoveButton>:
+    canvas:
+        Color:
+            rgba: 0.9, 0.0, 0.0, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        bold: True
+        text: 'Remove'
+        size_hint: (1, 1)
+
+<MediumRemoveButton@RemoveButton>:
+    size_hint: (None, None)
+    width: 200
+    height: 75

@@ -20,6 +20,12 @@ from widgets.historyScreen import HistoryScreen
 from widgets.editSnackScreen import EditSnackScreen
 from database import createAllTables, closeDatabase
 
+# Disable all the unused-import violations due to .kv files
+# pylint: disable=unused-import
+import widgets.uiElements.buttons
+
+# pylint: enable=unused-import
+
 # Size of Raspberry pi touchscreen
 Window.size = (800, 480)
 

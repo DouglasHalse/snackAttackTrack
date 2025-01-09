@@ -14,7 +14,6 @@
     GridLayout:
         rows: 1
         spacing: 30
-        size_hint: (1, 0.8)
         GridLayout:
             id: inventoryItemSelection
             cols: 1
@@ -37,46 +36,34 @@
                 bold: True
     GridLayout:
         rows: 1
-        size_hint: (1, 0.2)
-        padding: [0, 10, 0, 0]
-        spacing: 60
-        Label:
-            text: 'Total price: 0.00 credits'
-            id: totalPriceLabel
-            font_size: 24
-            text_size: self.size
-            size_hint_y: None
-            halign: 'left'
-            valign: 'middle'
-            bold: True
-            size_hint: (0.5, 1)
-        BoxLayoutButton:
-            on_press: root.onBuy()
-            size_hint: (0.25, 1)
-            canvas:
-                Color:
-                    rgba: 0.0, 0.9, 0.0, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-            
+        size_hint: (0.5, None)
+        height: self.minimum_height
+        spacing: 30
+        padding: [0, 10]
+        GridLayout:
+            rows: 1
+            size_hint_x: 0.5
+            height: 50
             Label:
+                text: 'Total price: 0.00 credits'
+                id: totalPriceLabel
+                size_hint: (1, None)
+                height: 50
+                font_size: 24
+                text_size: self.size
+                halign: 'left'
+                valign: 'middle'
                 bold: True
-                text: 'Buy'
-                size_hint: (1, 1)
-        BoxLayoutButton:
-            on_press: root.onCancel()
-            size_hint: (0.25, 1)
-            canvas:
-                Color:
-                    rgba: 0.9, 0.0, 0.0, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-            
-            Label:
-                bold: True
-                text: 'Cancel'
-                size_hint: (1, 1)
-    
+        GridLayout:
+            rows: 1
+            size_hint: (0.5, None)
+            height: self.minimum_height
+            SmallBuyButton:
+                on_press: root.onBuy()
+            Widget: # Horizontal Spacer
+                size_hint: (1, None)
+                height: 50
+            SmallCancelButton:
+                on_press: root.onCancel()
+                
 
