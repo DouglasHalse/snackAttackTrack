@@ -31,7 +31,7 @@ class EditUsersScreenContent(GridLayout):
                 entryContents=[
                     user.firstName,
                     user.lastName,
-                    user.employeeID,
+                    user.employeeID if user.employeeID != "" else "None",
                     f"{user.totalCredits:.2f}",
                 ],
                 entryIdentifier=user.patronId,
