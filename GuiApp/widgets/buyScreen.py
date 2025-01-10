@@ -13,6 +13,7 @@ from database import (
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.purchaseCompletedPopup import PurchaseCompletedPopup
+from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.clickableTable import ClickableTable
 
 
@@ -97,47 +98,76 @@ class BuyScreenContent(GridLayout):
             totalPrice += snackPrice * snackInShoppingCart
         self.ids["totalPriceLabel"].text = f"Total price: {totalPrice:.2f} credits"
 
-    def onBuy(self):
-        # TODO: Verify enough items are in the database?
-        # TODO: Verify user has enough credits
-        totalPrice = 0.0
-        snacksBought = []
+    def isShoppingCartEmpty(self):
         for snackDictEntry in self.snackDict.items():
             snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
-            # Skip snacks that are not in the shopping cart
-            if snackInShoppingCart == 0:
-                continue
+            if snackInShoppingCart > 0:
+                return False
+        return True
 
-            snackId = snackDictEntry[0]
-            snack = getSnack(snackId)
-            snackPrice = snack.pricePerItem
-
-            snackBought = SnackData(
-                snackId=snackId,
-                snackName=snack.snackName,
-                quantity=snackInShoppingCart,
-                imageID=snack.imageID,
-                pricePerItem=snackPrice,
-            )
-            snacksBought.append(snackBought)
-            totalPrice += snackPrice * snackInShoppingCart
-            if snackInShoppingCart == snack.quantity:
-                removeSnack(snackId=snack.snackId)
-            else:
-                subtractSnackQuantity(
-                    snackId=snack.snackId, quantity=snackInShoppingCart
+    def getSnacksInShoppingCart(self) -> list[SnackData]:
+        snacksInShoppingCart = []
+        for snackDictEntry in self.snackDict.items():
+            snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
+            if snackInShoppingCart > 0:
+                snackId = snackDictEntry[0]
+                snack = getSnack(snackId)
+                snackBought = SnackData(
+                    snackId=snackId,
+                    snackName=snack.snackName,
+                    quantity=snackInShoppingCart,
+                    imageID=snack.imageID,
+                    pricePerItem=snack.pricePerItem,
                 )
+                snacksInShoppingCart.append(snackBought)
+        return snacksInShoppingCart
+
+    def getTotalPriceOfSnacks(self, snacks: list[SnackData]) -> float:
+        totalPrice = 0.0
+        for snack in snacks:
+            totalPrice += snack.pricePerItem * snack.quantity
+        return totalPrice
+
+    def onBuy(self):
+        if self.isShoppingCartEmpty():
+            popup = ErrorMessagePopup(errorMessage="Shopping cart is empty")
+            popup.open()
+            return
+
+        snacksInShoppingCart = self.getSnacksInShoppingCart()
+        totalPrice = self.getTotalPriceOfSnacks(snacksInShoppingCart)
 
         currentPatron = self.screenManager.getCurrentPatron()
-        patronsCreditsBeforePurchase = currentPatron.totalCredits
-        patronsCreditsAfterPurchase = patronsCreditsBeforePurchase - totalPrice
+
+        if totalPrice > currentPatron.totalCredits:
+            popup = ErrorMessagePopup(errorMessage="Not enough credits")
+            popup.open()
+            return
+
+        #
+        # Purchase validation passed
+        #
+
+        creditsBeforePurchase = currentPatron.totalCredits
+        creditsAfterPurchase = creditsBeforePurchase - totalPrice
+
+        # Update snack database
+        for snack in snacksInShoppingCart:
+            if snack.quantity == getSnack(snack.snackId).quantity:
+                removeSnack(snackId=snack.snackId)
+            else:
+                subtractSnackQuantity(snackId=snack.snackId, quantity=snack.quantity)
+
+        # Update transaction database
         addPurchaseTransaction(
             patronID=currentPatron.patronId,
-            amountBeforeTransaction=patronsCreditsBeforePurchase,
-            amountAfterTransaction=patronsCreditsAfterPurchase,
+            amountBeforeTransaction=creditsBeforePurchase,
+            amountAfterTransaction=creditsAfterPurchase,
             transactionDate=datetime.now(),
-            transactionItems=snacksBought,
+            transactionItems=snacksInShoppingCart,
         )
+
+        # Update patron credits
         subtractPatronCredits(
             patronID=currentPatron.patronId, creditsToSubtract=totalPrice
         )
@@ -145,11 +175,10 @@ class BuyScreenContent(GridLayout):
         # Update current patron with new data
         self.screenManager.refreshCurrentPatron()
 
-        popup = PurchaseCompletedPopup(
-            creditsBeforePurchase=patronsCreditsBeforePurchase,
-            creditsAfterPurchase=patronsCreditsAfterPurchase,
-        )
-        popup.open()
+        PurchaseCompletedPopup(
+            creditsBeforePurchase=creditsBeforePurchase,
+            creditsAfterPurchase=creditsAfterPurchase,
+        ).open()
         self.screenManager.transitionToScreen(
             "mainUserPage", transitionDirection="right"
         )
