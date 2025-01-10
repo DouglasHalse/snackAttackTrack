@@ -13,9 +13,15 @@ class TopUpAmountScreenContent(GridLayout):
         self.ids["creditsAfterwards"].text = f"{self.userData.totalCredits:.2f}"
         self.ids["creditsToAdd"].bind(text=self.updateCreditsAfterwards)
 
+    def getCreditsToAdd(self):
+        creditsToAddStr = self.ids["creditsToAdd"].text
+        if not creditsToAddStr:
+            return 0.0
+        return float(self.ids["creditsToAdd"].text)
+
     def updateCreditsAfterwards(self, instance, text):
         currentCredits = float(self.ids["creditsCurrent"].text)
-        creditsToAdd = float(self.ids["creditsToAdd"].text)
+        creditsToAdd = self.getCreditsToAdd()
         newTotal = currentCredits + creditsToAdd
         self.ids["creditsAfterwards"].text = f"{newTotal:.2f}"
 
