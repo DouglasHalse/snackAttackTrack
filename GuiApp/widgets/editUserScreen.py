@@ -6,6 +6,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.popup import Popup
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.popups.errorMessagePopup import ErrorMessagePopup
 
 from database import UserData, updatePatronData, removePatron, addEditTransaction
 
@@ -29,6 +30,24 @@ class EditUserScreenContent(GridLayout):
         newLastName = self.ids["lastNameInput"].text
         newcardId = self.ids["cardIdInput"].text
         newCredits = self.ids["creditsInput"].text
+
+        if newCredits == "":
+            newCredits = "0.0"
+
+        if newFirstName == "":
+            ErrorMessagePopup(errorMessage="First name cannot be empty").open()
+            return
+
+        if newLastName == "":
+            ErrorMessagePopup(errorMessage="Last name cannot be empty").open()
+            return
+
+        try:
+            newCredits = float(newCredits)
+        except ValueError:
+            ErrorMessagePopup(errorMessage="Credits must be a number").open()
+            return
+
         newUserData = UserData(
             patronId=self.patronToEdit.patronId,
             firstName=newFirstName,
@@ -36,6 +55,7 @@ class EditUserScreenContent(GridLayout):
             employeeID=newcardId,
             totalCredits=newCredits,
         )
+
         if self.patronToEdit.totalCredits != newCredits:
             addEditTransaction(
                 patronID=self.patronToEdit.patronId,
@@ -43,6 +63,7 @@ class EditUserScreenContent(GridLayout):
                 amountAfterTransaction=newCredits,
                 transactionDate=datetime.now(),
             )
+
         updatePatronData(patronId=self.patronToEdit.patronId, newUserData=newUserData)
 
         # Update current patron with new data

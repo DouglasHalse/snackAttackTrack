@@ -121,6 +121,13 @@ def addPurchaseTransaction(
     transactionDate: str,
     transactionItems: list[SnackData],
 ):
+    # Verify data types
+    assert isinstance(patronID, int)
+    assert isinstance(amountBeforeTransaction, float)
+    assert isinstance(amountAfterTransaction, float)
+    assert isinstance(transactionDate, datetime)
+    assert isinstance(transactionItems, list)
+
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute(
@@ -183,6 +190,12 @@ def addEditTransaction(
     amountAfterTransaction: float,
     transactionDate: str,
 ):
+    # Verify data types
+    assert isinstance(patronID, int)
+    assert isinstance(amountBeforeTransaction, float)
+    assert isinstance(amountAfterTransaction, float)
+    assert isinstance(transactionDate, datetime)
+
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute(
@@ -341,7 +354,7 @@ def updatePatronData(patronId: int, newUserData: UserData):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute(
-        f"UPDATE Patrons Set FirstName = '{newUserData.firstName}', LastName = '{newUserData.lastName}', EmployeeID = {newUserData.employeeID}, TotalCredits = {newUserData.totalCredits} WHERE PatronID = {patronId}"
+        f"UPDATE Patrons Set FirstName = '{newUserData.firstName}', LastName = '{newUserData.lastName}', EmployeeID = '{newUserData.employeeID}', TotalCredits = {newUserData.totalCredits} WHERE PatronID = {patronId}"
     )
     conn.commit()
 
