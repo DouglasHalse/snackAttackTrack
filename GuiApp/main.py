@@ -23,6 +23,7 @@ from database import createAllTables, closeDatabase
 # Disable all the unused-import violations due to .kv files
 # pylint: disable=unused-import
 import widgets.uiElements.buttons
+import widgets.uiElements.textInputs
 
 # pylint: enable=unused-import
 

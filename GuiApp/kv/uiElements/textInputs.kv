@@ -1,0 +1,31 @@
+#:kivy 2.1.0     
+
+<TextInputWithHeader>:
+    size_factor: 16
+    header_text: "UNDEFINED"
+    hint_text: "UNDEFINED"
+    input_filter: None
+    disable_input: False
+    cols: 1
+    size_hint: (1, None)
+    height: self.minimum_height
+    Label:
+        id: header
+        text_size: self.size
+        size_hint_y: None
+        font_size: root.size_factor
+        height: root.size_factor
+        text: root.header_text
+        bold: True
+    TextInput:
+        id: input
+        write_tab: False
+        hint_text: root.hint_text
+        size_hint_y: None
+        font_size: root.size_factor
+        input_filter: root.input_filter
+        disabled: root.disable_input
+        height: self.minimum_height
+
+<LargeTextInputWithHeader>:
+    size_factor: 24

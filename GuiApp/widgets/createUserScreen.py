@@ -1,5 +1,6 @@
 from kivy.uix.screenmanager import Screen
 
+from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from database import addPatron
 
 
@@ -9,36 +10,28 @@ class CreateUserScreen(Screen):
 
     def registerUser(self):
         """Handle the registration logic."""
-        registerFirstName = self.ids.registerFirstName.text.strip()
-        registerLastName = self.ids.registerLastName.text.strip()
-        registerEmployeeID = self.ids.registerEmployeeID.text.strip()
+        firstName = self.ids.firstNameInput.getText()
+        lastName = self.ids.lastNameInput.getText()
+        cardId = self.ids.cardIdInput.getText()
 
-        # Check for empty fields and show error messages
-        if not registerFirstName:
-            self.ids.errorMessage.text = "First Name cannot be empty!"
-            self.ids.errorMessage.opacity = 1
-        elif not registerLastName:
-            self.ids.errorMessage.text = "Last Name cannot be empty!"
-            self.ids.errorMessage.opacity = 1
-        else:
-            self.ids.errorMessage.opacity = 0
-            print(f"Registering user: {registerFirstName} {registerLastName}")
-            if registerEmployeeID:
-                print(f"Employee ID: {registerEmployeeID}")
-            else:
-                print("No Employee ID provided.")
+        if firstName == "":
+            ErrorMessagePopup(errorMessage="First Name cannot be empty").open()
+            return
 
-            addPatron(registerFirstName, registerLastName, registerEmployeeID)
+        if lastName == "":
+            ErrorMessagePopup(errorMessage="Last Name cannot be empty").open()
+            return
 
-            self.manager.transitionToScreen("loginScreen", transitionDirection="right")
+        addPatron(firstName, lastName, cardId)
+
+        self.manager.transitionToScreen("loginScreen", transitionDirection="right")
 
     def cancel(self):
         """Handle the cancel action."""
-
-        self.ids.registerFirstName.text = ""
-        self.ids.registerLastName.text = ""
-        self.ids.registerEmployeeID.text = ""
-        self.ids.errorMessage.text = ""
-        self.ids.errorMessage.opacity = 0
-
         self.manager.transitionToScreen("loginScreen", transitionDirection="right")
+
+    def on_leave(self, *args):
+        self.ids.firstNameInput.clearText()
+        self.ids.lastNameInput.clearText()
+        self.ids.cardIdInput.clearText()
+        return super().on_leave(*args)

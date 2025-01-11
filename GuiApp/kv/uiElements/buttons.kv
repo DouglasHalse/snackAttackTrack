@@ -108,3 +108,21 @@
     size_hint: (None, None)
     width: 200
     height: 75
+
+
+<RegisterButton>:
+    canvas:
+        Color:
+            rgba: 0.0, 0.4, 0.0, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        bold: True
+        text: 'Register'
+        size_hint: (1, 1)
+
+<LargeRegisterButton@RegisterButton>:
+    size_hint: (None, None)
+    width: 300
+    height: 100

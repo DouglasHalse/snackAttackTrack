@@ -24,3 +24,7 @@ class CloseButton(BoxLayoutButton):
 
 class RemoveButton(BoxLayoutButton):
     pass
+
+
+class RegisterButton(BoxLayoutButton):
+    pass
