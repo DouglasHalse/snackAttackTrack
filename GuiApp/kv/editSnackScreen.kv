@@ -6,47 +6,23 @@
     spacing: 30
     GridLayout:
         cols: 1
-        size_hint: (1, 0.75)
         padding: [150, 0]
-        Label:
-            text_size: self.size
-            size_hint_y: None
-            height: 30
-            text: "Snack name"
-            bold: True
-        TextInput:
+        spacing: 10
+        LargeTextInputWithHeader:
             id: snackNameInput
-            write_tab: False
-            hint_text: "SNACK NAME"
-            size_hint_y: None
-            height: 40
-            padding: [10, 10]
-        Label:
-            text_size: self.size
-            size_hint_y: None
-            height: 30
-            text: "Quantity"
-            bold: True
-        TextInput:
+            header_text: "Snack Name"
+            hint_text: "Enter snack name"
+        LargeTextInputWithHeader:
             id: snackQuantityInput
-            write_tab: False
-            hint_text: "QUANTITY"
-            size_hint_y: None
-            height: 40
-            padding: [10, 10]
-        Label:
-            text_size: self.size
-            size_hint_y: None
-            height: 30
-            text: "Price per item"
-            bold: True
-        TextInput:
+            header_text: "Quantity"
+            hint_text: "Enter quantity"
+            input_filter: "int"
+        LargeTextInputWithHeader:
             id: snackPriceInput
-            write_tab: False
-            hint_text: "PRICE"
-            size_hint_y: None
-            height: 40
-            padding: [10, 10]
+            header_text: "Price"
+            hint_text: "Enter price"
+            input_filter: "float"
+
     GridLayout:
         rows: 1
         size_hint: (1, None)

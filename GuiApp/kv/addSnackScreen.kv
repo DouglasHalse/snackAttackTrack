@@ -9,45 +9,21 @@
         cols:1
         GridLayout:
             cols: 1
-            Label:
-                text_size: self.size
-                size_hint_y: None
-                height: 30
-                text: "Snack name"
-                bold: True
-            TextInput:
-                id: snackNameTextInput
-                write_tab: False
+            spacing: 10
+            LargeTextInputWithHeader:
+                id: snackNameInput
+                header_text: "Snack Name"
                 hint_text: "Enter snack name"
-                size_hint_y: None
-                height: 40
-                padding: [10, 10]
-            Label:
-                text_size: self.size
-                size_hint_y: None
-                height: 30
-                text: "Quantity"
-                bold: True
-            TextInput:
-                id: snackQuantityTextInput
-                write_tab: False
-                hint_text: "Enter number of snacks"
-                size_hint_y: None
-                height: 40
-                padding: [10, 10]
-            Label:
-                text_size: self.size
-                size_hint_y: None
-                height: 30
-                text: "Purchase price"
-                bold: True
-            TextInput:
-                id: snackTotalPriceTextInput
-                write_tab: False
-                hint_text: "Enter total purchase price of snack"
-                size_hint_y: None
-                height: 40
-                padding: [10, 10]
+            LargeTextInputWithHeader:
+                id: snackQuantityInput
+                header_text: "Quantity"
+                hint_text: "Enter quantity"
+                input_filter: "int"
+            LargeTextInputWithHeader:
+                id: snackPriceInput
+                header_text: "Price"
+                hint_text: "Enter price"
+                input_filter: "float"
         GridLayout:
             rows: 1
             size_hint: (1, None)

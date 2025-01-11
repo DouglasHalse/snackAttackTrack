@@ -20,16 +20,16 @@ class EditUserScreenContent(GridLayout):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.patronToEdit: UserData = self.screenManager.getPatronToEdit()
-        self.ids["firstNameInput"].text = self.patronToEdit.firstName
-        self.ids["lastNameInput"].text = self.patronToEdit.lastName
-        self.ids["creditsInput"].text = f"{self.patronToEdit.totalCredits:.2f}"
-        self.ids["cardIdInput"].text = self.patronToEdit.employeeID
+        self.ids["firstNameInput"].setText(self.patronToEdit.firstName)
+        self.ids["lastNameInput"].setText(self.patronToEdit.lastName)
+        self.ids["creditsInput"].setText(f"{self.patronToEdit.totalCredits:.2f}")
+        self.ids["cardIdInput"].setText(self.patronToEdit.employeeID)
 
     def onConfirm(self):
-        newFirstName = self.ids["firstNameInput"].text
-        newLastName = self.ids["lastNameInput"].text
-        newcardId = self.ids["cardIdInput"].text
-        newCredits = self.ids["creditsInput"].text
+        newFirstName = self.ids["firstNameInput"].getText()
+        newLastName = self.ids["lastNameInput"].getText()
+        newcardId = self.ids["cardIdInput"].getText()
+        newCredits = self.ids["creditsInput"].getText()
 
         if newCredits == "":
             newCredits = "0.0"

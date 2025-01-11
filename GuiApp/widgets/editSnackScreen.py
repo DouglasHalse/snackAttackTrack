@@ -5,6 +5,7 @@ from kivy.uix.popup import Popup
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
+
 from database import SnackData, updateSnackData, removeSnack
 
 
@@ -17,14 +18,14 @@ class EditSnackScreenContent(GridLayout):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.snackToEdit: SnackData = self.screenManager.getSnackToEdit()
-        self.ids["snackNameInput"].text = self.snackToEdit.snackName
-        self.ids["snackQuantityInput"].text = str(self.snackToEdit.quantity)
-        self.ids["snackPriceInput"].text = f"{self.snackToEdit.pricePerItem:.2f}"
+        self.ids["snackNameInput"].setText(self.snackToEdit.snackName)
+        self.ids["snackQuantityInput"].setText(str(self.snackToEdit.quantity))
+        self.ids["snackPriceInput"].setText(f"{self.snackToEdit.pricePerItem:.2f}")
 
     def onConfirm(self):
-        newSnackName = self.ids["snackNameInput"].text
-        newSnackQuantity = self.ids["snackQuantityInput"].text
-        newSnackPrice = self.ids["snackPriceInput"].text
+        newSnackName = self.ids["snackNameInput"].getText()
+        newSnackQuantity = self.ids["snackQuantityInput"].getText()
+        newSnackPrice = self.ids["snackPriceInput"].getText()
 
         newSnackData = SnackData(
             snackId=self.snackToEdit.snackId,

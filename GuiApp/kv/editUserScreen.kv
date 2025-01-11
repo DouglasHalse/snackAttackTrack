@@ -3,64 +3,31 @@
 <EditUserScreenContent>:
     cols: 1
     padding: 20
-    spacing: 10
+    spacing: 60
     GridLayout:
         cols: 1
+        size_hint_y: None
+        height: self.minimum_height
         padding: [150, 0]
-        Label:
-            text_size: self.size
-            size_hint_y: None
-            height: 20
-            text: "First name"
-            bold: True
-        TextInput:
+        spacing: 10
+        TextInputWithHeader:
             id: firstNameInput
-            write_tab: False
-            hint_text: "FIRST NAME"
-            size_hint_y: None
-            height: 40
-            padding: [10, 10]
-        Label:
-            text_size: self.size
-            size_hint_y: None
-            height: 30
-            text: "Last name"
-            bold: True
-        TextInput:
+            header_text: "First name"
+            hint_text: "Enter first name"
+        TextInputWithHeader:
             id: lastNameInput
-            write_tab: False
-            hint_text: "LAST NAME"
-            size_hint_y: None
-            height: 40
-            padding: [10, 10]
-        Label:
-            text_size: self.size
-            size_hint_y: None
-            height: 30
-            text: "Credits"
-            bold: True
-        TextInput:
+            header_text: "Last name"
+            hint_text: "Enter last name"
+        TextInputWithHeader:
             id: creditsInput
-            write_tab: False
-            hint_text: "CREDITS"
-            size_hint_y: None
+            header_text: "Credits"
+            hint_text: "Enter credits"
             input_filter: "float"
-            height: 40
-            padding: [10, 10]
-        Label:
-            text_size: self.size
-            size_hint_y: None
-            height: 30
-            text: "Card id (Scan card to update)"
-            bold: True
-        TextInput:
+        TextInputWithHeader:
             id: cardIdInput
-            write_tab: False
-            hint_text: "Scan card to update id"
-            size_hint_y: None
-            disabled: True
-            height: 40
-            padding: [10, 10]
+            header_text: "Login card"
+            hint_text: "Blipp card to register (optional)"
+            disable_input: True
     GridLayout:
         rows: 1
         size_hint: (1, None)

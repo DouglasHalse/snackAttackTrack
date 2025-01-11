@@ -9,19 +9,19 @@ class AddSnackScreenContent(GridLayout):
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
-        self.ids["snackNameTextInput"].bind(text=self.updateText)
-        self.ids["snackQuantityTextInput"].bind(text=self.updateText)
-        self.ids["snackTotalPriceTextInput"].bind(text=self.updateText)
+        self.ids["snackNameInput"].setInputChangedCallback(self.updateText)
+        self.ids["snackQuantityInput"].setInputChangedCallback(self.updateText)
+        self.ids["snackPriceInput"].setInputChangedCallback(self.updateText)
 
     def updateText(self, instance, text):
         # TODO sanitize input
-        snackName = self.ids["snackNameTextInput"].text
+        snackName = self.ids["snackNameInput"].getText()
         if snackName == "":
             snackName = "?"
-        quantity = self.ids["snackQuantityTextInput"].text
+        quantity = self.ids["snackQuantityInput"].getText()
         if quantity == "":
             quantity = "?"
-        totalPrice = self.ids["snackTotalPriceTextInput"].text
+        totalPrice = self.ids["snackPriceInput"].getText()
         pricePerItem = 0
         if totalPrice == "" or quantity == "?":
             totalPrice = "?"
@@ -33,9 +33,9 @@ class AddSnackScreenContent(GridLayout):
 
     def onConfirm(self, *largs):
         # TODO sanitize input
-        snackName = self.ids["snackNameTextInput"].text
-        quantity = int(self.ids["snackQuantityTextInput"].text)
-        totalPrice = float(self.ids["snackTotalPriceTextInput"].text)
+        snackName = self.ids["snackNameInput"].getText()
+        quantity = int(self.ids["snackQuantityInput"].getText())
+        totalPrice = float(self.ids["snackPriceInput"].getText())
         pricePerItem = totalPrice / float(quantity)
         addSnack(
             itemName=snackName,
