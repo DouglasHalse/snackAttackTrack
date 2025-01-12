@@ -35,7 +35,16 @@ class snackAttackTrackApp(App):
     def __init__(self):
         self.title = "Snack Attack Track"
         self.sm = None
+        Window.bind(on_key_down=self._on_keyboard_down)
         super().__init__()
+
+    def _on_keyboard_down(self, _, keycode, _1, _2, _3):
+        # F12
+        if keycode == 293:
+            Window.screenshot(name=self.sm.current + ".png")
+            # self.sm.export_to_png(self.sm.current + ".png")
+            return True
+        return False
 
     def build(self):
         Builder.load_file("kv/main.kv")
