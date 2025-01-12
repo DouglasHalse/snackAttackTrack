@@ -2,6 +2,7 @@ from kivy.uix.gridlayout import GridLayout
 
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.popups.errorMessagePopup import ErrorMessagePopup
 
 
 class TopUpAmountScreenContent(GridLayout):
@@ -13,9 +14,9 @@ class TopUpAmountScreenContent(GridLayout):
         self.ids["creditsAfterwards"].text = f"{self.userData.totalCredits:.2f}"
         self.ids["creditsToAdd"].bind(text=self.updateCreditsAfterwards)
 
-    def getCreditsToAdd(self):
+    def getCreditsToAdd(self) -> float:
         creditsToAddStr = self.ids["creditsToAdd"].text
-        if not creditsToAddStr:
+        if not creditsToAddStr or creditsToAddStr == "-":
             return 0.0
         return float(self.ids["creditsToAdd"].text)
 
@@ -26,8 +27,12 @@ class TopUpAmountScreenContent(GridLayout):
         self.ids["creditsAfterwards"].text = f"{newTotal:.2f}"
 
     def onConfirm(self, *largs):
-        # TODO Sanitize user input
-        creditsToAdd = float(self.ids["creditsToAdd"].text)
+        creditsToAdd = self.getCreditsToAdd()
+
+        if creditsToAdd <= 0.0:
+            ErrorMessagePopup(errorMessage="Invalid amount to add").open()
+            return
+
         self.screenManager.get_screen("topUpPaymentScreen").setAmountToBePayed(
             creditsToAdd
         )
