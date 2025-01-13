@@ -1,12 +1,13 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.image import Image
+from kivy.uix.boxlayout import BoxLayout
+
 
 from widgets.customScreenManager import CustomScreenManager
 
 
-class ImageButton(ButtonBehavior, Image):
+class BoxLayoutButton(ButtonBehavior, BoxLayout):
     pass
 
 
@@ -47,7 +48,7 @@ class Body(GridLayout):
         self.screenManager = screenManager
 
 
-class BackButton(ImageButton):
+class BackButton(BoxLayoutButton):
     def __init__(self, previousScreen, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.previousScreen = previousScreen
@@ -59,7 +60,7 @@ class BackButton(ImageButton):
         )
 
 
-class SettingsButton(ImageButton):
+class SettingsButton(BoxLayoutButton):
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager

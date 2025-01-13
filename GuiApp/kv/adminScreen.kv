@@ -12,9 +12,34 @@
             RoundedRectangle:
                 pos: self.pos
                 size: self.size
-        Label:
-            text: 'Edit snacks'
-            size_hint: (1, 1)
+        GridLayout:
+            cols: 1
+            padding: [0, 90]
+            GridLayout:
+                rows: 1
+                size_hint: (1, None)
+                padding: [70, 0]
+                Image:
+                    size_hint: (None, None)
+                    height: 98
+                    width: 98
+                    source: 'Images/candy-bar.png'
+                Widget: # Horizontal Spacer
+                    size_hint: (1, None)
+                    height: 98
+                Image:
+                    size_hint: (None, None)
+                    height: 98
+                    width: 98
+                    source: 'Images/wrench-alt.png'
+            Widget: # Vertical Spacer
+                size_hint: (1, 1)
+            Label:
+                text: 'Edit snacks'
+                bold: True
+                font_size: "30sp"
+                size_hint_y: None
+                height: 30
     BoxLayoutButton:
         on_press: root.onEditUsersButtonPressed()
         canvas:
@@ -23,7 +48,31 @@
             RoundedRectangle:
                 pos: self.pos
                 size: self.size
-        Label:
-            text: 'Edit users'
-            size_hint: (1, 1)
-
+        GridLayout:
+            cols: 1
+            padding: [0, 90]
+            GridLayout:
+                rows: 1
+                size_hint: (1, None)
+                padding: [70, 0]
+                Image:
+                    size_hint: (None, None)
+                    height: 98
+                    width: 98
+                    source: 'Images/user.png'
+                Widget: # Horizontal Spacer
+                    size_hint: (1, None)
+                    height: 98
+                Image:
+                    size_hint: (None, None)
+                    height: 98
+                    width: 98
+                    source: 'Images/wrench-alt.png'
+            Widget: # Vertical Spacer
+                size_hint: (1, 1)
+            Label:
+                text: 'Edit users'
+                bold: True
+                font_size: "30sp"
+                size_hint_y: None
+                height: 30

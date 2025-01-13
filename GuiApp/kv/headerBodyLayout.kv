@@ -55,18 +55,25 @@
             size: self.size
 
 <SettingsButton>:
-    width: '48dp'
     size_hint_x: None
-    source: 'Images/manage_devices.png'
-    color: 'white'
+    width: self.height
     on_press: root.onPressed()
+    GridLayout:
+        cols: 1
+        padding: 10
+        Image: 
+            source: 'Images/wrench-alt.png'
+            
 
 <BackButton>:
-    width: '48dp'
     size_hint_x: None
-    source: 'Images/leftArrow.png'
-    color: 'white'
+    width: self.height
     on_press: root.onPressed()
+    GridLayout:
+        cols: 1
+        padding: 10
+        Image: 
+            source: 'Images/leftArrow.png'
 
 <HeaderBodyScreen>:
     canvas:
