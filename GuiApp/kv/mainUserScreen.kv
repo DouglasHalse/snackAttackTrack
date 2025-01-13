@@ -12,9 +12,22 @@
             RoundedRectangle:
                 pos: self.pos
                 size: self.size
-        Label:
-            text: 'Buy'
-            size_hint: (1, 1)
+        GridLayout:
+            cols: 1
+            padding: [0, 90]
+            Image:
+                color: 'white'
+                height: 98
+                size_hint: (1, None)
+                source: 'Images/cart-shopping-fast.png'
+            Widget: # Horizontal Spacer
+                size_hint: (1, 1)
+            Label:
+                text: 'Buy'
+                bold: True
+                font_size: "30sp"
+                size_hint_y: None
+                height: 30
     BoxLayoutButton:
         on_press: root.onTopUpButtonPressed()
         canvas:
@@ -24,9 +37,22 @@
                 pos: self.pos
                 size: self.size
         
-        Label:
-            text: 'Top up'
-            size_hint: (1, 1)
+        GridLayout:
+            cols: 1
+            padding: [0, 90]
+            Image:
+                color: 'white'
+                height: 98
+                size_hint: (1, None)
+                source: 'Images/money-income.png'
+            Widget: # Horizontal Spacer
+                size_hint: (1, 1)
+            Label:
+                text: 'Top-up'
+                bold: True
+                font_size: "30sp"
+                size_hint_y: None
+                height: 30
     BoxLayoutButton:
         on_press: root.onHistoryButtonPressed()
         canvas:
@@ -36,6 +62,19 @@
                 pos: self.pos
                 size: self.size
         
-        Label:
-            text: 'History'
-            size_hint: (1, 1)
+        GridLayout:
+            cols: 1
+            padding: [0, 90]
+            Image:
+                color: 'white'
+                height: 98
+                size_hint: (1, None)
+                source: 'Images/time-past.png'
+            Widget: # Horizontal Spacer
+                size_hint: (1, 1)
+            Label:
+                text: 'History'
+                bold: True
+                font_size: "30sp"
+                size_hint_y: None
+                height: 30
