@@ -18,7 +18,7 @@
         size: self.texture_size
         halign: 'center'
         valign: 'center'
-        font_size: 12
+        font_size: 18
         color : [0,0,0,1]
         bold: True
     
@@ -47,7 +47,7 @@
                 on_press: root.createNewUserButtonClicked()
                 size_hint: None, None
                 height: '50dp'
-                width: '140dp'
+                width: '240dp'
                 canvas:
                     Color:
                         rgba: 0.7, 0.7, 0.7, 1
@@ -57,4 +57,6 @@
                 Label:
                     id: manageDeviceCancelLabel
                     text: 'Create new user'
+                    bold: True
+                    font_size: "30sp"
                     size_hint: (1, 1)

@@ -7,25 +7,30 @@
         RoundedRectangle:
             pos: self.pos
             size: self.size
+    text_size: 16
     Label:
         bold: True
         text: 'Confirm'
+        font_size: root.text_size
         size_hint: (1, 1)
 
 <SmallConfirmButton@ConfirmButton>:
     size_hint: (None, None)
     width: 150
     height: 50
+    text_size: 22
 
 <MediumConfirmButton@ConfirmButton>:
     size_hint: (None, None)
     width: 200
     height: 75
+    text_size: 28
 
 <LargeConfirmButton@ConfirmButton>:
     size_hint: (None, None)
     width: 300
     height: 100
+    text_size: 42
 
 
 <BuyButton>
@@ -35,15 +40,18 @@
         RoundedRectangle:
             pos: self.pos
             size: self.size
+    text_size: 16
     Label:
         bold: True
         text: 'Buy'
+        font_size: root.text_size
         size_hint: (1, 1)
 
 <SmallBuyButton@BuyButton>:
     size_hint: (None, None)
     width: 150
     height: 50
+    text_size: 22
 
 
 <CancelButton>
@@ -53,25 +61,30 @@
         RoundedRectangle:
             pos: self.pos
             size: self.size
+    text_size: 16
     Label:
         bold: True
         text: 'Cancel'
+        font_size: root.text_size
         size_hint: (1, 1)
 
 <SmallCancelButton@CancelButton>:
     size_hint: (None, None)
     width: 150
     height: 50
+    text_size: 22
 
 <MediumCancelButton@CancelButton>:
     size_hint: (None, None)
     width: 200
     height: 75
+    text_size: 28
 
 <LargeCancelButton@CancelButton>:
     size_hint: (None, None)
     width: 300
     height: 100
+    text_size: 42
 
 
 <CloseButton>:
@@ -81,15 +94,18 @@
         RoundedRectangle:
             pos: self.pos
             size: self.size
+    text_size: 16
     Label:
         bold: True
         text: 'Close'
+        font_size: root.text_size
         size_hint: (1, 1)
 
 <SmallCloseButton@CloseButton>:
     size_hint: (None, None)
     width: 150
     height: 50
+    text_size: 22
 
 
 <RemoveButton>:
@@ -99,15 +115,18 @@
         RoundedRectangle:
             pos: self.pos
             size: self.size
+    text_size: 16
     Label:
         bold: True
         text: 'Remove'
+        font_size: root.text_size
         size_hint: (1, 1)
 
 <MediumRemoveButton@RemoveButton>:
     size_hint: (None, None)
     width: 200
     height: 75
+    text_size: 28
 
 
 <RegisterButton>:
@@ -117,12 +136,15 @@
         RoundedRectangle:
             pos: self.pos
             size: self.size
+    text_size: 16        
     Label:
         bold: True
         text: 'Register'
+        font_size: root.text_size
         size_hint: (1, 1)
 
 <LargeRegisterButton@RegisterButton>:
     size_hint: (None, None)
     width: 300
     height: 100
+    text_size: 42
