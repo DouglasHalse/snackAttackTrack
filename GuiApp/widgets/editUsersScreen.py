@@ -18,7 +18,8 @@ class EditUsersScreenContent(GridLayout):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.usersTable = ClickableTable(
-            ["First name", "Last name", "User ID", "Total credits"],
+            columns=["First name", "Last name", "User ID", "Total credits"],
+            columnExamples=["LongName", "LongLastName", "23", "100.00"],
             onEntryPressedCallback=self.onUserEntryPressed,
         )
         self.add_widget(self.usersTable)

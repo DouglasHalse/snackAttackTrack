@@ -1,15 +1,17 @@
 #:kivy 2.1.0
 
 <ClickableTableColumnLabel>:
-    size_hint: 1, None
+    size_hint_y: None
     text: 'COLUMN NAME'
     bold: True
     height: '50dp'
 
 <ClickableTableColumnEntryLabel>:
     text: 'ENTRY NAME'
-    size_hint: 1, None
-    height: '50dp'
+    text_size: self.width, self.height
+    height: self.texture_size[1]
+    halign: "center"
+    valign: 'middle'
 
 <ClickableTableEntry>:
     rows: 1
@@ -55,6 +57,7 @@
             GridLayout:
                 rows: 1
                 size_hint: 1, None
+                padding: ["10dp", 0]
                 height: '50dp'
                 id: tableHeader
                 canvas.after:
