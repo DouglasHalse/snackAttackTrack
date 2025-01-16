@@ -26,7 +26,8 @@ class PurchaseSummaryPopup(Popup):
         self.ids["totalPriceLabel"].text = f"{totalPrice:.2f}"
 
         self.snackTable = ClickableTable(
-            ["Snack name", "Quantity", "Price"],
+            columns=["Snack name", "Quantity", "Price"],
+            columnExamples=["Long snack name", "100", "43.43"],
             onEntryPressedCallback=None,
             size_hint_x=0.5,
         )

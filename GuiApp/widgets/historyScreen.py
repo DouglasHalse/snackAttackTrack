@@ -20,7 +20,8 @@ class HistoryScreenContent(GridLayout):
         self.screenManager = screenManager
 
         self.historyTable = ClickableTable(
-            ["Date", "Credits before", "Credits after", "Type"],
+            columns=["Date", "Credits before", "Credits after", "Type"],
+            columnExamples=["2025-01-12 15:04:31", "10000.00", "10000.00", "Purchase"],
             onEntryPressedCallback=self.onHistoryEntryPressed,
         )
 

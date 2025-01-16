@@ -34,11 +34,13 @@ class BuyScreenContent(GridLayout):
             }
 
         self.snackListInventory = ClickableTable(
-            ["Snack name", "Quantity", "Price"],
+            columns=["Snack name", "Quantity", "Price"],
+            columnExamples=["Knopper original (salty)", "Quantity", "Price"],
             onEntryPressedCallback=self.itemClickedInInventory,
         )
         self.snackListShoppingCart = ClickableTable(
-            ["Snack name", "Quantity", "Price"],
+            columns=["Snack name", "Quantity", "Price"],
+            columnExamples=["Snack name", "Quantity", "Price"],
             onEntryPressedCallback=self.itemClickedInShoppingCart,
         )
 
