@@ -3,6 +3,12 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.label import Label
 
+import kivy.core.text
+
+
+def get_str_pixel_width(string: str, **kwargs) -> int:
+    return kivy.core.text.Label(**kwargs).get_extents(string)[0]
+
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
     pass
@@ -25,15 +31,21 @@ class ClickableTableEntry(BoxLayoutButton):
         self,
         clickableTable,
         entryContents: list[str],
+        columnProportions: list[float],
         entryIdentifier,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.entryIdentifier = entryIdentifier
         self.clickableTable = clickableTable
-        for columnValue in entryContents:
+        self.columnProportions = columnProportions
+        for columnText, columnProportion in zip(entryContents, columnProportions):
             self.add_widget(
-                ClickableTableColumnEntryLabel(text=columnValue, markup=True)
+                ClickableTableColumnEntryLabel(
+                    text=columnText,
+                    size_hint_x=columnProportion,
+                    markup=True,
+                )
             )
 
     def onPress(self, *largs):
@@ -83,14 +95,37 @@ class ClickableTable(GridLayout):
     """
 
     def __init__(
-        self, columns: list[str], onEntryPressedCallback: callable = None, **kwargs
+        self,
+        columns: list[str],
+        columnExamples: list[str] = None,
+        onEntryPressedCallback: callable = None,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.columns = columns
+        self.columnProportions = []
+
+        if columnExamples:
+            assert len(columns) == len(columnExamples)
+            columnExampleWidths = []
+            for columnExample, columnName in zip(columnExamples, columns):
+                widestContent = max(
+                    get_str_pixel_width(columnExample), get_str_pixel_width(columnName)
+                )
+                columnExampleWidths.append(widestContent)
+
+            columnWidthSum = sum(columnExampleWidths)
+            self.columnProportions = [i / columnWidthSum for i in columnExampleWidths]
+
+        else:
+            self.columnProportions = [1 / len(columns) for _ in range(len(columns))]
+
         self.onEntryPressedCallback = onEntryPressedCallback
-        for column in columns:
+        for columnName, columnProportion in zip(columns, self.columnProportions):
             self.ids["tableHeader"].add_widget(
-                ClickableTableColumnLabel(columnName=column)
+                ClickableTableColumnLabel(
+                    columnName=columnName, size_hint_x=columnProportion
+                )
             )
 
     def addEntry(self, entryContents: list[str], entryIdentifier):
@@ -111,6 +146,7 @@ class ClickableTable(GridLayout):
             ClickableTableEntry(
                 clickableTable=self,
                 entryContents=entryContents,
+                columnProportions=self.columnProportions,
                 entryIdentifier=entryIdentifier,
             )
         )

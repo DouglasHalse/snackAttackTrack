@@ -16,7 +16,8 @@ class EditSnacksScreenContent(GridLayout):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.snackTable = ClickableTable(
-            ["Snack name", "Quantity", "Price", "Image ID"],
+            columns=["Snack name", "Quantity", "Price", "Image ID"],
+            columnExamples=["Long snack name", "100", "43.43", "AnImageId"],
             onEntryPressedCallback=self.onSnackEntryPressed,
         )
         self.add_widget(self.snackTable)
