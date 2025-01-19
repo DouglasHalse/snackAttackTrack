@@ -85,12 +85,14 @@ def main():
         default=0,
         help="Rotate the screen by an angle between 0 and 360 degrees",
     )
+    parser.add_argument("--hide-cursor", action="store_true", help="Hide the cursor")
+
     args = parser.parse_args()
 
     # Size of Raspberry pi touchscreen
     Window.size = (800, 480)
     Window.rotation = args.rotate_screen
-    Window.show_cursor = False
+    Window.show_cursor = not args.hide_cursor
 
     if args.no_inspector:
         app = snackAttackTrackApp(use_inspector=False)
