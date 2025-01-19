@@ -1,3 +1,4 @@
+import argparse
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.modules import inspector
@@ -27,14 +28,12 @@ import widgets.uiElements.textInputs
 
 # pylint: enable=unused-import
 
-# Size of Raspberry pi touchscreen
-Window.size = (800, 480)
-
 
 class snackAttackTrackApp(App):
-    def __init__(self):
+    def __init__(self, use_inspector=True):
         self.title = "Snack Attack Track"
         self.sm = None
+        self.use_inspector = use_inspector
         Window.bind(on_key_down=self._on_keyboard_down)
         super().__init__()
 
@@ -65,7 +64,8 @@ class snackAttackTrackApp(App):
         self.sm.add_widget(HistoryScreen(name="historyScreen"))
         self.sm.add_widget(EditSnackScreen(name="editSnackScreen"))
 
-        inspector.create_inspector(Window, self.sm)
+        if self.use_inspector:
+            inspector.create_inspector(Window, self.sm)
         return self.sm
 
     def on_stop(self):
@@ -73,5 +73,32 @@ class snackAttackTrackApp(App):
         return super().on_stop()
 
 
+def main():
+    parser = argparse.ArgumentParser(description="Snack Attack Track Application")
+    parser.add_argument(
+        "--no-inspector", action="store_true", help="Run the app without the inspector"
+    )
+    parser.add_argument(
+        "--rotate-screen",
+        type=int,
+        choices=range(0, 361),
+        default=0,
+        help="Rotate the screen by an angle between 0 and 360 degrees",
+    )
+    args = parser.parse_args()
+
+    # Size of Raspberry pi touchscreen
+    Window.size = (800, 480)
+    Window.rotation = args.rotate_screen
+    Window.show_cursor = False
+
+    if args.no_inspector:
+        app = snackAttackTrackApp(use_inspector=False)
+    else:
+        app = snackAttackTrackApp(use_inspector=True)
+
+    app.run()
+
+
 if __name__ == "__main__":
-    snackAttackTrackApp().run()
+    main()
