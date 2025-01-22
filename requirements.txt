@@ -9,3 +9,5 @@ pre-commit
 matplotlib
 numpy
 pillow
+spidev
+mfrc522
