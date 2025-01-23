@@ -2,9 +2,11 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
+from kivy.clock import Clock
 
 
 from widgets.customScreenManager import CustomScreenManager
+from widgets.settingsManager import SettingName
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -97,6 +99,30 @@ class HeaderBodyScreen(Screen):
         self.body = Body(screenManager=self.manager)
         self.ids["screenLayout"].add_widget(self.body)
 
+        if self.manager.settingsManager.get_setting_value(
+            settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
+        ):
+            timeToAutoLogout = self.manager.settingsManager.get_setting_value(
+                settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME
+            )
+            Clock.schedule_once(self.autoLogout, timeToAutoLogout)
+
+    def autoLogout(self, *args):
+        self.manager.logout()
+        self.manager.transitionToScreen("splashScreen", transitionDirection="right")
+
     def on_leave(self, *args):
         self.ids["screenLayout"].clear_widgets()
         return super().on_leave(*args)
+
+    def on_touch_down(self, touch):
+        # Reset auto logout timer
+        if self.manager.settingsManager.get_setting_value(
+            settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
+        ):
+            timeToAutoLogout = self.manager.settingsManager.get_setting_value(
+                settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME
+            )
+            Clock.unschedule(self.autoLogout)
+            Clock.schedule_once(self.autoLogout, timeToAutoLogout)
+        return super().on_touch_down(touch)

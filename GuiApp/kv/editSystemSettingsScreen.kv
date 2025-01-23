@@ -1,0 +1,127 @@
+#:kivy 2.1.0     
+
+
+
+<BoolSettingRow>:
+    rows: 1
+    size_hint: (1, None)
+    height: 64
+    padding: [50, 0]
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+    Label:
+        id: settingName
+        text: "Settings item"
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        bold: True
+        font_size: "25sp"
+    GridLayout:
+        rows: 1
+        size_hint: (None, None)
+        height: 64
+        width: 128
+        Widget: # Horizontal Spacer
+            size_hint: (1, None)
+            height: 64
+        BoxLayoutButton:
+            on_press: root.onSettingChanged()
+            size_hint: (None, None)
+            height: 64
+            width: 64
+            Image:
+                id: toggleButtonImage
+                source: 'Images/toggle-on.png'
+        Widget: # Horizontal Spacer
+            size_hint: (1, None)
+            height: 64
+
+<FloatSettingRow>:
+    rows: 1
+    size_hint: (1, None)
+    height: 64
+    padding: [50, 0]
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+    Label:
+        id: settingName
+        text: "Settings item"
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        bold: True
+        font_size: "25sp"
+    TextInput:
+        id: textInput
+        write_tab: False
+        multiline: False
+        font_size: 42
+        hint_text: "Enter amount"
+        input_filter: "float"
+        size_hint: (None, None)
+        height: 64
+        width: 128
+
+<SettingsSection>:
+    cols: 1
+    size_hint: 1, None
+    height: self.minimum_height
+    
+    Label:
+        id: sectionNameLabel
+        text_size: self.size
+        size_hint_y: None
+        height: 20
+        text: "SECTION NAME"
+        bold: True
+        font_size: "20sp"
+
+    GridLayout:
+        id: sectionContent
+        cols: 1
+        padding: "10dp"
+        spacing: 10
+        size_hint_y: None
+        height: self.minimum_height
+
+
+<EditSystemSettingsScreenContent>:
+    rows: 1
+    size_hint: (1, 1)
+    padding: '20dp'
+    canvas:
+        Color:
+            rgba: 0.3, 0.3, 0.3, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    
+    GridLayout:
+        rows: 1
+        padding: 10
+        canvas.after:
+            Color:
+                rgba: .5, .5, .5, 1
+            Line:
+                width: 2
+                rectangle: self.x, self.y, self.width, self.height
+        ScrollView:
+            size_hint: 1, 1
+            do_scroll_x: False
+            GridLayout:
+                id: settingsLayout
+                cols: 1
+                padding: 10
+                spacing: 10
+                size_hint_y: None
+                height: self.minimum_height
+                

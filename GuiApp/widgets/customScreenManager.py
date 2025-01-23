@@ -4,14 +4,16 @@ from kivy.properties import StringProperty
 from kivy.properties import ObjectProperty
 
 from database import UserData, SnackData, getPatronData
+from widgets.settingsManager import SettingsManager
 
 
 class CustomScreenManager(ScreenManager):
-    def __init__(self):
+    def __init__(self, settingsManager: SettingsManager):
         super().__init__()
         self._currentPatron: UserData = None
         self._patronToEdit: UserData = None
         self._snackToEdit: SnackData = None
+        self.settingsManager: SettingsManager = settingsManager
         self.current: StringProperty
         self.transition: ObjectProperty
 

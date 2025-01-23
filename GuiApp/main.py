@@ -19,12 +19,14 @@ from widgets.buyScreen import BuyScreen
 from widgets.editUserScreen import EditUserScreen
 from widgets.historyScreen import HistoryScreen
 from widgets.editSnackScreen import EditSnackScreen
+from widgets.editSystemSettingsScreen import EditSystemSettingsScreen
+from widgets.settingsManager import SettingsManager, SettingName, SettingDataType
 from database import createAllTables, closeDatabase
 
 # Disable all the unused-import violations due to .kv files
 # pylint: disable=unused-import
-import widgets.uiElements.buttons
 import widgets.uiElements.textInputs
+import widgets.uiElements.buttons
 
 # pylint: enable=unused-import
 
@@ -32,7 +34,8 @@ import widgets.uiElements.textInputs
 class snackAttackTrackApp(App):
     def __init__(self, use_inspector=True):
         self.title = "Snack Attack Track"
-        self.sm = None
+        self.settingsManager = self.create_settings_manager()
+        self.screenManager = CustomScreenManager(settingsManager=self.settingsManager)
         self.use_inspector = use_inspector
         Window.bind(on_key_down=self._on_keyboard_down)
         super().__init__()
@@ -40,33 +43,72 @@ class snackAttackTrackApp(App):
     def _on_keyboard_down(self, _, keycode, _1, _2, _3):
         # F12
         if keycode == 293:
-            Window.screenshot(name=self.sm.current + ".png")
+            Window.screenshot(name=self.screenManager.current + ".png")
             # self.sm.export_to_png(self.sm.current + ".png")
             return True
         return False
 
+    def create_settings_manager(self) -> SettingsManager:
+        sm = SettingsManager("settings.json")
+
+        sm.add_setting_if_undefined(
+            settingName=SettingName.SPILL_FACTOR,
+            default_value=1.05,
+            datatype=SettingDataType.FLOAT,
+            min_value=1.0,
+            max_value=10.0,
+        )
+
+        sm.add_setting_if_undefined(
+            settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE,
+            default_value=True,
+            datatype=SettingDataType.BOOL,
+            min_value=0,
+            max_value=1,
+        )
+
+        sm.add_setting_if_undefined(
+            settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME,
+            default_value=120.0,
+            datatype=SettingDataType.FLOAT,
+            min_value=20.0,
+            max_value=600.0,
+        )
+
+        sm.add_setting_if_undefined(
+            settingName=SettingName.AUTO_LOGOUT_AFTER_PURCHASE,
+            default_value=False,
+            datatype=SettingDataType.BOOL,
+            min_value=0,
+            max_value=1,
+        )
+
+        return sm
+
     def build(self):
         Builder.load_file("kv/main.kv")
         createAllTables()
-        self.sm = CustomScreenManager()
-        self.sm.add_widget(SplashScreenWidget(name="splashScreen"))
-        self.sm.add_widget(LoginScreen(name="loginScreen"))
-        self.sm.add_widget(MainUserScreen(name="mainUserPage"))
-        self.sm.add_widget(CreateUserScreen(name="createUserScreen"))
-        self.sm.add_widget(AdminScreen(name="adminScreen"))
-        self.sm.add_widget(EditSnacksScreen(name="editSnacksScreen"))
-        self.sm.add_widget(EditUsersScreen(name="editUsersScreen"))
-        self.sm.add_widget(AddSnackScreen(name="addSnackScreen"))
-        self.sm.add_widget(TopUpAmountScreen(name="topUpAmountScreen"))
-        self.sm.add_widget(TopUpPaymentScreen(name="topUpPaymentScreen"))
-        self.sm.add_widget(BuyScreen(name="buyScreen"))
-        self.sm.add_widget(EditUserScreen(name="editUserScreen"))
-        self.sm.add_widget(HistoryScreen(name="historyScreen"))
-        self.sm.add_widget(EditSnackScreen(name="editSnackScreen"))
+        self.screenManager.add_widget(SplashScreenWidget(name="splashScreen"))
+        self.screenManager.add_widget(LoginScreen(name="loginScreen"))
+        self.screenManager.add_widget(MainUserScreen(name="mainUserPage"))
+        self.screenManager.add_widget(CreateUserScreen(name="createUserScreen"))
+        self.screenManager.add_widget(AdminScreen(name="adminScreen"))
+        self.screenManager.add_widget(EditSnacksScreen(name="editSnacksScreen"))
+        self.screenManager.add_widget(EditUsersScreen(name="editUsersScreen"))
+        self.screenManager.add_widget(AddSnackScreen(name="addSnackScreen"))
+        self.screenManager.add_widget(TopUpAmountScreen(name="topUpAmountScreen"))
+        self.screenManager.add_widget(TopUpPaymentScreen(name="topUpPaymentScreen"))
+        self.screenManager.add_widget(BuyScreen(name="buyScreen"))
+        self.screenManager.add_widget(EditUserScreen(name="editUserScreen"))
+        self.screenManager.add_widget(HistoryScreen(name="historyScreen"))
+        self.screenManager.add_widget(EditSnackScreen(name="editSnackScreen"))
+        self.screenManager.add_widget(
+            EditSystemSettingsScreen(name="editSystemSettingsScreen")
+        )
 
         if self.use_inspector:
-            inspector.create_inspector(Window, self.sm)
-        return self.sm
+            inspector.create_inspector(Window, self.screenManager)
+        return self.screenManager
 
     def on_stop(self):
         closeDatabase()
