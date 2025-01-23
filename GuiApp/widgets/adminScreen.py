@@ -9,6 +9,9 @@ class AdminScreenContent(GridLayout):
         super().__init__(**kwargs)
         self.screenManager = screenManager
 
+    def onEditSystemSettingsButtonPressed(self, *largs):
+        self.screenManager.transitionToScreen("editSystemSettingsScreen")
+
     def onEditSnacksButtonPressed(self, *largs):
         self.screenManager.transitionToScreen("editSnacksScreen")
 

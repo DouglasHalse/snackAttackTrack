@@ -31,16 +31,16 @@ async def navigateScreensCoroutine():
     patrons = getAllPatrons()
     snacks = getAllSnacks()
 
-    app.sm.login(patrons[0].patronId)
-    app.sm.setPatronToEdit(patrons[1])
-    app.sm.setSnackToEdit(snacks[0])
+    app.screenManager.login(patrons[0].patronId)
+    app.screenManager.setPatronToEdit(patrons[1])
+    app.screenManager.setSnackToEdit(snacks[0])
 
-    for screen in app.sm.screens:
+    for screen in app.screenManager.screens:
         await asyncio.sleep(DELAY)
-        app.sm.export_to_png(PATH + app.sm.current + ".png")
-        app.sm.current = screen.name
+        app.screenManager.export_to_png(PATH + app.screenManager.current + ".png")
+        app.screenManager.current = screen.name
         await asyncio.sleep(DELAY)
-        assert app.sm.current == screen.name
+        assert app.screenManager.current == screen.name
 
 
 async def runAppCoroutine():
