@@ -15,6 +15,7 @@ from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.purchaseCompletedPopup import PurchaseCompletedPopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.clickableTable import ClickableTable
+from widgets.settingsManager import SettingName
 
 
 class ItemLocation(Enum):
@@ -179,9 +180,18 @@ class BuyScreenContent(GridLayout):
             creditsBeforePurchase=creditsBeforePurchase,
             creditsAfterPurchase=creditsAfterPurchase,
         ).open()
-        self.screenManager.transitionToScreen(
-            "mainUserPage", transitionDirection="right"
-        )
+
+        if self.screenManager.settingsManager.get_setting_value(
+            settingName=SettingName.AUTO_LOGOUT_AFTER_PURCHASE
+        ):
+            self.screenManager.logout()
+            self.screenManager.transitionToScreen(
+                "splashScreen", transitionDirection="right"
+            )
+        else:
+            self.screenManager.transitionToScreen(
+                "mainUserPage", transitionDirection="right"
+            )
 
     def onCancel(self):
         self.screenManager.transitionToScreen(
