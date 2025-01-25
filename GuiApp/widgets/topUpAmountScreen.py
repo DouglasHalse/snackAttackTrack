@@ -29,8 +29,12 @@ class TopUpAmountScreenContent(GridLayout):
     def onConfirm(self, *largs):
         creditsToAdd = self.getCreditsToAdd()
 
-        if creditsToAdd <= 0.0:
-            ErrorMessagePopup(errorMessage="Invalid amount to add").open()
+        if creditsToAdd < 0.0:
+            ErrorMessagePopup(errorMessage="Cannot add negative amount").open()
+            return
+
+        if creditsToAdd < 1.0:
+            ErrorMessagePopup(errorMessage="Minimum amount is 1.0 Credits").open()
             return
 
         self.screenManager.get_screen("topUpPaymentScreen").setAmountToBePayed(
