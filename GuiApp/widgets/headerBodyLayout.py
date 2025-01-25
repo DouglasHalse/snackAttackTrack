@@ -113,6 +113,7 @@ class HeaderBodyScreen(Screen):
 
     def on_leave(self, *args):
         self.ids["screenLayout"].clear_widgets()
+        Clock.unschedule(self.autoLogout)
         return super().on_leave(*args)
 
     def on_touch_down(self, touch):
