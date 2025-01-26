@@ -44,7 +44,6 @@ class snackAttackTrackApp(App):
         # F12
         if keycode == 293:
             Window.screenshot(name=self.screenManager.current + ".png")
-            # self.sm.export_to_png(self.sm.current + ".png")
             return True
         return False
 

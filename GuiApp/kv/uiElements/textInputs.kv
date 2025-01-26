@@ -30,3 +30,25 @@
 
 <LargeTextInputWithHeader>:
     size_factor: 24
+
+<TextInputPopup>:
+    size_hint: (0.9, 0.9)
+    auto_dismiss: True
+    title: "TextInputPopup"
+    GridLayout:
+        cols: 1
+        GridLayout:
+            cols: 1
+            padding: [90, 0]
+            Widget: # Vertical Spacer
+                size_hint: (1, 1)
+            LargeTextInputWithHeader:
+                id: textInput
+                enableVirtualKeyboardEntry: False
+            Widget: # Vertical Spacer
+                size_hint: (1, 1)
+        GridLayout:
+            rows: 1
+            size_hint: (1, None)
+            height: self.minimum_height
+            id: keyboardLayout

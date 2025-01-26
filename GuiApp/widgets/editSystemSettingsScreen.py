@@ -9,6 +9,7 @@ from widgets.settingsManager import (
     get_presentable_setting_name,
 )
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.uiElements.textInputs import TextInputPopup
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -79,7 +80,14 @@ class FloatSettingRow(GridLayout):
 
     # Validate entry on defocus
     def on_focus(self, instance, value):
-        if not value:
+        if value:
+            TextInputPopup(
+                originalTextInputWidget=self.ids["textInput"],
+                headerText="Edit " + get_presentable_setting_name(self.settingName),
+                hintText="Setting value",
+                inputFilter="float",
+            ).open()
+        else:
             self.validateInput()
 
 
