@@ -58,18 +58,22 @@ class SettingsManager:
             if datatype == SettingDataType.INT.value:
                 if not isinstance(value, int):
                     raise ValueError(
-                        f"Value for {settingName.value} must be an integer"
+                        f"Value for {get_presentable_setting_name(settingName)} must be an integer"
                     )
             elif datatype == SettingDataType.FLOAT.value:
                 if not isinstance(value, (float, int)):
-                    raise ValueError(f"Value for {settingName.value} must be a float")
+                    raise ValueError(
+                        f"Value for {get_presentable_setting_name(settingName)} must be a float"
+                    )
             elif datatype == SettingDataType.BOOL.value:
                 if not isinstance(value, bool):
-                    raise ValueError(f"Value for {settingName.value} must be a boolean")
+                    raise ValueError(
+                        f"Value for {get_presentable_setting_name(settingName)} must be a boolean"
+                    )
 
             if not min_value <= value <= max_value:
                 raise ValueError(
-                    f"Value for {settingName.value} must be between {min_value} and {max_value}"
+                    f"Value for {get_presentable_setting_name(settingName)} must be between {min_value} and {max_value}"
                 )
 
             self.settings[settingName.value]["value"] = value

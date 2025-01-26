@@ -3,6 +3,7 @@ from kivy.uix.gridlayout import GridLayout
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.uiElements.textInputs import TextInputPopup
 
 
 class TopUpAmountScreenContent(GridLayout):
@@ -13,6 +14,16 @@ class TopUpAmountScreenContent(GridLayout):
         self.ids["creditsCurrent"].text = f"{self.userData.totalCredits:.2f}"
         self.ids["creditsAfterwards"].text = f"{self.userData.totalCredits:.2f}"
         self.ids["creditsToAdd"].bind(text=self.updateCreditsAfterwards)
+        self.ids["creditsToAdd"].bind(focus=self.on_focus)
+
+    def on_focus(self, instance, value):
+        if value:
+            TextInputPopup(
+                originalTextInputWidget=self.ids["creditsToAdd"],
+                headerText="Credits to add",
+                hintText="Enter amount",
+                inputFilter="float",
+            ).open()
 
     def getCreditsToAdd(self) -> float:
         creditsToAddStr = self.ids["creditsToAdd"].text
