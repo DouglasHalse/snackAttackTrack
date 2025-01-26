@@ -2,6 +2,7 @@ import os
 import asyncio
 
 from main import snackAttackTrackApp
+from kivy.core.window import Window
 from database import addPatron, addSnack, getAllPatrons, getAllSnacks
 
 
@@ -11,6 +12,8 @@ os.mkdir(PATH)
 
 if os.path.exists("database.db"):
     os.remove("database.db")
+
+Window.size = (800, 480)
 
 app = snackAttackTrackApp()
 
