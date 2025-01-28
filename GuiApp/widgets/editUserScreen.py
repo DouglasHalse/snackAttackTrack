@@ -31,9 +31,6 @@ class EditUserScreenContent(GridLayout):
         newcardId = self.ids["cardIdInput"].getText()
         newCredits = self.ids["creditsInput"].getText()
 
-        if newCredits == "":
-            newCredits = "0.0"
-
         if newFirstName == "":
             ErrorMessagePopup(errorMessage="First name cannot be empty").open()
             return
@@ -46,6 +43,10 @@ class EditUserScreenContent(GridLayout):
             newCredits = float(newCredits)
         except ValueError:
             ErrorMessagePopup(errorMessage="Credits must be a number").open()
+            return
+
+        if newCredits < 0:
+            ErrorMessagePopup(errorMessage="Credits cannot be negative").open()
             return
 
         newUserData = UserData(
