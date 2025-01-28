@@ -1,0 +1,43 @@
+name: Create Raspberry Pi Image
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+  
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+  
+      - name: Create Dockerfile
+        run: |
+          echo -e "FROM balenalib/rpi-raspbian\nRUN apt-get update && apt-get install -y qemu-user-static\nRUN apt-get install -y raspberrypi-ui-mods xserver-xorg-video-fbdev\nRUN curl -sSL https://get.sdm.tools | bash" > Dockerfile
+
+      - name: Build Raspberry Pi Image
+        run: |
+          docker buildx build --platform linux/arm/v7 -t raspberry-pi-image:latest --load .
+  
+      - name: Create Raspberry Pi Image File
+        run: |
+          mkdir -p output
+          docker run --rm --platform linux/arm/v7 -v $(pwd)/output:/output raspberry-pi-image:latest sdm --create /output/raspberry-pi-image.img --size 2048M
+  
+      - name: Upload Raspberry Pi Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: raspberry-pi-image
+          path: output/raspberry-pi-image.img
