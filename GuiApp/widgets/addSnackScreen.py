@@ -2,6 +2,7 @@ from kivy.uix.gridlayout import GridLayout
 
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from database import addSnack
 
 
@@ -14,28 +15,51 @@ class AddSnackScreenContent(GridLayout):
         self.ids["snackPriceInput"].setInputChangedCallback(self.updateText)
 
     def updateText(self, instance, text):
-        # TODO sanitize input
         snackName = self.ids["snackNameInput"].getText()
         if snackName == "":
             snackName = "?"
-        quantity = self.ids["snackQuantityInput"].getText()
-        if quantity == "":
-            quantity = "?"
-        totalPrice = self.ids["snackPriceInput"].getText()
-        pricePerItem = 0
-        if totalPrice == "" or quantity == "?":
-            totalPrice = "?"
-        else:
-            pricePerItem = float(totalPrice) / float(quantity)
+
+        quantityText = self.ids["snackQuantityInput"].getText()
+        try:
+            quantity = int(quantityText)
+        except ValueError:
+            return
+
+        totalPriceText = self.ids["snackPriceInput"].getText()
+        try:
+            totalPrice = float(totalPriceText)
+        except ValueError:
+            return
+
+        pricePerItem = float(totalPrice) / float(quantity)
 
         self.ids["numberOfItemsLabel"].text = f"{quantity} of {snackName}"
         self.ids["pricePerItemLabel"].text = f"{pricePerItem:.2f} credits per item"
 
     def onConfirm(self, *largs):
-        # TODO sanitize input
         snackName = self.ids["snackNameInput"].getText()
-        quantity = int(self.ids["snackQuantityInput"].getText())
-        totalPrice = float(self.ids["snackPriceInput"].getText())
+        if snackName == "":
+            ErrorMessagePopup(errorMessage="Snack Name cannot be empty").open()
+            return
+
+        try:
+            quantity = int(self.ids["snackQuantityInput"].getText())
+        except ValueError:
+            ErrorMessagePopup(errorMessage="Quantity must be a number").open()
+            return
+        if quantity == 0 or quantity < 0:
+            ErrorMessagePopup(errorMessage="Quantity cannot be 0 or negative").open()
+            return
+
+        try:
+            totalPrice = float(self.ids["snackPriceInput"].getText())
+        except ValueError:
+            ErrorMessagePopup(errorMessage="Price must be a number").open()
+            return
+        if totalPrice == 0 or totalPrice < 0:
+            ErrorMessagePopup(errorMessage="Price cannot be 0 or negative").open()
+            return
+
         pricePerItem = totalPrice / float(quantity)
         addSnack(
             itemName=snackName,

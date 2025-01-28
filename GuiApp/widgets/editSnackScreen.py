@@ -4,6 +4,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.popup import Popup
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.popups.errorMessagePopup import ErrorMessagePopup
 
 
 from database import SnackData, updateSnackData, removeSnack
@@ -24,8 +25,30 @@ class EditSnackScreenContent(GridLayout):
 
     def onConfirm(self):
         newSnackName = self.ids["snackNameInput"].getText()
-        newSnackQuantity = self.ids["snackQuantityInput"].getText()
-        newSnackPrice = self.ids["snackPriceInput"].getText()
+        if newSnackName == "":
+            ErrorMessagePopup(errorMessage="Snack Name cannot be empty").open()
+            return
+
+        try:
+            newSnackQuantity = int(self.ids["snackQuantityInput"].getText())
+        except ValueError:
+            ErrorMessagePopup(errorMessage="Quantity must be a number").open()
+            return
+        if newSnackQuantity == 0:
+            ErrorMessagePopup(errorMessage="Quantity cannot be 0").open()
+            return
+        if newSnackQuantity < 0:
+            ErrorMessagePopup(errorMessage="Quantity cannot be negative").open()
+            return
+
+        try:
+            newSnackPrice = float(self.ids["snackPriceInput"].getText())
+        except ValueError:
+            ErrorMessagePopup(errorMessage="Price must be a number").open()
+            return
+        if newSnackPrice < 0:
+            ErrorMessagePopup(errorMessage="Price cannot be negative").open()
+            return
 
         newSnackData = SnackData(
             snackId=self.snackToEdit.snackId,

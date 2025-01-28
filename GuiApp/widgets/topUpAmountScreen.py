@@ -25,20 +25,23 @@ class TopUpAmountScreenContent(GridLayout):
                 inputFilter="float",
             ).open()
 
-    def getCreditsToAdd(self) -> float:
-        creditsToAddStr = self.ids["creditsToAdd"].text
-        if not creditsToAddStr or creditsToAddStr == "-":
-            return 0.0
-        return float(self.ids["creditsToAdd"].text)
-
     def updateCreditsAfterwards(self, instance, text):
         currentCredits = float(self.ids["creditsCurrent"].text)
-        creditsToAdd = self.getCreditsToAdd()
+        try:
+            creditsToAdd = float(self.ids["creditsToAdd"].text)
+        except ValueError:
+            creditsToAdd = 0.0
+
         newTotal = currentCredits + creditsToAdd
         self.ids["creditsAfterwards"].text = f"{newTotal:.2f}"
 
     def onConfirm(self, *largs):
-        creditsToAdd = self.getCreditsToAdd()
+
+        try:
+            creditsToAdd = float(self.ids["creditsToAdd"].text)
+        except ValueError:
+            ErrorMessagePopup(errorMessage="Credits must be a number").open()
+            return
 
         if creditsToAdd < 0.0:
             ErrorMessagePopup(errorMessage="Cannot add negative amount").open()
