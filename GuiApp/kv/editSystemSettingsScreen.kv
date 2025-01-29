@@ -71,6 +71,36 @@
         height: 64
         width: 128
 
+<StringSettingRow>:
+    rows: 1
+    size_hint: (1, None)
+    height: 64
+    padding: [50, 0]
+    canvas.after:
+        Color:
+            rgba: .5, .5, .5, 1
+        Line:
+            width: 2
+            rectangle: self.x, self.y, self.width, self.height
+    Label:
+        id: settingName
+        text: "Settings item"
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        bold: True
+        font_size: "25sp"
+    TextInput:
+        id: textInput
+        write_tab: False
+        multiline: False
+        font_size: 42
+        hint_text: "Enter amount"
+        input_filter: "float"
+        size_hint: (None, None)
+        height: 64
+        width: 128
+
 <SettingsSection>:
     cols: 1
     size_hint: 1, None

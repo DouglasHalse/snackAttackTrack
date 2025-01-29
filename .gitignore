@@ -20,3 +20,6 @@ __pycache__/
 venv/
 database.db
 settings.json
+
+# Generated qr code
+qr.png
