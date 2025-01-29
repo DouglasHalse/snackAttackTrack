@@ -98,6 +98,22 @@ class snackAttackTrackApp(App):
             max_value=0,
         )
 
+        sm.add_setting_if_undefined(
+            settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE,
+            default_value=True,
+            datatype=SettingDataType.BOOL,
+            min_value=0,
+            max_value=1,
+        )
+
+        sm.add_setting_if_undefined(
+            settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_TIME,
+            default_value=10.0,
+            datatype=SettingDataType.FLOAT,
+            min_value=5.0,
+            max_value=600.0,
+        )
+
         return sm
 
     def build(self):

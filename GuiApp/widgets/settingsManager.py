@@ -11,6 +11,8 @@ class SettingName(Enum):
     AUTO_LOGOUT_AFTER_PURCHASE = "auto_logout_after_purchase"
     PURCHASE_FEE = "purchase_fee"
     PAYMENT_SWISH_NUMBER = "payment_swish_number"
+    GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE = "go_to_splash_screen_on_idle_enable"
+    GO_TO_SPLASH_SCREEN_ON_IDLE_TIME = "go_to_splash_screen_on_idle_time"
 
 
 def get_presentable_setting_name(settingName: SettingName):

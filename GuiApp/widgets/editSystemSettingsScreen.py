@@ -145,21 +145,21 @@ class EditSystemSettingsScreenContent(GridLayout):
 
         # Navigation settings
         navigationSection = SettingsSection(sectionName="Navigation")
-        enableAutoLogoutOnPurchase = BoolSettingRow(
+        autoLogoutOnPurchase = BoolSettingRow(
             settingName=SettingName.AUTO_LOGOUT_AFTER_PURCHASE,
             settingManager=self.screenManager.settingsManager,
         )
-        enableAutoLogoutTimeoutEnable = BoolSettingRow(
+        autoLogoutTimeoutEnable = BoolSettingRow(
             settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE,
             settingManager=self.screenManager.settingsManager,
         )
-        enableAutoLogoutTimeoutTime = FloatSettingRow(
+        autoLogoutTimeoutTime = FloatSettingRow(
             settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME,
             settingManager=self.screenManager.settingsManager,
         )
 
         # Disable AUTO_LOGOUT_TIMEOUT if AUTO_LOGOUT_ENABLE is False
-        enableAutoLogoutTimeoutTime.set_disabled(
+        autoLogoutTimeoutTime.set_disabled(
             not self.screenManager.settingsManager.get_setting_value(
                 settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
             )
@@ -168,14 +168,37 @@ class EditSystemSettingsScreenContent(GridLayout):
         # Disable AUTO_LOGOUT_TIMEOUT if AUTO_LOGOUT_ENABLE is changed to False
         self.screenManager.settingsManager.register_on_setting_change_callback(
             SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE,
-            lambda value: enableAutoLogoutTimeoutTime.set_disabled(not value),
+            lambda value: autoLogoutTimeoutTime.set_disabled(not value),
         )
 
-        navigationSection.ids["sectionContent"].add_widget(enableAutoLogoutOnPurchase)
-        navigationSection.ids["sectionContent"].add_widget(
-            enableAutoLogoutTimeoutEnable
+        goToSplashScreenOnIdleEnable = BoolSettingRow(
+            settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE,
+            settingManager=self.screenManager.settingsManager,
         )
-        navigationSection.ids["sectionContent"].add_widget(enableAutoLogoutTimeoutTime)
+
+        goToSplashScreenOnIdleTime = FloatSettingRow(
+            settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_TIME,
+            settingManager=self.screenManager.settingsManager,
+        )
+
+        # Disable GO_TO_SPLASH_SCREEN_ON_IDLE_TIME if GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE is False
+        goToSplashScreenOnIdleTime.set_disabled(
+            not self.screenManager.settingsManager.get_setting_value(
+                settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE
+            )
+        )
+
+        # Disable GO_TO_SPLASH_SCREEN_ON_IDLE_TIME if GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE is changed to False
+        self.screenManager.settingsManager.register_on_setting_change_callback(
+            SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE,
+            lambda value: goToSplashScreenOnIdleTime.set_disabled(not value),
+        )
+
+        navigationSection.ids["sectionContent"].add_widget(autoLogoutOnPurchase)
+        navigationSection.ids["sectionContent"].add_widget(autoLogoutTimeoutEnable)
+        navigationSection.ids["sectionContent"].add_widget(autoLogoutTimeoutTime)
+        navigationSection.ids["sectionContent"].add_widget(goToSplashScreenOnIdleEnable)
+        navigationSection.ids["sectionContent"].add_widget(goToSplashScreenOnIdleTime)
 
         # Finalcial settings
         financialSection = SettingsSection(sectionName="Financial")
