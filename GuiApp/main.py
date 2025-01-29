@@ -59,6 +59,14 @@ class snackAttackTrackApp(App):
         )
 
         sm.add_setting_if_undefined(
+            settingName=SettingName.PURCHASE_FEE,
+            default_value=0.05,
+            datatype=SettingDataType.FLOAT,
+            min_value=0.0,
+            max_value=1.0,
+        )
+
+        sm.add_setting_if_undefined(
             settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE,
             default_value=True,
             datatype=SettingDataType.BOOL,

@@ -118,6 +118,5 @@ class TextInputPopup(Popup):
 
     def on_dismiss(self):
         self.originalTextInputWidget.text = self.ids["textInput"].getText()
-        self.originalTextInputWidget.focus = False
         self.ids["keyboardLayout"].remove_widget(self.kb)
         return super().on_dismiss()

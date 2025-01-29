@@ -58,8 +58,8 @@ class FloatSettingRow(GridLayout):
             settingName=self.settingName
         )
         self.ids["textInput"].text = str(settingValue)
-        self.ids["textInput"].bind(on_text_validate=self.on_enter)
         self.ids["textInput"].bind(focus=self.on_focus)
+        self.ids["textInput"].bind(text=self.on_text)
 
     def validateInput(self):
         try:
@@ -75,10 +75,10 @@ class FloatSettingRow(GridLayout):
             ErrorMessagePopup(str(e)).open()
 
     # Validate entry on enter
-    def on_enter(self, instance):
+    def on_text(self, instance, *largs):
         self.validateInput()
 
-    # Validate entry on defocus
+    # Open popup on focus
     def on_focus(self, instance, value):
         if value:
             TextInputPopup(
@@ -87,8 +87,6 @@ class FloatSettingRow(GridLayout):
                 hintText="Setting value",
                 inputFilter="float",
             ).open()
-        else:
-            self.validateInput()
 
 
 class SettingsSection(GridLayout):
@@ -138,11 +136,11 @@ class EditSystemSettingsScreenContent(GridLayout):
 
         # Finalcial settings
         financialSection = SettingsSection(sectionName="Financial")
-        spillFactor = FloatSettingRow(
-            settingName=SettingName.SPILL_FACTOR,
+        purchaseFee = FloatSettingRow(
+            settingName=SettingName.PURCHASE_FEE,
             settingManager=self.screenManager.settingsManager,
         )
-        financialSection.ids["sectionContent"].add_widget(spillFactor)
+        financialSection.ids["sectionContent"].add_widget(purchaseFee)
 
         # Add sections to the layout
         self.ids["settingsLayout"].add_widget(navigationSection)

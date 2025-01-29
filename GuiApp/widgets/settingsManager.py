@@ -9,6 +9,7 @@ class SettingName(Enum):
     AUTO_LOGOUT_ON_IDLE_ENABLE = "auto_logout_on_idle_enable"
     AUTO_LOGOUT_ON_IDLE_TIME = "auto_logout_on_idle_time"
     AUTO_LOGOUT_AFTER_PURCHASE = "auto_logout_after_purchase"
+    PURCHASE_FEE = "purchase_fee"
 
 
 def get_presentable_setting_name(settingName: SettingName):
