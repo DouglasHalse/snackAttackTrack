@@ -25,20 +25,33 @@
 <LoginScreen>:
     GridLayout:
         cols: 1
-        anchor_x: 'center'
-        size_hint:(1,1)
-        GridLayout:
-            rows: 1
+        padding: [0, 40, 0, 0]
+        Label:
+            halign: 'center'
+            size_hint: (1, None)
+            height: 33
+            font_size: 32
+            color: 'white'
+            bold: True
+            text: "Select or create user"
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
             size_hint: 1, 0.7
             ScrollView:
+                id: scrollView
+                size_hint: 1, None
+                size_hint_min_x: 1
+                height: '130dp'
                 do_scroll_y: False
-                size_hint: 1, 1
                 GridLayout:
-                    size_hint: 1, None
-                    size_hint_y: None
-                    padding: 10, 100, 10, 10
                     id: LoginScreenUserGridLayout
                     rows: 1
+                    spacing: 30
+                    padding: [30, 0]
+                    size_hint_x: None
+                    width: self.minimum_width
+                        
         AnchorLayout:
             size_hint: 1, 0.3
             anchor_x: 'center'
