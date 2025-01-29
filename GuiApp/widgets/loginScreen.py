@@ -1,7 +1,6 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.widget import Widget
 
 from widgets.customScreenManager import CustomScreenManager
 from database import getAllPatrons, UserData
@@ -31,6 +30,7 @@ class LoginScreen(Screen):
 
     def on_pre_enter(self, *args):
         self.AddUsersToLoginScreen()
+        self.ids["scrollView"].scroll_x = 0.5
         return super().on_enter(*args)
 
     def on_leave(self, *args):
@@ -39,14 +39,10 @@ class LoginScreen(Screen):
     def AddUsersToLoginScreen(self):
         userDataList = getAllPatrons()
         if userDataList:
-            self.ids["LoginScreenUserGridLayout"].add_widget(Widget())  # Spacer widget
             for userData in userDataList:
                 self.ids["LoginScreenUserGridLayout"].add_widget(
                     LoginScreenUserWidget(userData=userData, screenManager=self.manager)
                 )
-                self.ids["LoginScreenUserGridLayout"].add_widget(
-                    Widget()
-                )  # Spacer widget
 
     def createNewUserButtonClicked(self, *largs):
         self.manager.transitionToScreen("createUserScreen")
