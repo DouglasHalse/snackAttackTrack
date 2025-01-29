@@ -89,6 +89,49 @@ class FloatSettingRow(GridLayout):
             ).open()
 
 
+class StringSettingRow(GridLayout):
+    def __init__(
+        self, settingName: SettingName, settingManager: SettingsManager, **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.settingManager: SettingsManager = settingManager
+        self.settingName: SettingName = settingName
+        self.ids["settingName"].text = get_presentable_setting_name(self.settingName)
+        settingValue = self.settingManager.get_setting_value(
+            settingName=self.settingName
+        )
+        self.ids["textInput"].text = str(settingValue)
+        self.ids["textInput"].bind(focus=self.on_focus)
+        self.ids["textInput"].bind(text=self.on_text)
+
+    def validateInput(self):
+        try:
+            newValue = str(self.ids["textInput"].text)
+            self.settingManager.set_setting_value(
+                settingName=self.settingName, value=newValue
+            )
+        except (TypeError, ValueError) as e:
+            settingValue = self.settingManager.get_setting_value(
+                settingName=self.settingName
+            )
+            self.ids["textInput"].text = str(settingValue)
+            ErrorMessagePopup(str(e)).open()
+
+    # Validate entry on enter
+    def on_text(self, instance, *largs):
+        self.validateInput()
+
+    # Open popup on focus
+    def on_focus(self, instance, value):
+        if value:
+            TextInputPopup(
+                originalTextInputWidget=self.ids["textInput"],
+                headerText="Edit " + get_presentable_setting_name(self.settingName),
+                hintText="Setting value",
+                inputFilter="float",
+            ).open()
+
+
 class SettingsSection(GridLayout):
     def __init__(self, sectionName: str, **kwargs):
         super().__init__(**kwargs)
@@ -140,7 +183,13 @@ class EditSystemSettingsScreenContent(GridLayout):
             settingName=SettingName.PURCHASE_FEE,
             settingManager=self.screenManager.settingsManager,
         )
+        paymentSwishNumber = StringSettingRow(
+            settingName=SettingName.PAYMENT_SWISH_NUMBER,
+            settingManager=self.screenManager.settingsManager,
+        )
+
         financialSection.ids["sectionContent"].add_widget(purchaseFee)
+        financialSection.ids["sectionContent"].add_widget(paymentSwishNumber)
 
         # Add sections to the layout
         self.ids["settingsLayout"].add_widget(navigationSection)

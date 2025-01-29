@@ -10,6 +10,7 @@ class SettingName(Enum):
     AUTO_LOGOUT_ON_IDLE_TIME = "auto_logout_on_idle_time"
     AUTO_LOGOUT_AFTER_PURCHASE = "auto_logout_after_purchase"
     PURCHASE_FEE = "purchase_fee"
+    PAYMENT_SWISH_NUMBER = "payment_swish_number"
 
 
 def get_presentable_setting_name(settingName: SettingName):
@@ -20,6 +21,7 @@ class SettingDataType(Enum):
     INT = "int"
     FLOAT = "float"
     BOOL = "bool"
+    STRING = "string"
 
 
 class SettingsManager:
@@ -49,6 +51,13 @@ class SettingsManager:
     def get_setting_value(self, settingName: SettingName):
         return self.settings[settingName.value]["value"]
 
+    def is_value_within_range(self, settingName: SettingName, value):
+        return (
+            self.settings[settingName.value]["min_value"]
+            <= value
+            <= self.settings[settingName.value]["max_value"]
+        )
+
     def set_setting_value(self, settingName: SettingName, value):
         if settingName.value in self.settings:
             setting = self.settings[settingName.value]
@@ -61,21 +70,29 @@ class SettingsManager:
                     raise ValueError(
                         f"Value for {get_presentable_setting_name(settingName)} must be an integer"
                     )
+                if not self.is_value_within_range(settingName, value):
+                    raise ValueError(
+                        f"Value for {get_presentable_setting_name(settingName)} must be between {min_value} and {max_value}"
+                    )
             elif datatype == SettingDataType.FLOAT.value:
                 if not isinstance(value, (float, int)):
                     raise ValueError(
                         f"Value for {get_presentable_setting_name(settingName)} must be a float"
+                    )
+                if not self.is_value_within_range(settingName, value):
+                    raise ValueError(
+                        f"Value for {get_presentable_setting_name(settingName)} must be between {min_value} and {max_value}"
                     )
             elif datatype == SettingDataType.BOOL.value:
                 if not isinstance(value, bool):
                     raise ValueError(
                         f"Value for {get_presentable_setting_name(settingName)} must be a boolean"
                     )
-
-            if not min_value <= value <= max_value:
-                raise ValueError(
-                    f"Value for {get_presentable_setting_name(settingName)} must be between {min_value} and {max_value}"
-                )
+            elif datatype == SettingDataType.STRING.value:
+                if not isinstance(value, str):
+                    raise ValueError(
+                        f"Value for {get_presentable_setting_name(settingName)} must be a string"
+                    )
 
             self.settings[settingName.value]["value"] = value
             self.save_settings()
