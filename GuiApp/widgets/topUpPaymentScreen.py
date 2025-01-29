@@ -4,7 +4,6 @@ from kivy.uix.gridlayout import GridLayout
 
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
-from widgets.settingsManager import SettingName
 from database import addCredits, addTopUpTransaction
 
 
@@ -52,10 +51,7 @@ class TopUpPaymentScreen(HeaderBodyScreen):
         self.amountToBePayed = 0.0
 
     def setAmountToBePayed(self, amount: float):
-        spillFactor = self.manager.settingsManager.get_setting_value(
-            settingName=SettingName.SPILL_FACTOR
-        )
-        self.amountToBePayed = amount * spillFactor
+        self.amountToBePayed = amount
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)

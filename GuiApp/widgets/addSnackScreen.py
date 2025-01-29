@@ -3,6 +3,7 @@ from kivy.uix.gridlayout import GridLayout
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.settingsManager import SettingName
 from database import addSnack
 
 
@@ -13,6 +14,11 @@ class AddSnackScreenContent(GridLayout):
         self.ids["snackNameInput"].setInputChangedCallback(self.updateText)
         self.ids["snackQuantityInput"].setInputChangedCallback(self.updateText)
         self.ids["snackPriceInput"].setInputChangedCallback(self.updateText)
+
+        purchaseFee = self.screenManager.settingsManager.get_setting_value(
+            settingName=SettingName.PURCHASE_FEE
+        )
+        self.ids["purchaseFeeLabel"].text = f"including fee of {purchaseFee*100:.2f}%"
 
     def updateText(self, instance, text):
         snackName = self.ids["snackNameInput"].getText()
@@ -30,6 +36,12 @@ class AddSnackScreenContent(GridLayout):
             totalPrice = float(totalPriceText)
         except ValueError:
             return
+
+        purchaseFee = self.screenManager.settingsManager.get_setting_value(
+            settingName=SettingName.PURCHASE_FEE
+        )
+
+        totalPrice *= 1 + purchaseFee
 
         pricePerItem = float(totalPrice) / float(quantity)
 
@@ -59,6 +71,12 @@ class AddSnackScreenContent(GridLayout):
         if totalPrice == 0 or totalPrice < 0:
             ErrorMessagePopup(errorMessage="Price cannot be 0 or negative").open()
             return
+
+        purchaseFee = self.screenManager.settingsManager.get_setting_value(
+            settingName=SettingName.PURCHASE_FEE
+        )
+
+        totalPrice *= 1 + purchaseFee
 
         pricePerItem = totalPrice / float(quantity)
         addSnack(
