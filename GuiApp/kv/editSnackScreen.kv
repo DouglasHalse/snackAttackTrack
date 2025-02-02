@@ -2,26 +2,50 @@
 
 <EditSnackScreenContent>:
     cols: 1
-    padding: 30
+    padding: 20
     spacing: 30
     GridLayout:
         cols: 1
-        padding: [150, 0]
-        spacing: 10
-        LargeTextInputWithHeader:
-            id: snackNameInput
-            header_text: "Snack Name"
-            hint_text: "Enter snack name"
-        LargeTextInputWithHeader:
-            id: snackQuantityInput
-            header_text: "Quantity"
-            hint_text: "Enter quantity"
-            input_filter: "int"
-        LargeTextInputWithHeader:
-            id: snackPriceInput
-            header_text: "Price"
-            hint_text: "Enter price"
-            input_filter: "float"
+        padding: [130, 0]
+        GridLayout:
+            canvas:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                SmoothRoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: app.colors["button"]
+                SmoothRoundedRectangle:
+                    pos: (self.pos[0] + 5, self.pos[1] + 5)
+                    size: (self.width - 10, self.height - 10)
+            canvas.before:
+                Color:
+                    rgba: 0, 0, 0, 0.10
+                BoxShadow:
+                    pos: self.pos
+                    size: self.size
+                    offset: 10, -10
+                    blur_radius: 15
+                    spread_radius: -5, -5
+                    border_radius: 2, 2, 2, 2
+            cols: 1
+            padding: [20, 15]
+            spacing: 10
+            LargeTextInputWithHeader:
+                id: snackNameInput
+                header_text: "Snack Name"
+                hint_text: "Enter snack name"
+            LargeTextInputWithHeader:
+                id: snackQuantityInput
+                header_text: "Quantity"
+                hint_text: "Enter quantity"
+                input_filter: "int"
+            LargeTextInputWithHeader:
+                id: snackPriceInput
+                header_text: "Price"
+                hint_text: "Enter price"
+                input_filter: "float"
 
     GridLayout:
         rows: 1

@@ -6,12 +6,27 @@
     spacing: 30
     BoxLayoutButton:
         on_press: root.onEditSystemSettingsButtonPressed()
-        canvas:
+        canvas.before:
             Color:
-                rgba: 0.2, 0.2, 0.2, 1
-            RoundedRectangle:
+                rgba: 0, 0, 0, 0.10
+            BoxShadow:
                 pos: self.pos
                 size: self.size
+                offset: 10, -10
+                blur_radius: 15
+                spread_radius: -5, -5
+                border_radius: 10, 10, 10, 10
+        canvas:
+            Color:
+                rgba: (1, 1, 1, 1)
+            SmoothRoundedRectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: app.colors["button"]
+            SmoothRoundedRectangle:
+                pos: (self.pos[0] + 5, self.pos[1] + 5)
+                size: (self.width - 10, self.height - 10)
         GridLayout:
             cols: 1
             padding: [0, 90]
@@ -45,12 +60,27 @@
         spacing: 30
         BoxLayoutButton:
             on_press: root.onEditSnacksButtonPressed()
-            canvas:
+            canvas.before:
                 Color:
-                    rgba: 0.2, 0.2, 0.2, 1
-                RoundedRectangle:
+                    rgba: 0, 0, 0, 0.10
+                BoxShadow:
                     pos: self.pos
                     size: self.size
+                    offset: 10, -10
+                    blur_radius: 15
+                    spread_radius: -5, -5
+                    border_radius: 10, 10, 10, 10
+            canvas:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                SmoothRoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: app.colors["button"]
+                SmoothRoundedRectangle:
+                    pos: (self.pos[0] + 5, self.pos[1] + 5)
+                    size: (self.width - 10, self.height - 10)
             GridLayout:
                 cols: 1
                 padding: [0, 20]
@@ -82,12 +112,27 @@
                     height: 30
         BoxLayoutButton:
             on_press: root.onEditUsersButtonPressed()
-            canvas:
+            canvas.before:
                 Color:
-                    rgba: 0.2, 0.2, 0.2, 1
-                RoundedRectangle:
+                    rgba: 0, 0, 0, 0.10
+                BoxShadow:
                     pos: self.pos
                     size: self.size
+                    offset: 10, -10
+                    blur_radius: 15
+                    spread_radius: -5, -5
+                    border_radius: 10, 10, 10, 10
+            canvas:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                SmoothRoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: app.colors["button"]
+                SmoothRoundedRectangle:
+                    pos: (self.pos[0] + 5, self.pos[1] + 5)
+                    size: (self.width - 10, self.height - 10)
             GridLayout:
                 cols: 1
                 padding: [0, 20]

@@ -7,9 +7,34 @@
     GridLayout:
         size_hint: (0.5, 1)
         cols:1
+        spacing: 20
         GridLayout:
+            canvas:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                SmoothRoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: app.colors["button"]
+                SmoothRoundedRectangle:
+                    pos: (self.pos[0] + 5, self.pos[1] + 5)
+                    size: (self.width - 10, self.height - 10)
+            canvas.before:
+                Color:
+                    rgba: 0, 0, 0, 0.10
+                BoxShadow:
+                    pos: self.pos
+                    size: self.size
+                    offset: 10, -10
+                    blur_radius: 15
+                    spread_radius: -5, -5
+                    border_radius: 2, 2, 2, 2
             cols: 1
             spacing: 10
+            padding: 20
+            size_hint: (1, None)
+            height: self.minimum_height
             LargeTextInputWithHeader:
                 id: snackNameInput
                 header_text: "Snack Name"
@@ -47,24 +72,28 @@
             height: 30
             text: "This change will add"
             bold: True
+            color: "black"
         Label:
             id: numberOfItemsLabel
             font_size: "30sp"
             size_hint_y: None
             height: 30
             text: "? of ?"
+            color: "black"
         Label:
             font_size: "30sp"
             size_hint_y: None
             height: 30
             text: "which will cost users"
             bold: True
+            color: "black"
         Label:
             id: pricePerItemLabel
             font_size: "30sp"
             size_hint_y: None
             height: 30
             text: "0.00 credits per item"
+            color: "black"
         Label:
             id: purchaseFeeLabel
             font_size: "30sp"
@@ -72,3 +101,4 @@
             height: 30
             text: "including fee of 5.00%"
             bold: True
+            color: "black"

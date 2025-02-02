@@ -1,10 +1,10 @@
-from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 
 from database import HistoryData
 from widgets.clickableTable import ClickableTable
 
 
-class PurchaseSummaryPopup(Popup):
+class PurchaseSummaryPopup(ModalView):
     def __init__(self, historyData: HistoryData, **kwargs):
         super().__init__(**kwargs)
         self.historyData = historyData

@@ -4,7 +4,7 @@
     size_hint_y: None
     text: 'COLUMN NAME'
     bold: True
-    height: '50dp'
+    height: '40dp'
 
 <ClickableTableColumnEntryLabel>:
     text: 'ENTRY NAME'
@@ -19,12 +19,23 @@
     height: '50dp'
     on_press: root.onPress()
     markup: True
-    canvas.after:
+    canvas:
         Color:
-            rgba: .5, .5, .5, 1
-        Line:
-            width: 2
-            rectangle: self.x, self.y, self.width, self.height
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [(2, 2),(2, 2),(2, 2),(2, 2)]
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 10, -10
+            blur_radius: 15
+            spread_radius: -5, -5
+            border_radius: 2, 2, 2, 2
 
 <ClickableTableCustomEntry>:
     rows: 1
@@ -32,48 +43,72 @@
     height: '50dp'
     on_press: root.onPress()
     markup: True
-    canvas.after:
+    canvas:
         Color:
-            rgba: .5, .5, .5, 1
-        Line:
-            width: 2
-            rectangle: self.x, self.y, self.width, self.height
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [(2, 2),(2, 2),(2, 2),(2, 2)]
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 10, -10
+            blur_radius: 15
+            spread_radius: -5, -5
+            border_radius: 2, 2, 2, 2
 
 <ClickableTable>:
+    canvas:
+        Color:
+            rgba: (1, 1, 1, 1)
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: app.colors["button"]
+        SmoothRoundedRectangle:
+            pos: (self.pos[0] + 5, self.pos[1] + 5)
+            size: (self.width - 10, self.height - 10)
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 10, -10
+            blur_radius: 15
+            spread_radius: -5, -5
+            border_radius: 2, 2, 2, 2
     rows: 1
     spacing: 30
     GridLayout:
         cols: 1
-        spacing: 5
+        size_hint: 1, 1
+        padding: [0, 10]
         GridLayout:
-            cols: 1
-            size_hint: 1, 1
+            rows: 1
+            size_hint: 1, None
+            padding: ["10dp", 0, "10dp", "20dp"]
+            height: '50dp'
+            id: tableHeader
             canvas.after:
                 Color:
-                    rgba: .5, .5, .5, 1
-                Line:
-                    width: 2
-                    rectangle: self.x, self.y, self.width, self.height
-            GridLayout:
-                rows: 1
-                size_hint: 1, None
-                padding: ["10dp", 0]
-                height: '50dp'
-                id: tableHeader
-                canvas.after:
-                    Color:
-                        rgba: .5, .5, .5, 1
-                    Line:
-                        width: 2
-                        rectangle: self.x, self.y, self.width, self.height
+                    rgba: (1, 1, 1, 1)
+                SmoothLine:
+                    width: 2.5
+                    points: (self.x + 2.5, self.y + 2.5, self.x + self.width - 2.5, self.y + 2.5)
 
-            ScrollView:
-                size_hint: 1, 1
-                do_scroll_x: False
-                GridLayout:
-                    id: tableContent
-                    cols: 1
-                    padding: "10dp"
-                    spacing: 10
-                    size_hint_y: None
-                    height: self.minimum_height
+        ScrollView:
+            size_hint: 1, 1
+            do_scroll_x: False
+            GridLayout:
+                id: tableContent
+                cols: 1
+                padding: "10dp"
+                spacing: 10
+                size_hint_y: None
+                height: self.minimum_height

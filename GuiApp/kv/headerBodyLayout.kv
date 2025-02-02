@@ -5,7 +5,7 @@
     size_hint: 1, 0.2
     canvas:
         Color:
-            rgba: 0.8, 0.8, 0.8, 1
+            rgba: 0.392, 0.839, 0.859, 1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -29,29 +29,31 @@
         orientation: "rl-tb"
         rows: 1
         size_hint: 1, 1
-        BoxLayoutButton:
+        GridLayout:
+            rows: 1
             size_hint: None, 1
-            width: '120dp'
-            on_press: root.onLogoutButtonPressed()
-            canvas:
-                Color:
-                    rgba: 0.7, 0.1, 0.1, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-            
-            Label:
-                text: 'Log out'
-                font_size: "28sp"
-                bold: True
-                size_hint: (1, 1)
+            width: '130dp'
+            padding: 10
+            BoxLayoutButton:
+                on_press: root.onLogoutButtonPressed()
+                canvas:
+                    Color:
+                        rgba: app.colors["red_button"]
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                Label:
+                    text: 'Log out'
+                    font_size: "28sp"
+                    bold: True
+                    size_hint: (1, 1)
 
 <Body>:
     rows: 1
     size_hint: (1, 1)
     canvas:
         Color:
-            rgba: 0.3, 0.3, 0.3, 1
+            rgba: app.colors["background"]
         Rectangle:
             pos: self.pos
             size: self.size
