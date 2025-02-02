@@ -1,9 +1,9 @@
-from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 
 from database import HistoryData
 
 
-class EditSummaryPopup(Popup):
+class EditSummaryPopup(ModalView):
     def __init__(self, historyData: HistoryData, **kwargs):
         super().__init__(**kwargs)
         self.historyData = historyData

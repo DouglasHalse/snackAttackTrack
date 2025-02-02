@@ -1,51 +1,76 @@
 <CreateUserScreen>:
-    canvas:
-        Color:
-            rgba: 0.3, 0.3, 0.3, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
     GridLayout:
         cols: 1
-        padding: [100, 50, 100, 0]
-        spacing: 25
-
-        Label:
-            text: "Create New User"
-            bold: True
-            font_size: 32
-            size_hint_y: None
-            height: 32
-
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
         GridLayout:
             cols: 1
-            spacing: 10
-            size_hint_y: None
-            height: self.minimum_height
-            LargeTextInputWithHeader:
-                id: firstNameInput
-                header_text: "First name"
-                hint_text: "Enter first name"
-            LargeTextInputWithHeader:
-                id: lastNameInput
-                header_text: "Last name"
-                hint_text: "Enter last name"
-            LargeTextInputWithHeader:
-                id: cardIdInput
-                header_text: "Login card"
-                hint_text: "Blipp card to register (optional)"
-                disable_input: True
-
-        GridLayout:
-            rows: 1
-            size_hint_y: None
-            height: self.minimum_height
+            padding: [100, 30, 100, 0]
             spacing: 20
 
-            LargeRegisterButton:
-                on_press: root.registerUser()
-            Widget: # Horizontal Spacer
-                size_hint: (1, None)
-                height: 100
-            LargeCancelButton:
-                on_press: root.cancel()
+            Label:
+                text: "Create New User"
+                bold: True
+                font_size: 32
+                size_hint_y: None
+                color: 'black'
+                height: 32
+
+            GridLayout:
+                canvas:
+                    Color:
+                        rgba: (1, 1, 1, 1)
+                    SmoothRoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                    Color:
+                        rgba: app.colors["button"]
+                    SmoothRoundedRectangle:
+                        pos: (self.pos[0] + 5, self.pos[1] + 5)
+                        size: (self.width - 10, self.height - 10)
+                canvas.before:
+                    Color:
+                        rgba: 0, 0, 0, 0.10
+                    BoxShadow:
+                        pos: self.pos
+                        size: self.size
+                        offset: 10, -10
+                        blur_radius: 15
+                        spread_radius: -5, -5
+                        border_radius: 2, 2, 2, 2
+                cols: 1
+                spacing: 10
+                padding: [20, 20]
+                size_hint_y: None
+                height: self.minimum_height
+                LargeTextInputWithHeader:
+                    id: firstNameInput
+                    header_text: "First name"
+                    hint_text: "Enter first name"
+                LargeTextInputWithHeader:
+                    id: lastNameInput
+                    header_text: "Last name"
+                    hint_text: "Enter last name"
+                LargeTextInputWithHeader:
+                    id: cardIdInput
+                    header_text: "Login card"
+                    hint_text: "Blipp card to register (optional)"
+                    disable_input: True
+
+            GridLayout:
+                rows: 1
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 20
+
+                LargeRegisterButton:
+                    on_press: root.registerUser()
+                Widget: # Horizontal Spacer
+                    size_hint: (1, None)
+                    height: 100
+                LargeCancelButton:
+                    on_press: root.cancel()

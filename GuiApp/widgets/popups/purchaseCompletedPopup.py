@@ -1,11 +1,11 @@
 from time import time
 
-from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 from kivy.animation import AnimationTransition
 from kivy.clock import Clock
 
 
-class PurchaseCompletedPopup(Popup):
+class PurchaseCompletedPopup(ModalView):
     def __init__(
         self, creditsBeforePurchase: float, creditsAfterPurchase: float, **kwargs
     ):

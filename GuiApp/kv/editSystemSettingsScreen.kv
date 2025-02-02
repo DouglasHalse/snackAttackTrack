@@ -7,12 +7,23 @@
     size_hint: (1, None)
     height: 64
     padding: [50, 0]
-    canvas.after:
+    canvas:
         Color:
-            rgba: .5, .5, .5, 1
-        Line:
-            width: 2
-            rectangle: self.x, self.y, self.width, self.height
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [(2, 2),(2, 2),(2, 2),(2, 2)]
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 10, -10
+            blur_radius: 15
+            spread_radius: -5, -5
+            border_radius: 2, 2, 2, 2
     Label:
         id: settingName
         text: "Settings item"
@@ -46,12 +57,23 @@
     size_hint: (1, None)
     height: 64
     padding: [50, 0]
-    canvas.after:
+    canvas:
         Color:
-            rgba: .5, .5, .5, 1
-        Line:
-            width: 2
-            rectangle: self.x, self.y, self.width, self.height
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [(2, 2),(2, 2),(2, 2),(2, 2)]
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 10, -10
+            blur_radius: 15
+            spread_radius: -5, -5
+            border_radius: 2, 2, 2, 2
     Label:
         id: settingName
         text: "Settings item"
@@ -76,12 +98,23 @@
     size_hint: (1, None)
     height: 64
     padding: [50, 0]
-    canvas.after:
+    canvas:
         Color:
-            rgba: .5, .5, .5, 1
-        Line:
-            width: 2
-            rectangle: self.x, self.y, self.width, self.height
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [(2, 2),(2, 2),(2, 2),(2, 2)]
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 10, -10
+            blur_radius: 15
+            spread_radius: -5, -5
+            border_radius: 2, 2, 2, 2
     Label:
         id: settingName
         text: "Settings item"
@@ -127,23 +160,31 @@
 <EditSystemSettingsScreenContent>:
     rows: 1
     size_hint: (1, 1)
-    padding: '20dp'
-    canvas:
-        Color:
-            rgba: 0.3, 0.3, 0.3, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    
+    padding: '20dp'    
     GridLayout:
         rows: 1
         padding: 10
-        canvas.after:
+        canvas.before:
             Color:
-                rgba: .5, .5, .5, 1
-            Line:
-                width: 2
-                rectangle: self.x, self.y, self.width, self.height
+                rgba: 0, 0, 0, 0.10
+            BoxShadow:
+                pos: self.pos
+                size: self.size
+                offset: 10, -10
+                blur_radius: 15
+                spread_radius: -5, -5
+                border_radius: 10, 10, 10, 10
+        canvas:
+            Color:
+                rgba: (1, 1, 1, 1)
+            SmoothRoundedRectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: app.colors["button"]
+            SmoothRoundedRectangle:
+                pos: (self.pos[0] + 5, self.pos[1] + 5)
+                size: (self.width - 10, self.height - 10)
         ScrollView:
             size_hint: 1, 1
             do_scroll_x: False

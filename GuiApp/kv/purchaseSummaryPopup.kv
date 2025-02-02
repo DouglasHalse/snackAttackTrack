@@ -20,7 +20,12 @@
 <PurchaseSummaryPopup>:
     size_hint: (0.8, 0.9)
     auto_dismiss: True
-    title: "Purchase summary"
+    canvas:
+        Color:
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
     GridLayout:
         cols: 1
         padding: '10dp'

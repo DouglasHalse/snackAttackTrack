@@ -3,31 +3,53 @@
 <EditUserScreenContent>:
     cols: 1
     padding: 20
-    spacing: 60
+    spacing: 20
     GridLayout:
         cols: 1
-        size_hint_y: None
-        height: self.minimum_height
-        padding: [150, 0]
-        spacing: 10
-        TextInputWithHeader:
-            id: firstNameInput
-            header_text: "First name"
-            hint_text: "Enter first name"
-        TextInputWithHeader:
-            id: lastNameInput
-            header_text: "Last name"
-            hint_text: "Enter last name"
-        TextInputWithHeader:
-            id: creditsInput
-            header_text: "Credits"
-            hint_text: "Enter credits"
-            input_filter: "float"
-        TextInputWithHeader:
-            id: cardIdInput
-            header_text: "Login card"
-            hint_text: "Blipp card to register (optional)"
-            disable_input: True
+        padding: [130, 10]
+        GridLayout:
+            canvas:
+                Color:
+                    rgba: (1, 1, 1, 1)
+                SmoothRoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: app.colors["button"]
+                SmoothRoundedRectangle:
+                    pos: (self.pos[0] + 5, self.pos[1] + 5)
+                    size: (self.width - 10, self.height - 10)
+            canvas.before:
+                Color:
+                    rgba: 0, 0, 0, 0.10
+                BoxShadow:
+                    pos: self.pos
+                    size: self.size
+                    offset: 10, -10
+                    blur_radius: 15
+                    spread_radius: -5, -5
+                    border_radius: 2, 2, 2, 2
+            cols: 1
+            padding: [20, 10]
+            spacing: 10
+            TextInputWithHeader:
+                id: firstNameInput
+                header_text: "First name"
+                hint_text: "Enter first name"
+            TextInputWithHeader:
+                id: lastNameInput
+                header_text: "Last name"
+                hint_text: "Enter last name"
+            TextInputWithHeader:
+                id: creditsInput
+                header_text: "Credits"
+                hint_text: "Enter credits"
+                input_filter: "float"
+            TextInputWithHeader:
+                id: cardIdInput
+                header_text: "Login card"
+                hint_text: "Blipp card to register (optional)"
+                disable_input: True
     GridLayout:
         rows: 1
         size_hint: (1, None)

@@ -38,6 +38,15 @@ class snackAttackTrackApp(App):
         self.screenManager = CustomScreenManager(settingsManager=self.settingsManager)
         self.use_inspector = use_inspector
         Window.bind(on_key_down=self._on_keyboard_down)
+        self.colors = {
+            "background": (165 / 255, 231 / 255, 234 / 255, 1),
+            "secondary_background": (8 / 255, 127 / 255, 140 / 255, 1),
+            "button": (252 / 255, 172 / 255, 196 / 255, 1),
+            "green_button": (92 / 255, 179 / 255, 56 / 255, 1),
+            "yellow_button": (236 / 255, 232 / 255, 82 / 255, 1),
+            "orange_button": (255 / 255, 193 / 255, 69 / 255, 1),
+            "red_button": (251 / 255, 65 / 255, 65 / 255, 1),
+        }
         super().__init__()
 
     def _on_keyboard_down(self, _, keycode, _1, _2, _3):
