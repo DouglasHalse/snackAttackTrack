@@ -73,7 +73,13 @@ def createAllTables():
             FirstName TEXT NOT NULL,
             LastName TEXT NOT NULL,
             EmployeeID TEXT NOT NULL,
+            CardId TEXT UNIQUE, -- CardId debe ser único
             TotalCredits REAL NOT NULL DEFAULT 0
+        );
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS ValidCards (
+            CardId TEXT PRIMARY KEY -- Almacena los CardIds válidos
         );
         """,
         """
@@ -331,7 +337,7 @@ def getAllPatrons() -> list[UserData]:
         firstName = userEntry[1]
         lastName = userEntry[2]
         employeeID = userEntry[3]
-        totalCredits = userEntry[4]
+        totalCredits = 0
         userData = UserData(patronId, firstName, lastName, employeeID, totalCredits)
         userDataList.append(userData)
     return userDataList
@@ -346,7 +352,7 @@ def getPatronData(patronID: int) -> UserData:
     firstName = sqlResult[1]
     lastName = sqlResult[2]
     employeeID = sqlResult[3]
-    totalCredits = sqlResult[4]
+    totalCredits = 0
     return UserData(patronId, firstName, lastName, employeeID, totalCredits)
 
 
@@ -482,6 +488,91 @@ def addCredits(userId: int, amount: float):
     )
     conn.commit()
 
+def registerValidCard(card_id: str):
+    """
+    Add a new valid CardId to the database.
+    """
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT INTO ValidCards (CardId)
+            VALUES (?)
+            """,
+            (card_id,),
+        )
+        conn.commit()
+    except sqlite3.IntegrityError:
+        print(f"CardId {card_id} already exists in ValidCards.")
+
+def VerifyUsedCardId(first_name: str, last_name: str, employee_id: str, card_id: str):
+    """
+    Add a new patron to the database.
+    Ensures that the CardId is valid and not already in use.
+    """
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    # Verificar si el CardId es válido
+    cursor.execute(
+        """
+        SELECT * FROM ValidCards WHERE CardId = ?
+        """,
+        (card_id,),
+    )
+    valid_card = cursor.fetchone()
+
+    if not valid_card:
+        raise ValueError(f"CardId {card_id} is not registered as a valid card.")
+
+    # Verificar si el CardId ya está en uso
+    cursor.execute(
+        """
+        SELECT * FROM Patrons WHERE CardId = ?
+        """,
+        (card_id,),
+    )
+    existing_card = cursor.fetchone()
+
+    if existing_card:
+        raise ValueError(f"CardId {card_id} is already in use by another user.")
+
+    # Registrar al usuario
+    cursor.execute(
+        """
+        INSERT INTO Patrons (FirstName, LastName, EmployeeID, CardId)
+        VALUES (?, ?, ?, ?)
+        """,
+        (first_name, last_name, employee_id, card_id),
+    )
+    conn.commit()
+
+
+def getAvailableCards() -> list[str]:
+    """
+    Get a list of all unused valid CardIds.
+    """
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT CardId FROM ValidCards
+        WHERE CardId NOT IN (SELECT CardId FROM Patrons)
+        """
+    )
+    available_cards = cursor.fetchall()
+    return [card[0] for card in available_cards]
+
+def getAllCards() -> list[str]:
+    """
+    Devuelve una lista de todas las tarjetas registradas.
+    """
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT CardId FROM Cards")
+    cards = cursor.fetchall()
+    return [card[0] for card in cards]
 
 def closeDatabase():
     sqlite3.connect("database.db").cursor().close()

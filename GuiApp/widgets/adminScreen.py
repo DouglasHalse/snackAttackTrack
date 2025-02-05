@@ -17,7 +17,9 @@ class AdminScreenContent(GridLayout):
 
     def onEditUsersButtonPressed(self, *largs):
         self.screenManager.transitionToScreen("editUsersScreen")
-
+    
+    def registerCardIdtoDataBase(self, *largs):
+        self.screenManager.transitionToScreen("registerCardIdScreen")
 
 class AdminScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):

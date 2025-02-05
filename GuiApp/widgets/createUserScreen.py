@@ -1,8 +1,6 @@
-#!/usr/bin/env python
-
 import threading
-import RPi.GPIO as GPIO
-from mfrc522 import SimpleMFRC522
+# import RPi.GPIO as GPIO
+# from mfrc522 import SimpleMFRC522
 from kivy.uix.screenmanager import Screen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from database import addPatron
@@ -17,16 +15,16 @@ class CreateUserScreen(Screen):
     def start_reader(self):
         """Start the RFID reader in a separate thread."""
         def reader_task():
-            reader = SimpleMFRC522()
+            # reader = SimpleMFRC522()
             try:
                 while self.running:
-                    id, text = reader.read()
+                    # id, text = reader.read()
                     self.cardId = id
                     self.ids.cardIdInput.setText(str(id))  # Update the UI with the card ID
             except Exception as e:
-                print(f"Error reading RFID: {e}")
-            finally:
-                GPIO.cleanup()
+                 print(f"Error reading RFID: {e}")
+            # finally:
+            #     GPIO.cleanup()
 
         self.running = True
         self.reader_thread = threading.Thread(target=reader_task, daemon=True)

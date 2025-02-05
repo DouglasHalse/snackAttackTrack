@@ -12,6 +12,7 @@ from widgets.createUserScreen import CreateUserScreen
 from widgets.adminScreen import AdminScreen
 from widgets.editSnacksScreen import EditSnacksScreen
 from widgets.editUsersScreen import EditUsersScreen
+from widgets.RegisterCardIdScreen import RegisterCardIdScreen
 from widgets.addSnackScreen import AddSnackScreen
 from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
@@ -46,7 +47,7 @@ class snackAttackTrackApp(App):
             "yellow_button": (236 / 255, 232 / 255, 82 / 255, 1),
             "orange_button": (255 / 255, 193 / 255, 69 / 255, 1),
             "red_button": (251 / 255, 65 / 255, 65 / 255, 1),
-        }
+        }               
         super().__init__()
 
     def _on_keyboard_down(self, _, keycode, _1, _2, _3):
@@ -135,6 +136,7 @@ class snackAttackTrackApp(App):
         self.screenManager.add_widget(AdminScreen(name="adminScreen"))
         self.screenManager.add_widget(EditSnacksScreen(name="editSnacksScreen"))
         self.screenManager.add_widget(EditUsersScreen(name="editUsersScreen"))
+        self.screenManager.add_widget(RegisterCardIdScreen(name="registerCardIdScreen"))
         self.screenManager.add_widget(AddSnackScreen(name="addSnackScreen"))
         self.screenManager.add_widget(TopUpAmountScreen(name="topUpAmountScreen"))
         self.screenManager.add_widget(TopUpPaymentScreen(name="topUpPaymentScreen"))

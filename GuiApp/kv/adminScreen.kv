@@ -162,3 +162,41 @@
                     font_size: "30sp"
                     size_hint_y: None
                     height: 30
+        BoxLayoutButton:
+                on_press: root.registerCardIdtoDataBase()
+                canvas:
+                    Color:
+                        rgba: 0.2, 0.2, 0.2, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                GridLayout:
+                    cols: 1
+                    padding: [0, 90]
+                    GridLayout:
+                        rows: 1
+                        size_hint: (1, None)
+                        padding: [70, 0]
+                        Image:
+                            size_hint: (None, None)
+                            height: 98
+                            width: 98
+                            source: 'Images/user.png'
+                        Widget: # Horizontal Spacer
+                            size_hint: (1, None)
+                            height: 98
+                        Image:
+                            size_hint: (None, None)
+                            height: 98
+                            width: 98
+                            source: 'Images/wrench-alt.png'
+                    Widget: # Vertical Spacer
+                        size_hint: (1, 1)
+                    Label:
+                        text: 'Register CardId'
+                        bold: True
+                        font_size: "30sp"
+                        size_hint_y: None
+                        height: 30
+
+
