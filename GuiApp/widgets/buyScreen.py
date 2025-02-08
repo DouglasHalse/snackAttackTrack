@@ -36,12 +36,12 @@ class BuyScreenContent(GridLayout):
 
         self.snackListInventory = ClickableTable(
             columns=["Snack name", "Quantity", "Price"],
-            columnExamples=["Long snack name", "Quantity", "Price"],
+            columnExamples=["Long snack name", "30", "15.00"],
             onEntryPressedCallback=self.itemClickedInInventory,
         )
         self.snackListShoppingCart = ClickableTable(
             columns=["Snack name", "Quantity", "Price"],
-            columnExamples=["Long snack name", "Quantity", "Price"],
+            columnExamples=["Long snack name", "30", "15.00"],
             onEntryPressedCallback=self.itemClickedInShoppingCart,
         )
 
@@ -53,14 +53,59 @@ class BuyScreenContent(GridLayout):
     def itemClickedInInventory(self, snackId: int):
         self.snackDict[snackId][ItemLocation.INVENTORY] -= 1
         self.snackDict[snackId][ItemLocation.SHOPPINGCART] += 1
-        self.updateSnackLists()
+        self.updateSnackLists2(snackId=snackId)
         self.updateTotalPrice()
 
     def itemClickedInShoppingCart(self, snackId: int):
         self.snackDict[snackId][ItemLocation.SHOPPINGCART] -= 1
         self.snackDict[snackId][ItemLocation.INVENTORY] += 1
-        self.updateSnackLists()
+        self.updateSnackLists2(snackId=snackId)
         self.updateTotalPrice()
+
+    def updateSnackLists2(self, snackId: int):
+        snackData = getSnack(snackId)
+
+        if self.snackDict[snackId][ItemLocation.INVENTORY] == 0:
+            self.snackListInventory.removeEntry(entryIdentifier=snackId)
+        elif self.snackListInventory.hasEntry(entryIdentifier=snackId):
+            self.snackListInventory.updateEntry(
+                entryIdentifier=snackId,
+                newEntryContents=[
+                    snackData.snackName,
+                    str(self.snackDict[snackId][ItemLocation.INVENTORY]),
+                    f"{snackData.pricePerItem:.2f}",
+                ],
+            )
+        else:
+            self.snackListInventory.addEntry(
+                entryContents=[
+                    snackData.snackName,
+                    str(self.snackDict[snackId][ItemLocation.INVENTORY]),
+                    f"{snackData.pricePerItem:.2f}",
+                ],
+                entryIdentifier=snackId,
+            )
+
+        if self.snackDict[snackId][ItemLocation.SHOPPINGCART] == 0:
+            self.snackListShoppingCart.removeEntry(entryIdentifier=snackId)
+        elif self.snackListShoppingCart.hasEntry(entryIdentifier=snackId):
+            self.snackListShoppingCart.updateEntry(
+                entryIdentifier=snackId,
+                newEntryContents=[
+                    snackData.snackName,
+                    str(self.snackDict[snackId][ItemLocation.SHOPPINGCART]),
+                    f"{snackData.pricePerItem:.2f}",
+                ],
+            )
+        else:
+            self.snackListShoppingCart.addEntry(
+                entryContents=[
+                    snackData.snackName,
+                    str(self.snackDict[snackId][ItemLocation.SHOPPINGCART]),
+                    f"{snackData.pricePerItem:.2f}",
+                ],
+                entryIdentifier=snackId,
+            )
 
     def updateSnackLists(self):
         self.snackListInventory.clearEntries()

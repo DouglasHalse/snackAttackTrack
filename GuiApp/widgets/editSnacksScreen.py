@@ -38,7 +38,7 @@ class EditSnacksScreenContent(GridLayout):
             )
 
         self.snackTable.addCustomEntry(
-            entryContents=["[b]Add a snack +[/b]"],
+            entryContents=["[i]Add a snack +[/i]"],
             onPressCallback=self.onAddSnackEntryPressed,
         )
 
