@@ -1,7 +1,11 @@
+from time import time
+
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.label import Label
+from kivy.clock import Clock
+from kivy.animation import AnimationTransition
 
 import kivy.core.text
 
@@ -20,10 +24,35 @@ class ClickableTableColumnLabel(Label):
         self.text = columnName
 
 
-class ClickableTableColumnEntryLabel(Label):
+class ClickableTableColumnEntryLabel(GridLayout):
     def __init__(self, text: str, **kwargs):
         super().__init__(**kwargs)
-        self.text = text
+        self.ids["entryLabel"].text = text
+        self.ids["scrollView"].scroll_x = 0.0
+        self.animationStartDelay = 1.0
+        self.animationTime = 2.0
+        self.postAnimationTime = 1.0
+        self.timeOfStart = time() + self.animationStartDelay
+        Clock.schedule_interval(self.updateText, 0.01666)
+
+    def updateText(self, dt):
+        timeUsed = time() - self.timeOfStart
+
+        if timeUsed < 0:
+            return
+
+        if timeUsed < self.animationTime:
+            animationTimeProgress = timeUsed / self.animationTime
+            animationState = AnimationTransition.linear(animationTimeProgress)
+            self.ids["scrollView"].scroll_x = animationState
+        else:
+            Clock.unschedule(self.updateText)
+            Clock.schedule_once(self.resetAndStartAnimation, self.postAnimationTime)
+
+    def resetAndStartAnimation(self, dt):
+        self.ids["scrollView"].scroll_x = 0.0
+        self.timeOfStart = time() + self.animationStartDelay
+        Clock.schedule_interval(self.updateText, 0.01666)
 
 
 class ClickableTableEntry(BoxLayoutButton):
@@ -44,7 +73,6 @@ class ClickableTableEntry(BoxLayoutButton):
                 ClickableTableColumnEntryLabel(
                     text=columnText,
                     size_hint_x=columnProportion,
-                    markup=True,
                 )
             )
 
@@ -65,9 +93,7 @@ class ClickableTableCustomEntry(BoxLayoutButton):
         super().__init__(**kwargs)
         self.onPressCallback = onPressCallback
         for columnValue in entryContents:
-            self.add_widget(
-                ClickableTableColumnEntryLabel(text=columnValue, markup=True)
-            )
+            self.add_widget(ClickableTableColumnEntryLabel(text=columnValue))
 
     def onPress(self, *largs):
         """
@@ -150,6 +176,49 @@ class ClickableTable(GridLayout):
                 entryIdentifier=entryIdentifier,
             )
         )
+
+    def hasEntry(self, entryIdentifier):
+        """
+        Check if an entry with the given entryIdentifier exists in the table
+
+        entryIdentifier: any
+            The identifier of the entry to check
+        """
+        for entry in self.ids["tableContent"].children:
+            if entry.entryIdentifier == entryIdentifier:
+                return True
+        return False
+
+    def removeEntry(self, entryIdentifier):
+        """
+        Remove an entry from the table
+
+        entryIdentifier: any
+            The identifier of the entry to remove
+        """
+        for entry in self.ids["tableContent"].children:
+            if entry.entryIdentifier == entryIdentifier:
+                self.ids["tableContent"].remove_widget(entry)
+                return
+        raise ValueError(f"Entry with identifier {entryIdentifier} not found")
+
+    def updateEntry(self, entryIdentifier, newEntryContents: list[str]):
+        """
+        Update the contents of an entry in the table
+
+        entryIdentifier: any
+            The identifier of the entry to update
+        newEntryContents: list[str]
+            The new contents of the row
+        """
+        for entry in self.ids["tableContent"].children:
+            if entry.entryIdentifier == entryIdentifier:
+                for columnLabel, newColumnContent in zip(
+                    entry.children, reversed(newEntryContents)
+                ):
+                    columnLabel.ids["entryLabel"].text = newColumnContent
+                return
+        raise ValueError(f"Entry with identifier {entryIdentifier} not found")
 
     def addCustomEntry(
         self, entryContents: list[str], onPressCallback: callable = None

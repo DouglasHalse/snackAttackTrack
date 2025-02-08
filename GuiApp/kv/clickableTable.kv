@@ -5,13 +5,36 @@
     text: 'COLUMN NAME'
     bold: True
     height: '40dp'
+    font_size: '22dp'
 
 <ClickableTableColumnEntryLabel>:
-    text: 'ENTRY NAME'
-    text_size: self.width, self.height
-    height: self.texture_size[1]
-    halign: "center"
-    valign: 'middle'
+    rows: 1
+    id: entry
+    ScrollView:
+        id: scrollView
+        size_hint_y: None
+        height: '50dp'
+        do_scroll_y: False
+        bar_color: [0, 0, 0, 0]
+        bar_width: 0
+        scroll_type: ['bars']
+        GridLayout:
+            id: scrollViewLayout
+            rows: 1
+            size_hint_x: None
+            width: self.minimum_width
+            Label:
+                id: entryLabel
+                text: 'ENTRY NAME'
+                size_hint_x: None
+                size_hint_y: None
+                height: '50dp'
+                width: max(self.texture_size[0], entry.width)
+                markup: True
+                font_size: '22dp'
+                bold: True
+                halign: "center"
+                valign: 'middle'
 
 <ClickableTableEntry>:
     rows: 1
@@ -19,6 +42,7 @@
     height: '50dp'
     on_press: root.onPress()
     markup: True
+    padding: [10, 0]
     canvas:
         Color:
             rgba: app.colors["secondary_background"]
