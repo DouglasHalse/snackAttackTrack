@@ -483,5 +483,15 @@ def addCredits(userId: int, amount: float):
     conn.commit()
 
 
+def getPatronIdByCardId(cardId: str) -> int:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT PatronID FROM Patrons WHERE EmployeeID = '{cardId}'")
+    sqlResult = cursor.fetchone()
+    if sqlResult:
+        return sqlResult[0]
+    return None
+
+
 def closeDatabase():
     sqlite3.connect("database.db").cursor().close()

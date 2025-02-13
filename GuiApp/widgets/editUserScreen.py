@@ -8,7 +8,14 @@ from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 
-from database import UserData, updatePatronData, removePatron, addEditTransaction
+from database import (
+    UserData,
+    updatePatronData,
+    removePatron,
+    addEditTransaction,
+    getPatronIdByCardId,
+    getPatronData,
+)
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -24,6 +31,10 @@ class EditUserScreenContent(GridLayout):
         self.ids["lastNameInput"].setText(self.patronToEdit.lastName)
         self.ids["creditsInput"].setText(f"{self.patronToEdit.totalCredits:.2f}")
         self.ids["cardIdInput"].setText(self.patronToEdit.employeeID)
+        self.screenManager.registerCardReadCallback(self.cardRead)
+
+    def cardRead(self, cardId, *args):
+        self.ids["cardIdInput"].setText(str(cardId))
 
     def onConfirm(self):
         newFirstName = self.ids["firstNameInput"].getText()
@@ -47,6 +58,19 @@ class EditUserScreenContent(GridLayout):
 
         if newCredits < 0:
             ErrorMessagePopup(errorMessage="Credits cannot be negative").open()
+            return
+
+        existingPatronId = getPatronIdByCardId(newcardId)
+        if (
+            existingPatronId
+            and existingPatronId != self.patronToEdit.patronId
+            and newcardId != ""
+        ):
+            patronWithTheId = getPatronData(existingPatronId)
+            ErrorMessagePopup(
+                errorMessage=f"Card ID is already used by {patronWithTheId.firstName}"
+            ).open()
+            self.ids["cardIdInput"].setText("")
             return
 
         newUserData = UserData(
@@ -94,9 +118,12 @@ class EditUserScreen(HeaderBodyScreen):
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
         self.body.add_widget(EditUserScreenContent(screenManager=self.manager))
+        self.manager.RFIDReader.start()
 
     def on_leave(self, *args):
         super().on_leave(*args)
+        self.manager.RFIDReader.stop()
+        self.manager.unregisterCardReadCallback()
         self.manager.resetPatronToEdit()
 
 
