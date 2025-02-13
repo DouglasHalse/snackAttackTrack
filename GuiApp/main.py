@@ -1,8 +1,16 @@
+import platform
+from datetime import datetime
+import os
 import argparse
+import threading
+import requests
+
+
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.modules import inspector
 from kivy.lang import Builder
+from kivy.clock import Clock
 
 from widgets.customScreenManager import CustomScreenManager
 from widgets.splashScreen import SplashScreenWidget
@@ -21,6 +29,7 @@ from widgets.historyScreen import HistoryScreen
 from widgets.editSnackScreen import EditSnackScreen
 from widgets.editSystemSettingsScreen import EditSystemSettingsScreen
 from widgets.settingsManager import SettingsManager, SettingName, SettingDataType
+from widgets.popups.setTimePopup import SetTimePopup
 from database import createAllTables, closeDatabase
 
 # Disable all the unused-import violations due to .kv files
@@ -47,6 +56,8 @@ class snackAttackTrackApp(App):
             "orange_button": (255 / 255, 193 / 255, 69 / 255, 1),
             "red_button": (251 / 255, 65 / 255, 65 / 255, 1),
         }
+        if platform.system() == "Windows" or os.getenv("GITHUB_ACTIONS") == "true":
+            self.start_time_sync_thread()
         super().__init__()
 
     def _on_keyboard_down(self, _, keycode, _1, _2, _3):
@@ -152,11 +163,31 @@ class snackAttackTrackApp(App):
 
         if self.use_inspector:
             inspector.create_inspector(Window, self.screenManager)
+
         return self.screenManager
+
+    def open_popup(self, dt):
+        SetTimePopup().open()
 
     def on_stop(self):
         closeDatabase()
         return super().on_stop()
+
+    def start_time_sync_thread(self):
+        def sync_time():
+            try:
+                response = requests.get("http://worldtimeapi.org/api/ip")
+                if response.status_code == 200:
+                    internet_time = datetime.fromisoformat(response.json()["datetime"])
+                    system_time = datetime.now()
+                    if abs((internet_time - system_time).total_seconds()) > 5:
+                        os.system(
+                            f"sudo date -s '{internet_time.strftime('%Y-%m-%d %H:%M:%S')}'"
+                        )
+            except requests.RequestException:
+                Clock.schedule_once(self.open_popup, 0)  # Open popup if sync fails
+
+        threading.Thread(target=sync_time, daemon=True).start()
 
 
 def main():

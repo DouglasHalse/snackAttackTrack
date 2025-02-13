@@ -1,0 +1,48 @@
+<SetTimePopup>:
+    size_hint: 0.7, 0.8
+    GridLayout:
+        cols: 1
+        padding: [70, 0]
+        canvas:
+            Color:
+                rgba: (1, 1, 1, 1)
+            SmoothRoundedRectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: app.colors["button"]
+            SmoothRoundedRectangle:
+                pos: (self.pos[0] + 5, self.pos[1] + 5)
+                size: (self.width - 10, self.height - 10)
+        
+        GridLayout:
+            cols: 1
+            padding: [20, 30]
+            spacing: 30
+            Label:
+                #text_size: self.size
+                size_hint_y: None
+                font_size: 32
+                height: 32
+                text: 'Enter Date and Time'
+                bold: True
+            LargeTextInputWithHeader:
+                id: dateInput
+                header_text: "Enter date (YYYY-MM-DD)"
+                hint_text: "1990-01-01"
+            LargeTextInputWithHeader:
+                id: timeInput
+                header_text: "Enter time (HH:MM:SS)"
+                hint_text: "14:23:01"
+
+            GridLayout:
+                rows: 1
+                size_hint: (0.5, None)
+                height: self.minimum_height
+                SmallConfirmButton:
+                    on_press: root.onBuy()
+                Widget: # Horizontal Spacer
+                    size_hint: (1, None)
+                    height: 50
+                SmallCancelButton:
+                    on_press: root.dismiss()
