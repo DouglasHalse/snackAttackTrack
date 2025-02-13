@@ -54,6 +54,10 @@ class snackAttackTrackApp(App):
         if keycode == 293:
             Window.screenshot(name=self.screenManager.current + ".png")
             return True
+        # F11
+        if keycode == 292:
+            self.screenManager.RFIDReader.triggerFakeRead()
+            return True
         return False
 
     def create_settings_manager(self) -> SettingsManager:

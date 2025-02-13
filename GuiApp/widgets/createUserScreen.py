@@ -1,11 +1,13 @@
 from kivy.uix.screenmanager import Screen
 
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
-from database import addPatron
+from database import addPatron, getPatronIdByCardId, getPatronData
 
 
 class CreateUserScreen(Screen):
     def __init__(self, **kwargs):
+        self.cardId = None
+        self.update_event = None
         super().__init__(**kwargs)
 
     def registerUser(self):
@@ -22,6 +24,15 @@ class CreateUserScreen(Screen):
             ErrorMessagePopup(errorMessage="Last Name cannot be empty").open()
             return
 
+        existingPatronId = getPatronIdByCardId(cardId)
+        if existingPatronId and cardId != "":
+            patronWithTheId = getPatronData(existingPatronId)
+            ErrorMessagePopup(
+                errorMessage=f"Card ID is already used by {patronWithTheId.firstName}"
+            ).open()
+            self.ids.cardIdInput.setText("")
+            return
+
         addPatron(firstName, lastName, cardId)
 
         self.manager.transitionToScreen("loginScreen", transitionDirection="right")
@@ -30,7 +41,17 @@ class CreateUserScreen(Screen):
         """Handle the cancel action."""
         self.manager.transitionToScreen("loginScreen", transitionDirection="right")
 
+    def cardRead(self, cardId, *args):
+        self.ids.cardIdInput.setText(str(cardId))
+
+    def on_enter(self, *args):
+        self.manager.registerCardReadCallback(self.cardRead)
+        self.manager.RFIDReader.start()
+        return super().on_enter(*args)
+
     def on_leave(self, *args):
+        self.manager.RFIDReader.stop()
+        self.manager.unregisterCardReadCallback()
         self.ids.firstNameInput.clearText()
         self.ids.lastNameInput.clearText()
         self.ids.cardIdInput.clearText()
