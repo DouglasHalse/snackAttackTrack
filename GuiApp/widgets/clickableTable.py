@@ -28,12 +28,24 @@ class ClickableTableColumnEntryLabel(GridLayout):
     def __init__(self, text: str, **kwargs):
         super().__init__(**kwargs)
         self.ids["entryLabel"].text = text
-        self.ids["scrollView"].scroll_x = 0.0
+        self.widthOverhang = 0.0
+        self.startPosition = 0.0
         self.animationStartDelay = 1.0
         self.animationTime = 2.0
         self.postAnimationTime = 1.0
         self.timeOfStart = time() + self.animationStartDelay
-        Clock.schedule_interval(self.updateText, 0.01666)
+
+        # Need to run this once to get the initial width of the label
+        Clock.schedule_once(self.initLabelWidth, 0)
+
+    def initLabelWidth(self, dt):
+        entryLabelWidth = self.ids["entryLabel"].texture_size[0]
+        # if text label is wider than the entrylabel, then we need to animate the text
+        if entryLabelWidth > self.width:
+            self.widthOverhang = entryLabelWidth - self.width
+            self.ids["entryLabel"].x += self.widthOverhang / 2.0
+            self.startPosition = self.ids["entryLabel"].x
+            Clock.schedule_interval(self.updateText, 0.01666)
 
     def updateText(self, dt):
         timeUsed = time() - self.timeOfStart
@@ -44,13 +56,15 @@ class ClickableTableColumnEntryLabel(GridLayout):
         if timeUsed < self.animationTime:
             animationTimeProgress = timeUsed / self.animationTime
             animationState = AnimationTransition.linear(animationTimeProgress)
-            self.ids["scrollView"].scroll_x = animationState
+            self.ids["entryLabel"].x = (
+                self.startPosition - self.widthOverhang * animationState
+            )
         else:
             Clock.unschedule(self.updateText)
             Clock.schedule_once(self.resetAndStartAnimation, self.postAnimationTime)
 
     def resetAndStartAnimation(self, dt):
-        self.ids["scrollView"].scroll_x = 0.0
+        self.ids["entryLabel"].x = self.startPosition
         self.timeOfStart = time() + self.animationStartDelay
         Clock.schedule_interval(self.updateText, 0.01666)
 
