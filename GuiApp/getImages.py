@@ -39,9 +39,9 @@ async def navigateScreensCoroutine():
     app.screenManager.setSnackToEdit(snacks[0])
 
     for screen in app.screenManager.screens:
-        await asyncio.sleep(DELAY)
         app.screenManager.export_to_png(PATH + app.screenManager.current + ".png")
-        app.screenManager.current = screen.name
+        await asyncio.sleep(DELAY)
+        app.screenManager.transitionToScreen(screen.name)
         await asyncio.sleep(DELAY)
         assert app.screenManager.current == screen.name
 
