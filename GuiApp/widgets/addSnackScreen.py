@@ -97,9 +97,7 @@ class AddSnackScreenContent(GridLayout):
 
 class AddSnackScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
-        super().__init__(
-            previousScreen="editSnacksScreen", enableSettingsButton=True, **kwargs
-        )
+        super().__init__(previousScreen="editSnacksScreen", **kwargs)
         self.headerSuffix = "Add snack screen"
 
     def on_pre_enter(self, *args):
