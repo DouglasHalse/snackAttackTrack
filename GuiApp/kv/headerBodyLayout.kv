@@ -13,22 +13,42 @@
         id: leftContent
         orientation: "lr-tb"
         rows: 1
-        size_hint: 1, 1
-        Label:
-            id: welcomeTextLabel
-            text: 'WelcomeText'
-            halign: 'left'
-            valign: 'middle'
+        size_hint: 0.7, 1
+        GridLayout:
+            cols: 1
             padding: ['20dp', 0, 0, 0]
-            size_hint: (1, 1)
-            text_size: self.size
-            color: 'black'
-            bold: True
+            spacing: 8
+            Widget: # Vertical Spacer
+                size_hint: (1, 1)
+            Label:
+                id: welcomeTextLabel
+                text: 'WelcomeText'
+                halign: 'left'
+                valign: 'middle'
+                size_hint: (1, None)
+                height: 20
+                font_size: 20
+                text_size: self.size
+                color: 'black'
+                bold: True
+            Label:
+                id: patronCreditsLabel
+                text: 'Your credits: 912.40'
+                halign: 'left'
+                valign: 'middle'
+                size_hint: (1, None)
+                height: 20
+                font_size: 20
+                text_size: self.size
+                color: 'black'
+                bold: True
+            Widget: # Vertical Spacer
+                size_hint: (1, 1)
     GridLayout:
         id: rightContent
         orientation: "rl-tb"
         rows: 1
-        size_hint: 1, 1
+        size_hint: 0.3, 1
         GridLayout:
             rows: 1
             size_hint: None, 1
