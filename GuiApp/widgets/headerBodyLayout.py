@@ -25,6 +25,9 @@ class Header(GridLayout):
         self.screenManager: CustomScreenManager = screenManager
         self.currentPatron = self.screenManager.getCurrentPatron()
         self.ids["welcomeTextLabel"].text = f"Welcome {self.currentPatron.firstName}"
+        self.ids[
+            "patronCreditsLabel"
+        ].text = f"Your credits: {self.currentPatron.totalCredits:.2f}"
         if enableSettingsButton:
             self.ids["rightContent"].add_widget(
                 SettingsButton(screenManager=self.screenManager)
