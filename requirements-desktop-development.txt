@@ -1,0 +1,12 @@
+
+kivy[base]
+kivy_examples
+numpy
+pytest
+black
+pylint
+pre-commit
+matplotlib
+numpy
+pillow
+qrcode
