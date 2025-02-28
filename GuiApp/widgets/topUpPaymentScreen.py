@@ -7,6 +7,7 @@ from kivy.uix.image import Image
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.settingsManager import SettingName
+from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
 from database import addCredits, addTopUpTransaction
 
 
@@ -42,6 +43,12 @@ class TopUpPaymentScreenContent(GridLayout):
 
         # Update current patron with new data
         self.screenManager.refreshCurrentPatron()
+
+        CreditsAnimationPopup(
+            title="Thank you for your top-up!",
+            creditsBefore=self.userData.totalCredits,
+            creditsAfter=self.userData.totalCredits + self.amountToBePayed,
+        ).open()
 
         self.screenManager.transitionToScreen(
             "mainUserPage", transitionDirection="right"
