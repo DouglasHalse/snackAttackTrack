@@ -1,6 +1,6 @@
 #:kivy 2.1.0     
 
-<PurchaseCompletedPopup>:
+<CreditsAnimationPopup>:
     size_hint: (0.8, 0.5)
     auto_dismiss: True
     GridLayout:
@@ -22,13 +22,14 @@
             orientation: "vertical"
             size_hint: (1, .9)
             Label:
+                id: titleLabel
                 text_size: self.size
                 padding: 10
                 halign: 'center'
                 valign: 'middle'
                 font_size: 42
                 bold: True
-                text: 'Thank you for your purchase!'
+                text: 'TITLE'
                 
             Label:
                 id: creditsLabel

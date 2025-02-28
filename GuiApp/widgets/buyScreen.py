@@ -12,7 +12,7 @@ from database import (
 )
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
-from widgets.popups.purchaseCompletedPopup import PurchaseCompletedPopup
+from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.clickableTable import ClickableTable
 from widgets.settingsManager import SettingName
@@ -223,9 +223,10 @@ class BuyScreenContent(GridLayout):
         # Update current patron with new data
         self.screenManager.refreshCurrentPatron()
 
-        PurchaseCompletedPopup(
-            creditsBeforePurchase=creditsBeforePurchase,
-            creditsAfterPurchase=creditsAfterPurchase,
+        CreditsAnimationPopup(
+            title="Thank you for your purchase!",
+            creditsBefore=creditsBeforePurchase,
+            creditsAfter=creditsAfterPurchase,
         ).open()
 
         if self.screenManager.settingsManager.get_setting_value(
