@@ -1,5 +1,4 @@
 from kivy.uix.screenmanager import Screen
-from database import getPatronIdByCardId
 
 
 class SplashScreenWidget(Screen):
@@ -17,7 +16,7 @@ class SplashScreenWidget(Screen):
         return super().on_leave(*args)
 
     def cardRead(self, cardId, *args):
-        patronId = getPatronIdByCardId(cardId=cardId)
+        patronId = self.manager.database.get_patron_id_by_card_id(cardId=cardId)
         if patronId is not None:
             self.manager.login(patronId)
             self.manager.transitionToScreen("buyScreen")

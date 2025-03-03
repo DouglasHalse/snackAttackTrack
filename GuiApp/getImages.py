@@ -3,8 +3,6 @@ import asyncio
 
 from main import snackAttackTrackApp
 from kivy.core.window import Window
-from database import addPatron, addSnack, getAllPatrons, getAllSnacks
-
 
 DELAY = 0.5
 PATH = "imagesOutput/"
@@ -22,17 +20,17 @@ async def navigateScreensCoroutine():
 
     await asyncio.sleep(DELAY)
 
-    addPatron("FirstName1", "LastName1", 9001)
-    addPatron("FirstName2", "LastName2", 9002)
-    addPatron("FirstName3", "LastName3", 9003)
-    addSnack("Snack1", 42, "TestImage1", 10)
-    addSnack("Snack2", 5, "TestImage2", 12)
-    addSnack("Snack3", 16, "TestImage3", 15)
+    app.screenManager.database.add_patron("FirstName1", "LastName1", 9001)
+    app.screenManager.database.add_patron("FirstName2", "LastName2", 9002)
+    app.screenManager.database.add_patron("FirstName3", "LastName3", 9003)
+    app.screenManager.database.add_snack("Snack1", 42, "TestImage1", 10)
+    app.screenManager.database.add_snack("Snack2", 5, "TestImage2", 12)
+    app.screenManager.database.add_snack("Snack3", 16, "TestImage3", 15)
 
     await asyncio.sleep(DELAY)
 
-    patrons = getAllPatrons()
-    snacks = getAllSnacks()
+    patrons = app.screenManager.database.get_all_patrons()
+    snacks = app.screenManager.database.get_all_snacks()
 
     app.screenManager.login(patrons[0].patronId)
     app.screenManager.setPatronToEdit(patrons[1])

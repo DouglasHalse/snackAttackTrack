@@ -21,7 +21,6 @@ from widgets.historyScreen import HistoryScreen
 from widgets.editSnackScreen import EditSnackScreen
 from widgets.editSystemSettingsScreen import EditSystemSettingsScreen
 from widgets.settingsManager import SettingsManager, SettingName, SettingDataType
-from database import createAllTables, closeDatabase
 
 # Disable all the unused-import violations due to .kv files
 # pylint: disable=unused-import
@@ -131,7 +130,6 @@ class snackAttackTrackApp(App):
 
     def build(self):
         Builder.load_file("kv/main.kv")
-        createAllTables()
         self.screenManager.add_widget(SplashScreenWidget(name="splashScreen"))
         self.screenManager.add_widget(LoginScreen(name="loginScreen"))
         self.screenManager.add_widget(MainUserScreen(name="mainUserPage"))
@@ -155,7 +153,7 @@ class snackAttackTrackApp(App):
         return self.screenManager
 
     def on_stop(self):
-        closeDatabase()
+        self.screenManager.database.close_database()
         return super().on_stop()
 
 

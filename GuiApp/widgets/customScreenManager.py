@@ -6,9 +6,9 @@ from kivy.properties import StringProperty
 from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 
-from database import UserData, SnackData, getPatronData
 from widgets.settingsManager import SettingsManager
 from RFIDReader import RFIDReader
+from database import UserData, SnackData, Database
 
 # pylint: disable=too-many-instance-attributes
 
@@ -25,6 +25,7 @@ class CustomScreenManager(ScreenManager):
         self.RFIDReader = RFIDReader()
         self._cardReadCallback = None
         self.RFIDReader.registerCallbackFunction(self.onCardRead)
+        self.database = Database()
 
     def registerCardReadCallback(self, function):
         self._cardReadCallback = function
@@ -39,7 +40,7 @@ class CustomScreenManager(ScreenManager):
             )  # call after the next frame
 
     def login(self, patronId):
-        self._currentPatron = getPatronData(patronID=patronId)
+        self._currentPatron = self.database.get_patron_data(patronID=patronId)
 
     def logout(self):
         self._currentPatron = None
@@ -66,7 +67,9 @@ class CustomScreenManager(ScreenManager):
         return self._currentPatron
 
     def refreshCurrentPatron(self):
-        self._currentPatron = getPatronData(patronID=self._currentPatron.patronId)
+        self._currentPatron = self.database.get_patron_data(
+            patronID=self._currentPatron.patronId
+        )
 
     def transitionToScreen(self, screenName, transitionDirection: str = "left"):
         self.transition = SlideTransition(direction=transitionDirection)

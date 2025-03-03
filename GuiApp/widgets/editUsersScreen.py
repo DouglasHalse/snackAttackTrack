@@ -6,9 +6,6 @@ from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.clickableTable import ClickableTable
 
 
-from database import getAllPatrons, getPatronData
-
-
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
     pass
 
@@ -26,7 +23,7 @@ class EditUsersScreenContent(GridLayout):
         self.addUsersFromDatabase()
 
     def addUsersFromDatabase(self):
-        users = getAllPatrons()
+        users = self.screenManager.database.get_all_patrons()
         for user in users:
             self.usersTable.addEntry(
                 entryContents=[
@@ -39,7 +36,7 @@ class EditUsersScreenContent(GridLayout):
             )
 
     def onUserEntryPressed(self, identifier):
-        userToEdit = getPatronData(patronID=identifier)
+        userToEdit = self.screenManager.database.get_patron_data(patronID=identifier)
         self.screenManager.setPatronToEdit(patronToEdit=userToEdit)
         self.screenManager.transitionToScreen("editUserScreen")
 

@@ -7,7 +7,7 @@ from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 
 
-from database import SnackData, updateSnackData, removeSnack
+from database import SnackData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -57,7 +57,9 @@ class EditSnackScreenContent(GridLayout):
             imageID="None",
             pricePerItem=newSnackPrice,
         )
-        updateSnackData(snackId=self.snackToEdit.snackId, newSnackData=newSnackData)
+        self.screenManager.database.update_snack_data(
+            snackId=self.snackToEdit.snackId, newSnackData=newSnackData
+        )
         self.screenManager.transitionToScreen(
             "editSnacksScreen", transitionDirection="right"
         )
@@ -103,7 +105,7 @@ class RemoveSnackConfirmationPopup(Popup):
         self.dismiss()
 
     def onRemove(self):
-        removeSnack(self.snackToRemove.snackId)
+        self.screenManager.database.remove_snack(self.snackToRemove.snackId)
         self.dismiss()
         self.screenManager.transitionToScreen(
             "editSnacksScreen", transitionDirection="right"

@@ -1,11 +1,8 @@
 from kivy.uix.gridlayout import GridLayout
 
-from database import (
-    getTransactions,
-    transactionTypeToPresentableString,
-    getTransaction,
-    TransactionType,
-)
+from database import transactionTypeToPresentableString, TransactionType
+
+
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.purchaseSummaryPopup import PurchaseSummaryPopup
@@ -26,7 +23,9 @@ class HistoryScreenContent(GridLayout):
         )
 
         currentPatron = self.screenManager.getCurrentPatron()
-        self.transactions = getTransactions(currentPatron.patronId)
+        self.transactions = self.screenManager.database.get_transactions(
+            currentPatron.patronId
+        )
 
         # Redorder transactions so that the most recent transactions are at the top
         self.transactions = sorted(
@@ -47,7 +46,7 @@ class HistoryScreenContent(GridLayout):
         self.add_widget(self.historyTable)
 
     def onHistoryEntryPressed(self, transactionId):
-        transaction = getTransaction(transactionId)
+        transaction = self.screenManager.database.get_transaction(transactionId)
         if transaction.transactionType == TransactionType.PURCHASE:
             PurchaseSummaryPopup(historyData=transaction).open()
         elif transaction.transactionType == TransactionType.EDIT:

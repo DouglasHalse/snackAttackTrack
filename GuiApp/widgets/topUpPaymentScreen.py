@@ -8,7 +8,6 @@ from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.settingsManager import SettingName
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
-from database import addCredits, addTopUpTransaction
 
 
 class TopUpPaymentScreenContent(GridLayout):
@@ -33,13 +32,15 @@ class TopUpPaymentScreenContent(GridLayout):
         self.ids["qrCodeLayout"].add_widget(Image(source="qr.png"))
 
     def onConfirm(self, *largs):
-        addTopUpTransaction(
+        self.screenManager.database.add_top_up_transaction(
             patronID=self.userData.patronId,
             amountBeforeTransaction=self.userData.totalCredits,
             amountAfterTransaction=self.userData.totalCredits + self.amountToBePayed,
             transactionDate=datetime.now(),
         )
-        addCredits(self.userData.patronId, self.amountToBePayed)
+        self.screenManager.database.add_credits(
+            self.userData.patronId, self.amountToBePayed
+        )
 
         # Update current patron with new data
         self.screenManager.refreshCurrentPatron()

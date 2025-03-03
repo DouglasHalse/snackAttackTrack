@@ -1,7 +1,6 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
-from database import getAllSnacks, getSnack
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.clickableTable import ClickableTable
@@ -24,7 +23,7 @@ class EditSnacksScreenContent(GridLayout):
         self.addSnacksFromDatabase()
 
     def addSnacksFromDatabase(self):
-        snacks = getAllSnacks()
+        snacks = self.screenManager.database.get_all_snacks()
 
         for snack in snacks:
             self.snackTable.addEntry(
@@ -46,7 +45,7 @@ class EditSnacksScreenContent(GridLayout):
         self.screenManager.transitionToScreen("addSnackScreen")
 
     def onSnackEntryPressed(self, identifier):
-        snackToEdit = getSnack(identifier)
+        snackToEdit = self.screenManager.database.get_snack(identifier)
         self.screenManager.setSnackToEdit(snackToEdit=snackToEdit)
         self.screenManager.transitionToScreen("editSnackScreen")
 

@@ -5,7 +5,7 @@ from kivy.clock import Clock
 
 from widgets.customScreenManager import CustomScreenManager
 from widgets.settingsManager import SettingName
-from database import getAllPatrons, UserData
+from database import UserData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -66,7 +66,7 @@ class LoginScreen(Screen):
         return super().on_touch_down(touch)
 
     def AddUsersToLoginScreen(self):
-        userDataList = getAllPatrons()
+        userDataList = self.manager.database.get_all_patrons()
         if userDataList:
             for userData in userDataList:
                 self.ids["LoginScreenUserGridLayout"].add_widget(

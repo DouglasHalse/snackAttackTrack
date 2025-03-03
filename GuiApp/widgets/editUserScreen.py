@@ -8,14 +8,7 @@ from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 
-from database import (
-    UserData,
-    updatePatronData,
-    removePatron,
-    addEditTransaction,
-    getPatronIdByCardId,
-    getPatronData,
-)
+from database import UserData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -60,13 +53,17 @@ class EditUserScreenContent(GridLayout):
             ErrorMessagePopup(errorMessage="Credits cannot be negative").open()
             return
 
-        existingPatronId = getPatronIdByCardId(newcardId)
+        existingPatronId = self.screenManager.database.get_patron_id_by_card_id(
+            newcardId
+        )
         if (
             existingPatronId
             and existingPatronId != self.patronToEdit.patronId
             and newcardId != ""
         ):
-            patronWithTheId = getPatronData(existingPatronId)
+            patronWithTheId = self.screenManager.database.get_patron_data(
+                existingPatronId
+            )
             ErrorMessagePopup(
                 errorMessage=f"Card ID is already used by {patronWithTheId.firstName}"
             ).open()
@@ -82,14 +79,16 @@ class EditUserScreenContent(GridLayout):
         )
 
         if self.patronToEdit.totalCredits != newCredits:
-            addEditTransaction(
+            self.screenManager.database.add_edit_transaction(
                 patronID=self.patronToEdit.patronId,
                 amountBeforeTransaction=self.patronToEdit.totalCredits,
                 amountAfterTransaction=newCredits,
                 transactionDate=datetime.now(),
             )
 
-        updatePatronData(patronId=self.patronToEdit.patronId, newUserData=newUserData)
+        self.screenManager.database.update_patron_data(
+            patronId=self.patronToEdit.patronId, newUserData=newUserData
+        )
 
         # Update current patron with new data
         self.screenManager.refreshCurrentPatron()
@@ -142,7 +141,7 @@ class RemoveUserConfirmationPopup(Popup):
         self.dismiss()
 
     def onRemove(self):
-        removePatron(self.patronToRemove.patronId)
+        self.screenManager.database.remove_patron(self.patronToRemove.patronId)
         self.dismiss()
         self.screenManager.transitionToScreen(
             "editUsersScreen", transitionDirection="right"

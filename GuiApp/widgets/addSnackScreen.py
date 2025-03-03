@@ -4,7 +4,6 @@ from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
-from database import addSnack
 
 
 class AddSnackScreenContent(GridLayout):
@@ -79,7 +78,7 @@ class AddSnackScreenContent(GridLayout):
         totalPrice *= 1 + purchaseFee
 
         pricePerItem = totalPrice / float(quantity)
-        addSnack(
+        self.screenManager.database.add_snack(
             itemName=snackName,
             quantity=quantity,
             imageID="None",
