@@ -116,8 +116,10 @@
                     points: (self.x + 2.5, self.y + 2.5, self.x + self.width - 2.5, self.y + 2.5)
 
         ScrollView:
+            id: scrollView
             size_hint: 1, 1
             do_scroll_x: False
+            effect_cls: "ScrollEffect"
             GridLayout:
                 id: tableContent
                 cols: 1

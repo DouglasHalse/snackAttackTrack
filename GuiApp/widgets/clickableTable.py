@@ -144,8 +144,12 @@ class ClickableTable(GridLayout):
         super().__init__(**kwargs)
         self.columns = columns
         self.columnProportions = []
+        self.entries = []
+        self.entriesPerLoad = 7
+        self.checkIfScrolledToEndClock = None
 
         if columnExamples:
+            # If column examples are provided, set the column proportions based on the widest content or column name
             assert len(columns) == len(columnExamples)
             columnExampleWidths = []
             for columnExample, columnName in zip(columnExamples, columns):
@@ -158,6 +162,7 @@ class ClickableTable(GridLayout):
             self.columnProportions = [i / columnWidthSum for i in columnExampleWidths]
 
         else:
+            # If no column examples are provided, set the column proportions to be equal
             self.columnProportions = [1 / len(columns) for _ in range(len(columns))]
 
         self.onEntryPressedCallback = onEntryPressedCallback
@@ -167,6 +172,29 @@ class ClickableTable(GridLayout):
                     columnName=columnName, size_hint_x=columnProportion
                 )
             )
+
+    def checkIfScrolledToEnd(self, dt):
+
+        # If the user has scrolled to the end of the table
+        if self.ids["scrollView"].scroll_y <= 0:
+
+            # Unschedule the checkIfScrolledToEnd function
+            self.checkIfScrolledToEndClock.cancel()
+
+            # Load the next entries
+            entriesBeforeLoad = len(self.ids["tableContent"].children)
+            for _ in range(self.entriesPerLoad):
+                self._load_next_entry()
+            entriesAfterLoad = len(self.ids["tableContent"].children)
+
+            # Scroll to the previous position
+            self.ids["scrollView"].scroll_y = 1 - (entriesBeforeLoad / entriesAfterLoad)
+
+            # If there are still entries to load, check if the user has scrolled to the end again
+            if len(self.ids["tableContent"].children) < len(self.entries):
+                self.checkIfScrolledToEndClock = Clock.schedule_interval(
+                    self.checkIfScrolledToEnd, 1 / 30
+                )
 
     def addEntry(self, entryContents: list[str], entryIdentifier):
         """
@@ -182,14 +210,33 @@ class ClickableTable(GridLayout):
                 f"Size of row contents {entryContents} does not match number of columns {self.columns}"
             )
 
-        self.ids["tableContent"].add_widget(
-            ClickableTableEntry(
-                clickableTable=self,
-                entryContents=entryContents,
-                columnProportions=self.columnProportions,
-                entryIdentifier=entryIdentifier,
+        self.entries.append((entryContents, entryIdentifier))
+
+        if len(self.ids["tableContent"].children) < self.entriesPerLoad:
+            self._load_next_entry()
+
+        # Start checking if the user has scrolled to the end
+        if (
+            len(self.ids["tableContent"].children) >= self.entriesPerLoad
+            and self.checkIfScrolledToEndClock is None
+        ):
+            self.checkIfScrolledToEndClock = Clock.schedule_interval(
+                self.checkIfScrolledToEnd, 1 / 30
             )
-        )
+
+    def _load_next_entry(self):
+        if len(self.ids["tableContent"].children) < len(self.entries):
+            entryContents, entryIdentifier = self.entries[
+                len(self.ids["tableContent"].children)
+            ]
+            self.ids["tableContent"].add_widget(
+                ClickableTableEntry(
+                    clickableTable=self,
+                    entryContents=entryContents,
+                    columnProportions=self.columnProportions,
+                    entryIdentifier=entryIdentifier,
+                )
+            )
 
     def hasEntry(self, entryIdentifier):
         """
@@ -198,8 +245,9 @@ class ClickableTable(GridLayout):
         entryIdentifier: any
             The identifier of the entry to check
         """
-        for entry in self.ids["tableContent"].children:
-            if entry.entryIdentifier == entryIdentifier:
+
+        for _, ident in self.entries:
+            if ident == entryIdentifier:
                 return True
         return False
 
@@ -210,11 +258,21 @@ class ClickableTable(GridLayout):
         entryIdentifier: any
             The identifier of the entry to remove
         """
+
+        if not self.hasEntry(entryIdentifier):
+            raise ValueError(f"Entry with identifier {entryIdentifier} not found")
+
+        # Remove the entry from the entries list
+        for entryIndex, (_, ident) in enumerate(self.entries):
+            if ident == entryIdentifier:
+                self.entries.pop(entryIndex)
+                break
+
+        # Remove the entry from the table
         for entry in self.ids["tableContent"].children:
             if entry.entryIdentifier == entryIdentifier:
                 self.ids["tableContent"].remove_widget(entry)
                 return
-        raise ValueError(f"Entry with identifier {entryIdentifier} not found")
 
     def updateEntry(self, entryIdentifier, newEntryContents: list[str]):
         """
@@ -225,6 +283,17 @@ class ClickableTable(GridLayout):
         newEntryContents: list[str]
             The new contents of the row
         """
+
+        if not self.hasEntry(entryIdentifier):
+            raise ValueError(f"Entry with identifier {entryIdentifier} not found")
+
+        # Update the entry in the entries list
+        for entryIndex, (_, ident) in enumerate(self.entries):
+            if ident == entryIdentifier:
+                self.entries[entryIndex] = (newEntryContents, ident)
+                break
+
+        # Update the entry in the table
         for entry in self.ids["tableContent"].children:
             if entry.entryIdentifier == entryIdentifier:
                 for columnLabel, newColumnContent in zip(
@@ -232,7 +301,6 @@ class ClickableTable(GridLayout):
                 ):
                     columnLabel.ids["entryLabel"].text = newColumnContent
                 return
-        raise ValueError(f"Entry with identifier {entryIdentifier} not found")
 
     def addCustomEntry(
         self, entryContents: list[str], onPressCallback: callable = None
@@ -246,17 +314,29 @@ class ClickableTable(GridLayout):
             The callback function that will be called when the custom entry is
             pressed. If not provided, a default print statement will be used
         """
+        self.entries.append((entryContents, None))
+
         self.ids["tableContent"].add_widget(
             ClickableTableCustomEntry(
                 entryContents=entryContents, onPressCallback=onPressCallback
             )
         )
 
+        # Start checking if the user has scrolled to the end
+        if (
+            len(self.ids["tableContent"].children) >= self.entriesPerLoad
+            and self.checkIfScrolledToEndClock is None
+        ):
+            self.checkIfScrolledToEndClock = Clock.schedule_interval(
+                self.checkIfScrolledToEnd, 1 / 30
+            )
+
     def clearEntries(self):
         """
         Clear all entries from the table
         """
         self.ids["tableContent"].clear_widgets()
+        self.entries = []
 
     def onEntryPressed(self, entryIdentifier):
         """
