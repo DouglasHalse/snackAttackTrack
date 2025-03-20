@@ -12,13 +12,15 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class EditSnacksScreenContent(GridLayout):
+    ADD_SNACK_ENTRY_IDENTIFIER = -1
+
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.snackTable = ClickableTable(
             columns=["Snack name", "Quantity", "Price", "Image ID"],
             columnExamples=["Long snack name", "100", "43.43", "AnImageId"],
-            onEntryPressedCallback=self.onSnackEntryPressed,
+            onEntryPressedCallback=self.onEntryPressed,
         )
         self.add_widget(self.snackTable)
         self.addSnacksFromDatabase()
@@ -37,18 +39,24 @@ class EditSnacksScreenContent(GridLayout):
                 entryIdentifier=snack.snackId,
             )
 
-        self.snackTable.addCustomEntry(
+        self.snackTable.addEntry(
             entryContents=["[i]Add a snack +[/i]"],
-            onPressCallback=self.onAddSnackEntryPressed,
+            entryIdentifier=self.ADD_SNACK_ENTRY_IDENTIFIER,
         )
 
     def onAddSnackEntryPressed(self):
         self.screenManager.transitionToScreen("addSnackScreen")
 
-    def onSnackEntryPressed(self, identifier):
-        snackToEdit = getSnack(identifier)
+    def onEditSnackEntryPressed(self, snackId):
+        snackToEdit = getSnack(snackId)
         self.screenManager.setSnackToEdit(snackToEdit=snackToEdit)
         self.screenManager.transitionToScreen("editSnackScreen")
+
+    def onEntryPressed(self, identifier):
+        if identifier == self.ADD_SNACK_ENTRY_IDENTIFIER:
+            self.onAddSnackEntryPressed()
+        else:
+            self.onEditSnackEntryPressed(identifier)
 
 
 class EditSnacksScreen(HeaderBodyScreen):
