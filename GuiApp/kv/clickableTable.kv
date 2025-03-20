@@ -50,29 +50,6 @@
             spread_radius: -5, -5
             border_radius: 2, 2, 2, 2
 
-<ClickableTableCustomEntry>:
-    rows: 1
-    size_hint_y: None
-    height: '50dp'
-    on_press: root.onPress()
-    markup: True
-    canvas:
-        Color:
-            rgba: app.colors["secondary_background"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
-            radius: [(2, 2),(2, 2),(2, 2),(2, 2)]
-    canvas.before:
-        Color:
-            rgba: 0, 0, 0, 0.10
-        BoxShadow:
-            pos: self.pos
-            size: self.size
-            offset: 10, -10
-            blur_radius: 15
-            spread_radius: -5, -5
-            border_radius: 2, 2, 2, 2
 
 <ClickableTable>:
     canvas:
@@ -114,14 +91,14 @@
                 SmoothLine:
                     width: 2.5
                     points: (self.x + 2.5, self.y + 2.5, self.x + self.width - 2.5, self.y + 2.5)
-
-        ScrollView:
-            size_hint: 1, 1
-            do_scroll_x: False
-            GridLayout:
-                id: tableContent
-                cols: 1
-                padding: "10dp"
+        RecycleView:
+            id: rw
+            viewclass: 'ClickableTableEntry'
+            RecycleBoxLayout:
                 spacing: 10
+                padding: 10
+                default_size: None, dp(56)
+                default_size_hint: 1, None
                 size_hint_y: None
                 height: self.minimum_height
+                orientation: 'vertical'

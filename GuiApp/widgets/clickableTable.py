@@ -6,6 +6,7 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.label import Label
 from kivy.clock import Clock
 from kivy.animation import AnimationTransition
+from kivy.uix.recycleview.views import RecycleDataViewBehavior
 
 import kivy.core.text
 
@@ -69,55 +70,47 @@ class ClickableTableColumnEntryLabel(GridLayout):
         Clock.schedule_interval(self.updateText, 0.01666)
 
 
-class ClickableTableEntry(BoxLayoutButton):
-    def __init__(
-        self,
-        clickableTable,
-        entryContents: list[str],
-        columnProportions: list[float],
-        entryIdentifier,
-        **kwargs,
-    ):
-        super().__init__(**kwargs)
-        self.entryIdentifier = entryIdentifier
-        self.clickableTable = clickableTable
-        self.columnProportions = columnProportions
-        for columnText, columnProportion in zip(entryContents, columnProportions):
-            self.add_widget(
-                ClickableTableColumnEntryLabel(
-                    text=columnText,
-                    size_hint_x=columnProportion,
+class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
+    clickableTable = None
+    entryContents = None
+    columnProportions = None
+    entryIdentifier = None
+    index = None
+
+    def refresh_view_attrs(self, rv, index, data):
+        self.clickableTable = data["clickableTable"]
+        self.entryContents = data["entryContents"]
+        self.columnProportions = data["columnProportions"]
+        self.entryIdentifier = data["entryIdentifier"]
+        self.index = index
+
+        # If the entry has children, then we can reuse them
+        if len(self.children) == len(self.entryContents):
+            reversedContents = list(reversed(self.entryContents))
+            reversedColumnProportions = list(reversed(self.columnProportions))
+            for child, columnText, columnProportion in zip(
+                self.children, reversedContents, reversedColumnProportions
+            ):
+                child.ids["entryLabel"].text = columnText
+                child.size_hint_x = columnProportion
+        else:
+            self.clear_widgets()
+            for columnText, columnProportion in zip(
+                self.entryContents, self.columnProportions
+            ):
+                self.add_widget(
+                    ClickableTableColumnEntryLabel(
+                        text=columnText,
+                        size_hint_x=columnProportion,
+                    )
                 )
-            )
+        super().refresh_view_attrs(rv, index, data)
 
     def onPress(self, *largs):
         """
         Call the onEntryPressed function of the clickableTable with the entryIdentifier of the pressed entry on the table
         """
         self.clickableTable.onEntryPressed(entryIdentifier=self.entryIdentifier)
-
-
-class ClickableTableCustomEntry(BoxLayoutButton):
-    def __init__(
-        self,
-        entryContents: list[str],
-        onPressCallback: callable = None,
-        **kwargs,
-    ):
-        super().__init__(**kwargs)
-        self.onPressCallback = onPressCallback
-        for columnValue in entryContents:
-            self.add_widget(ClickableTableColumnEntryLabel(text=columnValue))
-
-    def onPress(self, *largs):
-        """
-        Call the onPressCallback when the custom entry is pressed
-        if the onPressCallback is not provided, print a default message
-        """
-        if self.onPressCallback:
-            self.onPressCallback()
-        else:
-            print("Custom entry pressed")
 
 
 class ClickableTable(GridLayout):
@@ -177,18 +170,13 @@ class ClickableTable(GridLayout):
         entryIdentifier: any
             The identifier of the row that will be passed to the onEntryPressedCallback when the entry is pressed
         """
-        if len(entryContents) != len(self.columns):
-            raise ValueError(
-                f"Size of row contents {entryContents} does not match number of columns {self.columns}"
-            )
-
-        self.ids["tableContent"].add_widget(
-            ClickableTableEntry(
-                clickableTable=self,
-                entryContents=entryContents,
-                columnProportions=self.columnProportions,
-                entryIdentifier=entryIdentifier,
-            )
+        self.ids["rw"].data.append(
+            {
+                "clickableTable": self,
+                "entryContents": entryContents,
+                "columnProportions": self.columnProportions,
+                "entryIdentifier": entryIdentifier,
+            }
         )
 
     def hasEntry(self, entryIdentifier):
@@ -198,8 +186,9 @@ class ClickableTable(GridLayout):
         entryIdentifier: any
             The identifier of the entry to check
         """
-        for entry in self.ids["tableContent"].children:
-            if entry.entryIdentifier == entryIdentifier:
+
+        for entry in self.ids["rw"].data:
+            if entry["entryIdentifier"] == entryIdentifier:
                 return True
         return False
 
@@ -210,9 +199,9 @@ class ClickableTable(GridLayout):
         entryIdentifier: any
             The identifier of the entry to remove
         """
-        for entry in self.ids["tableContent"].children:
-            if entry.entryIdentifier == entryIdentifier:
-                self.ids["tableContent"].remove_widget(entry)
+        for entry in self.ids["rw"].data:
+            if entry["entryIdentifier"] == entryIdentifier:
+                self.ids["rw"].data.remove(entry)
                 return
         raise ValueError(f"Entry with identifier {entryIdentifier} not found")
 
@@ -225,38 +214,19 @@ class ClickableTable(GridLayout):
         newEntryContents: list[str]
             The new contents of the row
         """
-        for entry in self.ids["tableContent"].children:
-            if entry.entryIdentifier == entryIdentifier:
-                for columnLabel, newColumnContent in zip(
-                    entry.children, reversed(newEntryContents)
-                ):
-                    columnLabel.ids["entryLabel"].text = newColumnContent
+
+        for entry in self.ids["rw"].data:
+            if entry["entryIdentifier"] == entryIdentifier:
+                entry["entryContents"] = newEntryContents
+                self.ids["rw"].refresh_from_data()
                 return
         raise ValueError(f"Entry with identifier {entryIdentifier} not found")
-
-    def addCustomEntry(
-        self, entryContents: list[str], onPressCallback: callable = None
-    ):
-        """
-        Add a custom entry to the table that does not ned one entry per column
-
-        entryContents: list[str]
-            The contents of the row
-        onPressCallback: callable
-            The callback function that will be called when the custom entry is
-            pressed. If not provided, a default print statement will be used
-        """
-        self.ids["tableContent"].add_widget(
-            ClickableTableCustomEntry(
-                entryContents=entryContents, onPressCallback=onPressCallback
-            )
-        )
 
     def clearEntries(self):
         """
         Clear all entries from the table
         """
-        self.ids["tableContent"].clear_widgets()
+        self.ids["rw"].data = []
 
     def onEntryPressed(self, entryIdentifier):
         """
