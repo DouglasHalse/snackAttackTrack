@@ -14,6 +14,7 @@ from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
 from widgets.clickableTable import ClickableTable
 from widgets.settingsManager import SettingName
 
@@ -188,7 +189,7 @@ class BuyScreenContent(GridLayout):
         currentPatron = self.screenManager.getCurrentPatron()
 
         if totalPrice > currentPatron.totalCredits:
-            popup = ErrorMessagePopup(errorMessage="Not enough credits")
+            popup = InsufficientFundsPopup(screenManager=self.screenManager)
             popup.open()
             return
 

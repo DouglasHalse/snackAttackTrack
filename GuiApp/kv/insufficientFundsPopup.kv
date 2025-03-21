@@ -1,0 +1,46 @@
+#:kivy 2.1.0     
+
+<InsufficientFundsPopup>:
+    id: errorMessagePopup
+    size_hint: (0.5, 0.5)
+    canvas:
+        Color:
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        cols: 1
+        padding: '10dp'
+        spacing: '10dp'
+        Label:
+            size_hint_y: None
+            height: 32
+            font_size: 24
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            bold: True            
+            text: 'Insufficient funds'
+        Label:
+            font_size: 18
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            bold: True            
+            text: 'Would you like to add funds now?'
+        GridLayout:
+            rows: 1
+            padding: ['10dp', 0]
+            size_hint: (1, None)
+            height: self.minimum_height
+            orientation: 'rl-tb'
+            SmallGreenButton:
+                text: "Top-up now"
+                on_press: root.on_top_up_pressed()
+            Widget: # Horizontal Spacer
+                size_hint: (1, None)
+                height: 50
+            SmallOrangeButton:
+                text: "Close"
+                on_press: root.on_close_pressed()
