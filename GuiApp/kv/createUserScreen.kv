@@ -46,10 +46,12 @@
                 height: self.minimum_height
                 spacing: 20
 
-                LargeRegisterButton:
+                LargeGreenButton:
+                    text: "Register"
                     on_press: root.registerUser()
                 Widget: # Horizontal Spacer
                     size_hint: (1, None)
                     height: 100
-                LargeCancelButton:
+                LargeOrangeButton:
+                    text: "Cancel"
                     on_press: root.cancel()

@@ -1,150 +1,105 @@
 #:kivy 2.1.0     
 
-<ConfirmButton>
+<GreenButton>:
+    text: "UNDEFINED"
+    text_size: 16
+    size_hint: (None, None)
     canvas:
         Color:
             rgba: app.colors["green_button"]
         SmoothRoundedRectangle:
             pos: self.pos
             size: self.size
-    text_size: 16
     Label:
         bold: True
-        text: 'Confirm'
+        text: root.text
         font_size: root.text_size
         size_hint: (1, 1)
 
-<SmallConfirmButton@ConfirmButton>:
-    size_hint: (None, None)
+<SmallGreenButton@GreenButton>:
     width: 150
     height: 50
     text_size: 22
+    text: "UNDEFINED"
 
-<MediumConfirmButton@ConfirmButton>:
-    size_hint: (None, None)
+<MediumGreenButton@GreenButton>:
     width: 200
     height: 75
     text_size: 28
+    text: "UNDEFINED"
 
-<LargeConfirmButton@ConfirmButton>:
-    size_hint: (None, None)
+<LargeGreenButton@GreenButton>:
     width: 300
     height: 100
     text_size: 42
+    text: "UNDEFINED"
 
 
-<BuyButton>
-    canvas:
-        Color:
-            rgba: app.colors["green_button"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
+<OrangeButton>:
+    text: "UNDEFINED"
     text_size: 16
-    Label:
-        bold: True
-        text: 'Buy'
-        font_size: root.text_size
-        size_hint: (1, 1)
-
-<SmallBuyButton@BuyButton>:
     size_hint: (None, None)
-    width: 150
-    height: 50
-    text_size: 22
-
-
-<CancelButton>
     canvas:
         Color:
             rgba: app.colors["orange_button"]
         SmoothRoundedRectangle:
             pos: self.pos
             size: self.size
-    text_size: 16
     Label:
         bold: True
-        text: 'Cancel'
+        text: root.text
         font_size: root.text_size
         size_hint: (1, 1)
 
-<SmallCancelButton@CancelButton>:
-    size_hint: (None, None)
+<SmallOrangeButton@OrangeButton>:
     width: 150
     height: 50
     text_size: 22
+    text: "UNDEFINED"
 
-<MediumCancelButton@CancelButton>:
-    size_hint: (None, None)
+<MediumOrangeButton@OrangeButton>:
     width: 200
     height: 75
     text_size: 28
+    text: "UNDEFINED"
 
-<LargeCancelButton@CancelButton>:
-    size_hint: (None, None)
+<LargeOrangeButton@OrangeButton>:
     width: 300
     height: 100
     text_size: 42
+    text: "UNDEFINED"
 
 
-<CloseButton>:
-    canvas:
-        Color:
-            rgba: app.colors["orange_button"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
+<RedButton>:
+    text: "UNDEFINED"
     text_size: 16
-    Label:
-        bold: True
-        text: 'Close'
-        font_size: root.text_size
-        size_hint: (1, 1)
-
-<SmallCloseButton@CloseButton>:
     size_hint: (None, None)
-    width: 150
-    height: 50
-    text_size: 22
-
-
-<RemoveButton>:
     canvas:
         Color:
             rgba: app.colors["red_button"]
         SmoothRoundedRectangle:
             pos: self.pos
             size: self.size
-    text_size: 16
     Label:
         bold: True
-        text: 'Remove'
+        text: root.text
         font_size: root.text_size
         size_hint: (1, 1)
 
-<MediumRemoveButton@RemoveButton>:
-    size_hint: (None, None)
+<SmallRedButton@RedButton>:
+    width: 150
+    height: 50
+    text_size: 22
+    text: "UNDEFINED"
+
+<MediumRedButton@RedButton>:
     width: 200
     height: 75
     text_size: 28
+    text: "UNDEFINED"
 
-
-<RegisterButton>:
-    canvas:
-        Color:
-            rgba: app.colors["green_button"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
-    text_size: 16        
-    Label:
-        bold: True
-        text: 'Register'
-        font_size: root.text_size
-        size_hint: (1, 1)
-
-<LargeRegisterButton@RegisterButton>:
-    size_hint: (None, None)
+<LargeRedButton@RedButton>:
     width: 300
     height: 100
     text_size: 42
+    text: "UNDEFINED"

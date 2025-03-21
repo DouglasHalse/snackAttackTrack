@@ -32,12 +32,14 @@
             rows: 1
             size_hint: (1, None)
             height: self.minimum_height
-            SmallConfirmButton:
+            SmallGreenButton:
+                text: "Confirm"
                 on_press: root.onConfirm()
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
                 height: 50
-            SmallCancelButton:
+            SmallOrangeButton:
+                text: "Cancel"
                 on_press: root.onCancel()
 
     GridLayout:
