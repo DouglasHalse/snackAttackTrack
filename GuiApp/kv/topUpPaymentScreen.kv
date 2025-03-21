@@ -10,28 +10,7 @@
     GridLayout:
         cols: 1
         spacing: 10
-        GridLayout:
-            canvas:
-                Color:
-                    rgba: (1, 1, 1, 1)
-                SmoothRoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: app.colors["button"]
-                SmoothRoundedRectangle:
-                    pos: (self.pos[0] + 5, self.pos[1] + 5)
-                    size: (self.width - 10, self.height - 10)
-            canvas.before:
-                Color:
-                    rgba: 0, 0, 0, 0.10
-                BoxShadow:
-                    pos: self.pos
-                    size: self.size
-                    offset: 10, -10
-                    blur_radius: 15
-                    spread_radius: -5, -5
-                    border_radius: 2, 2, 2, 2
+        RoundedTwoColorGridLayout:
             cols: 1
             spacing: 10
             padding: [0, 20]

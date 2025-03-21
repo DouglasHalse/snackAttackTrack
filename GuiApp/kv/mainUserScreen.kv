@@ -4,122 +4,54 @@
     rows: 1
     padding: 30
     spacing: 30
-    BoxLayoutButton:
+    ClickableRoundedTwoColorGridLayout:
         on_press: root.onBuyButtonPressed()
-        canvas.before:
-            Color:
-                rgba: 0, 0, 0, 0.10
-            BoxShadow:
-                pos: self.pos
-                size: self.size
-                offset: 10, -10
-                blur_radius: 15
-                spread_radius: -5, -5
-                border_radius: 10, 10, 10, 10
-        canvas:
-            Color:
-                rgba: (1, 1, 1, 1)
-            SmoothRoundedRectangle:
-                pos: self.pos
-                size: self.size
-            Color:
-                rgba: app.colors["button"]
-            SmoothRoundedRectangle:
-                pos: (self.pos[0] + 5, self.pos[1] + 5)
-                size: (self.width - 10, self.height - 10)
-        GridLayout:
-            cols: 1
-            padding: [0, 90]
-            Image:
-                color: 'white'
-                height: 98
-                size_hint: (1, None)
-                source: 'Images/cart-shopping-fast.png'
-            Widget: # Horizontal Spacer
-                size_hint: (1, 1)
-            Label:
-                text: 'Buy'
-                bold: True
-                font_size: "30sp"
-                size_hint_y: None
-                height: 30
-    BoxLayoutButton:
+        cols: 1
+        padding: [0, 90]
+        Image:
+            color: 'white'
+            height: 98
+            size_hint: (1, None)
+            source: 'Images/cart-shopping-fast.png'
+        Widget: # Horizontal Spacer
+            size_hint: (1, 1)
+        Label:
+            text: 'Buy'
+            bold: True
+            font_size: "30sp"
+            size_hint_y: None
+            height: 30
+    ClickableRoundedTwoColorGridLayout:
         on_press: root.onTopUpButtonPressed()
-        canvas.before:
-            Color:
-                rgba: 0, 0, 0, 0.10
-            BoxShadow:
-                pos: self.pos
-                size: self.size
-                offset: 10, -10
-                blur_radius: 15
-                spread_radius: -5, -5
-                border_radius: 10, 10, 10, 10
-        canvas:
-            Color:
-                rgba: (1, 1, 1, 1)
-            SmoothRoundedRectangle:
-                pos: self.pos
-                size: self.size
-            Color:
-                rgba: app.colors["button"]
-            SmoothRoundedRectangle:
-                pos: (self.pos[0] + 5, self.pos[1] + 5)
-                size: (self.width - 10, self.height - 10)
-        
-        GridLayout:
-            cols: 1
-            padding: [0, 90]
-            Image:
-                color: 'white'
-                height: 98
-                size_hint: (1, None)
-                source: 'Images/money-income.png'
-            Widget: # Horizontal Spacer
-                size_hint: (1, 1)
-            Label:
-                text: 'Top-up'
-                bold: True
-                font_size: "30sp"
-                size_hint_y: None
-                height: 30
-    BoxLayoutButton:
+        cols: 1
+        padding: [0, 90]
+        Image:
+            color: 'white'
+            height: 98
+            size_hint: (1, None)
+            source: 'Images/money-income.png'
+        Widget: # Horizontal Spacer
+            size_hint: (1, 1)
+        Label:
+            text: 'Top-up'
+            bold: True
+            font_size: "30sp"
+            size_hint_y: None
+            height: 30
+    ClickableRoundedTwoColorGridLayout:
         on_press: root.onHistoryButtonPressed()
-        canvas.before:
-            Color:
-                rgba: 0, 0, 0, 0.10
-            BoxShadow:
-                pos: self.pos
-                size: self.size
-                offset: 10, -10
-                blur_radius: 15
-                spread_radius: -5, -5
-                border_radius: 10, 10, 10, 10
-        canvas:
-            Color:
-                rgba: (1, 1, 1, 1)
-            SmoothRoundedRectangle:
-                pos: self.pos
-                size: self.size
-            Color:
-                rgba: app.colors["button"]
-            SmoothRoundedRectangle:
-                pos: (self.pos[0] + 5, self.pos[1] + 5)
-                size: (self.width - 10, self.height - 10)
-        
-        GridLayout:
-            cols: 1
-            padding: [0, 90]
-            Image:
-                color: 'white'
-                height: 98
-                size_hint: (1, None)
-                source: 'Images/time-past.png'
-            Widget: # Horizontal Spacer
-                size_hint: (1, 1)
-            Label:
-                text: 'History'
-                bold: True
-                font_size: "30sp"
-                size_hint_y: None
-                height: 30
+        cols: 1
+        padding: [0, 90]
+        Image:
+            color: 'white'
+            height: 98
+            size_hint: (1, None)
+            source: 'Images/time-past.png'
+        Widget: # Horizontal Spacer
+            size_hint: (1, 1)
+        Label:
+            text: 'History'
+            bold: True
+            font_size: "30sp"
+            size_hint_y: None
+            height: 30
