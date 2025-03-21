@@ -4,161 +4,95 @@
     rows: 1
     padding: 30
     spacing: 30
-    BoxLayoutButton:
+    ClickableRoundedTwoColorGridLayout:
         on_press: root.onEditSystemSettingsButtonPressed()
-        canvas.before:
-            Color:
-                rgba: 0, 0, 0, 0.10
-            BoxShadow:
-                pos: self.pos
-                size: self.size
-                offset: 10, -10
-                blur_radius: 15
-                spread_radius: -5, -5
-                border_radius: 10, 10, 10, 10
-        canvas:
-            Color:
-                rgba: (1, 1, 1, 1)
-            SmoothRoundedRectangle:
-                pos: self.pos
-                size: self.size
-            Color:
-                rgba: app.colors["button"]
-            SmoothRoundedRectangle:
-                pos: (self.pos[0] + 5, self.pos[1] + 5)
-                size: (self.width - 10, self.height - 10)
+        cols: 1
+        padding: [0, 90]
         GridLayout:
+            rows: 1
+            size_hint: (1, None)
+            padding: [70, 0]
+            Image:
+                size_hint: (None, None)
+                height: 98
+                width: 98
+                source: 'Images/settings-sliders.png'
+            Widget: # Horizontal Spacer
+                size_hint: (1, None)
+                height: 98
+            Image:
+                size_hint: (None, None)
+                height: 98
+                width: 98
+                source: 'Images/wrench-alt.png'
+        Widget: # Vertical Spacer
+            size_hint: (1, 1)
+        Label:
+            text: 'System settings'
+            bold: True
+            font_size: "30sp"
+            size_hint_y: None
+            height: 30
+    GridLayout:
+        cols: 1
+        spacing: 30
+        ClickableRoundedTwoColorGridLayout:
+            on_press: root.onEditSnacksButtonPressed()
             cols: 1
-            padding: [0, 90]
+            padding: [0, 20]
             GridLayout:
                 rows: 1
                 size_hint: (1, None)
-                padding: [70, 0]
+                height: 64
+                padding: [110, 0]
                 Image:
                     size_hint: (None, None)
-                    height: 98
-                    width: 98
-                    source: 'Images/settings-sliders.png'
+                    height: 64
+                    width: 64
+                    source: 'Images/candy-bar.png'
                 Widget: # Horizontal Spacer
                     size_hint: (1, None)
-                    height: 98
+                    height: 64
                 Image:
                     size_hint: (None, None)
-                    height: 98
-                    width: 98
+                    height: 64
+                    width: 64
                     source: 'Images/wrench-alt.png'
             Widget: # Vertical Spacer
                 size_hint: (1, 1)
             Label:
-                text: 'System settings'
+                text: 'Edit snacks'
                 bold: True
                 font_size: "30sp"
                 size_hint_y: None
                 height: 30
-    GridLayout:
-        cols: 1
-        spacing: 30
-        BoxLayoutButton:
-            on_press: root.onEditSnacksButtonPressed()
-            canvas.before:
-                Color:
-                    rgba: 0, 0, 0, 0.10
-                BoxShadow:
-                    pos: self.pos
-                    size: self.size
-                    offset: 10, -10
-                    blur_radius: 15
-                    spread_radius: -5, -5
-                    border_radius: 10, 10, 10, 10
-            canvas:
-                Color:
-                    rgba: (1, 1, 1, 1)
-                SmoothRoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: app.colors["button"]
-                SmoothRoundedRectangle:
-                    pos: (self.pos[0] + 5, self.pos[1] + 5)
-                    size: (self.width - 10, self.height - 10)
-            GridLayout:
-                cols: 1
-                padding: [0, 20]
-                GridLayout:
-                    rows: 1
-                    size_hint: (1, None)
-                    height: 64
-                    padding: [110, 0]
-                    Image:
-                        size_hint: (None, None)
-                        height: 64
-                        width: 64
-                        source: 'Images/candy-bar.png'
-                    Widget: # Horizontal Spacer
-                        size_hint: (1, None)
-                        height: 64
-                    Image:
-                        size_hint: (None, None)
-                        height: 64
-                        width: 64
-                        source: 'Images/wrench-alt.png'
-                Widget: # Vertical Spacer
-                    size_hint: (1, 1)
-                Label:
-                    text: 'Edit snacks'
-                    bold: True
-                    font_size: "30sp"
-                    size_hint_y: None
-                    height: 30
-        BoxLayoutButton:
+        ClickableRoundedTwoColorGridLayout:
             on_press: root.onEditUsersButtonPressed()
-            canvas.before:
-                Color:
-                    rgba: 0, 0, 0, 0.10
-                BoxShadow:
-                    pos: self.pos
-                    size: self.size
-                    offset: 10, -10
-                    blur_radius: 15
-                    spread_radius: -5, -5
-                    border_radius: 10, 10, 10, 10
-            canvas:
-                Color:
-                    rgba: (1, 1, 1, 1)
-                SmoothRoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: app.colors["button"]
-                SmoothRoundedRectangle:
-                    pos: (self.pos[0] + 5, self.pos[1] + 5)
-                    size: (self.width - 10, self.height - 10)
+            cols: 1
+            padding: [0, 20]
             GridLayout:
-                cols: 1
-                padding: [0, 20]
-                GridLayout:
-                    rows: 1
+                rows: 1
+                size_hint: (1, None)
+                height: 64
+                padding: [110, 0]
+                Image:
+                    size_hint: (None, None)
+                    height: 64
+                    width: 64
+                    source: 'Images/user.png'
+                Widget: # Horizontal Spacer
                     size_hint: (1, None)
                     height: 64
-                    padding: [110, 0]
-                    Image:
-                        size_hint: (None, None)
-                        height: 64
-                        width: 64
-                        source: 'Images/user.png'
-                    Widget: # Horizontal Spacer
-                        size_hint: (1, None)
-                        height: 64
-                    Image:
-                        size_hint: (None, None)
-                        height: 64
-                        width: 64
-                        source: 'Images/wrench-alt.png'
-                Widget: # Vertical Spacer
-                    size_hint: (1, 1)
-                Label:
-                    text: 'Edit users'
-                    bold: True
-                    font_size: "30sp"
-                    size_hint_y: None
-                    height: 30
+                Image:
+                    size_hint: (None, None)
+                    height: 64
+                    width: 64
+                    source: 'Images/wrench-alt.png'
+            Widget: # Vertical Spacer
+                size_hint: (1, 1)
+            Label:
+                text: 'Edit users'
+                bold: True
+                font_size: "30sp"
+                size_hint_y: None
+                height: 30

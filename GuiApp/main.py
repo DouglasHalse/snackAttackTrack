@@ -27,6 +27,7 @@ from database import createAllTables, closeDatabase
 # pylint: disable=unused-import
 import widgets.uiElements.textInputs
 import widgets.uiElements.buttons
+import widgets.uiElements.layouts
 
 # pylint: enable=unused-import
 
