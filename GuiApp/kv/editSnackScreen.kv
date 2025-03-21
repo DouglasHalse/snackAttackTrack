@@ -31,17 +31,20 @@
         size_hint: (1, None)
         height: self.minimum_height
         padding: [20, 0]
-        MediumConfirmButton:
+        MediumGreenButton:
+            text: "Confirm"
             on_press: root.onConfirm()
         Widget: # Horizontal Spacer
             size_hint: (1, None)
             height: 75
-        MediumCancelButton:
+        MediumOrangeButton:
+            text: "Cancel"
             on_press: root.onCancel()
         Widget: # Horizontal Spacer
             size_hint: (1, None)
             height: 75
-        MediumRemoveButton:
+        MediumRedButton:
+            text: "Remove"
             on_press: root.onRemove()
 
 
@@ -66,11 +69,13 @@
             size_hint: (1, None)
             height: self.minimum_height
             padding: [60, 0]
-            MediumCancelButton:
+            MediumOrangeButton:
+                text: "Cancel"
                 on_press: root.onCancel()
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
                 height: 75
-            MediumRemoveButton:
+            MediumRedButton:
+                text: "Remove"
                 on_press: root.onRemove()
             

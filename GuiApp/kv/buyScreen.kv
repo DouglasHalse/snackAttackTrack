@@ -54,12 +54,14 @@
             rows: 1
             size_hint: (0.5, None)
             height: self.minimum_height
-            SmallBuyButton:
+            SmallGreenButton:
+                text: "Buy"
                 on_press: root.onBuy()
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
                 height: 50
-            SmallCancelButton:
+            SmallOrangeButton:
+                text: "Cancel"
                 on_press: root.onCancel()
                 
 

@@ -6,25 +6,13 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
     pass
 
 
-class ConfirmButton(BoxLayoutButton):
+class GreenButton(BoxLayoutButton):
     pass
 
 
-class BuyButton(BoxLayoutButton):
+class OrangeButton(BoxLayoutButton):
     pass
 
 
-class CancelButton(BoxLayoutButton):
-    pass
-
-
-class CloseButton(BoxLayoutButton):
-    pass
-
-
-class RemoveButton(BoxLayoutButton):
-    pass
-
-
-class RegisterButton(BoxLayoutButton):
+class RedButton(BoxLayoutButton):
     pass

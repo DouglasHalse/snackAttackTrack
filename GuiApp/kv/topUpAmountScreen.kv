@@ -73,12 +73,14 @@
         height: self.minimum_height
         rows: 1
         padding: [30, 0]
-        LargeConfirmButton:
+        LargeGreenButton:
+            text: "Confirm"
             anchor_x: "left"
             on_press: root.onConfirm()
         Widget: # Horizontal Spacer
             size_hint: (1, None)
             height: 100
-        LargeCancelButton:
+        LargeOrangeButton:
+            text: "Cancel"
             anchor_x: "right"
             on_press: root.onCancel()
