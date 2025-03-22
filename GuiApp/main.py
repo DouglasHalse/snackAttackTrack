@@ -128,6 +128,14 @@ class snackAttackTrackApp(App):
             max_value=600.0,
         )
 
+        sm.add_setting_if_undefined(
+            settingName=SettingName.ORDER_INVENTORY_BY_MOST_PURCHASED,
+            default_value=True,
+            datatype=SettingDataType.BOOL,
+            min_value=0,
+            max_value=1,
+        )
+
         return sm
 
     def build(self):

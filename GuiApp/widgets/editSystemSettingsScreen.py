@@ -214,9 +214,19 @@ class EditSystemSettingsScreenContent(GridLayout):
         financialSection.ids["sectionContent"].add_widget(purchaseFee)
         financialSection.ids["sectionContent"].add_widget(paymentSwishNumber)
 
+        buyScreenSection = SettingsSection(sectionName="Buy screen")
+
+        orderInventoryByMostPurchased = BoolSettingRow(
+            settingName=SettingName.ORDER_INVENTORY_BY_MOST_PURCHASED,
+            settingManager=self.screenManager.settingsManager,
+        )
+
+        buyScreenSection.ids["sectionContent"].add_widget(orderInventoryByMostPurchased)
+
         # Add sections to the layout
         self.ids["settingsLayout"].add_widget(navigationSection)
         self.ids["settingsLayout"].add_widget(financialSection)
+        self.ids["settingsLayout"].add_widget(buyScreenSection)
 
 
 class EditSystemSettingsScreen(HeaderBodyScreen):
