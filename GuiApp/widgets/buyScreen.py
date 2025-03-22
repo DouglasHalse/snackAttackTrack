@@ -9,6 +9,7 @@ from database import (
     subtractSnackQuantity,
     subtractPatronCredits,
     addPurchaseTransaction,
+    getMostPurchasedSnacksByPatron,
 )
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
@@ -17,6 +18,7 @@ from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
 from widgets.clickableTable import ClickableTable
 from widgets.settingsManager import SettingName
+from snackReorderer import SnackReorderer
 
 
 class ItemLocation(Enum):
@@ -29,11 +31,6 @@ class BuyScreenContent(GridLayout):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.snackDict = {}
-        for snack in getAllSnacks():
-            self.snackDict[snack.snackId] = {
-                ItemLocation.INVENTORY: snack.quantity,
-                ItemLocation.SHOPPINGCART: 0,
-            }
 
         self.snackListInventory = ClickableTable(
             columns=["Snack name", "Quantity", "Price"],
@@ -49,21 +46,21 @@ class BuyScreenContent(GridLayout):
         self.ids["inventoryItemSelection"].add_widget(self.snackListInventory)
         self.ids["shoppingCartItemSelection"].add_widget(self.snackListShoppingCart)
 
-        self.updateSnackLists()
+        self.initInventory()
 
     def itemClickedInInventory(self, snackId: int):
         self.snackDict[snackId][ItemLocation.INVENTORY] -= 1
         self.snackDict[snackId][ItemLocation.SHOPPINGCART] += 1
-        self.updateSnackLists2(snackId=snackId)
+        self.updateSnackInLists(snackId=snackId)
         self.updateTotalPrice()
 
     def itemClickedInShoppingCart(self, snackId: int):
         self.snackDict[snackId][ItemLocation.SHOPPINGCART] -= 1
         self.snackDict[snackId][ItemLocation.INVENTORY] += 1
-        self.updateSnackLists2(snackId=snackId)
+        self.updateSnackInLists(snackId=snackId)
         self.updateTotalPrice()
 
-    def updateSnackLists2(self, snackId: int):
+    def updateSnackInLists(self, snackId: int):
         snackData = getSnack(snackId)
 
         if self.snackDict[snackId][ItemLocation.INVENTORY] == 0:
@@ -108,34 +105,42 @@ class BuyScreenContent(GridLayout):
                 entryIdentifier=snackId,
             )
 
-    def updateSnackLists(self):
+    def initInventory(self):
+        snacks = getAllSnacks()
+
+        if self.screenManager.settingsManager.get_setting_value(
+            settingName=SettingName.ORDER_INVENTORY_BY_MOST_PURCHASED
+        ):
+            mostPurchasedSnacks = getMostPurchasedSnacksByPatron(
+                patronId=self.screenManager.getCurrentPatron().patronId
+            )
+
+            SnackReorderer.reorder_snacks_based_on_guide_list(
+                snacks_to_reorder=snacks, snack_guide_list=mostPurchasedSnacks
+            )
+
+        for snack in snacks:
+            self.snackDict[snack.snackId] = {
+                ItemLocation.INVENTORY: snack.quantity,
+                ItemLocation.SHOPPINGCART: 0,
+            }
+
         self.snackListInventory.clearEntries()
         self.snackListShoppingCart.clearEntries()
 
         for snackDictEntry in self.snackDict.items():
             snackId = snackDictEntry[0]
             snack = getSnack(snackId)
-            snackInInventory = snackDictEntry[1][ItemLocation.INVENTORY]
-            snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
+            snacksInInventory = snackDictEntry[1][ItemLocation.INVENTORY]
 
-            if snackInInventory:
-                self.snackListInventory.addEntry(
-                    entryContents=[
-                        snack.snackName,
-                        str(snackInInventory),
-                        f"{snack.pricePerItem:.2f}",
-                    ],
-                    entryIdentifier=snackId,
-                )
-            if snackInShoppingCart:
-                self.snackListShoppingCart.addEntry(
-                    entryContents=[
-                        snack.snackName,
-                        str(snackInShoppingCart),
-                        f"{snack.pricePerItem:.2f}",
-                    ],
-                    entryIdentifier=snackId,
-                )
+            self.snackListInventory.addEntry(
+                entryContents=[
+                    snack.snackName,
+                    str(snacksInInventory),
+                    f"{snack.pricePerItem:.2f}",
+                ],
+                entryIdentifier=snackId,
+            )
 
     def updateTotalPrice(self):
         totalPrice = 0.0

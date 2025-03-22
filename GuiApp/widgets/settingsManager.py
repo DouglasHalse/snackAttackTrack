@@ -13,6 +13,7 @@ class SettingName(Enum):
     PAYMENT_SWISH_NUMBER = "payment_swish_number"
     GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE = "go_to_splash_screen_on_idle_enable"
     GO_TO_SPLASH_SCREEN_ON_IDLE_TIME = "go_to_splash_screen_on_idle_time"
+    ORDER_INVENTORY_BY_MOST_PURCHASED = "order_inventory_by_most_purchased"
 
 
 def get_presentable_setting_name(settingName: SettingName):

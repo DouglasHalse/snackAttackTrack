@@ -300,6 +300,32 @@ def getTransactionIds(patronID: int):
     return transactionIds
 
 
+def getMostPurchasedSnacksByPatron(patronId: int) -> list[str]:
+    """
+    Get the most purchased snacks by a patron in descending order of quantity.
+    """
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        f"""
+        SELECT ItemName, SUM(Quantity) as TotalQuantity
+        FROM TransactionItems
+        WHERE TransactionID IN (
+            SELECT TransactionID
+            FROM Transactions
+            WHERE PatronID = {patronId}
+        )
+        GROUP BY ItemName
+        ORDER BY TotalQuantity DESC
+        """
+    )
+    sqlResult = cursor.fetchall()
+    mostPurchasedSnacks = []
+    for entry in sqlResult:
+        mostPurchasedSnacks.append(entry[0])
+    return mostPurchasedSnacks
+
+
 def removeTransactions(patronID: int):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
