@@ -1,8 +1,10 @@
+import os
 import argparse
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.modules import inspector
 from kivy.lang import Builder
+
 
 from widgets.customScreenManager import CustomScreenManager
 from widgets.splashScreen import SplashScreenWidget
@@ -139,7 +141,12 @@ class snackAttackTrackApp(App):
         return sm
 
     def build(self):
-        Builder.load_file("kv/main.kv")
+        print("pwd:", os.getcwd())
+
+        kv_path = os.path.join(os.path.dirname(__file__), "kv", "main.kv")
+        print("kv_path:", kv_path)
+        Builder.load_file(kv_path)
+
         createAllTables()
         self.screenManager.add_widget(SplashScreenWidget(name="splashScreen"))
         self.screenManager.add_widget(LoginScreen(name="loginScreen"))

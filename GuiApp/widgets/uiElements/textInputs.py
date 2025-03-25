@@ -8,6 +8,7 @@ class TextInputWithHeader(GridLayout):
     def __init__(self, enableVirtualKeyboardEntry: bool = True, **kwargs):
         super().__init__(**kwargs)
         self.enableVirtualKeyboardEntry = enableVirtualKeyboardEntry
+        self.textInputPopup = None
         Clock.schedule_once(self.init_ui, 0)
 
     def init_ui(self, dt):
@@ -36,12 +37,13 @@ class TextInputWithHeader(GridLayout):
 
     def on_focus(self, instance, value):
         if value and self.enableVirtualKeyboardEntry:
-            TextInputPopup(
+            self.textInputPopup = TextInputPopup(
                 originalTextInputWidget=self.ids["input"],
                 headerText=self.header_text,
                 hintText=self.hint_text,
                 inputFilter=self.input_filter,
-            ).open()
+            )
+            self.textInputPopup.open()
 
 
 class LargeTextInputWithHeader(TextInputWithHeader):
@@ -119,4 +121,5 @@ class TextInputPopup(Popup):
     def on_dismiss(self):
         self.originalTextInputWidget.text = self.ids["textInput"].getText()
         self.ids["keyboardLayout"].remove_widget(self.kb)
+        self.originalTextInputWidget.textInputPopup = None
         return super().on_dismiss()
