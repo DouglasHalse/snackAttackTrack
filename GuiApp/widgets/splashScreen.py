@@ -1,4 +1,5 @@
 from kivy.uix.screenmanager import Screen
+from widgets.popups.createUserOrLinkCardPopup import CreateUserOrLinkCardPopup
 from database import getPatronIdByCardId
 
 
@@ -18,9 +19,14 @@ class SplashScreenWidget(Screen):
 
     def cardRead(self, cardId, *args):
         patronId = getPatronIdByCardId(cardId=cardId)
-        if patronId is not None:
-            self.manager.login(patronId)
-            self.manager.transitionToScreen("buyScreen")
+        if patronId is None:
+            CreateUserOrLinkCardPopup(
+                screenManager=self.manager, readCard=cardId
+            ).open()
+            return
+
+        self.manager.login(patronId)
+        self.manager.transitionToScreen("buyScreen")
 
     def onPressed(self):
         self.manager.transitionToScreen("loginScreen")
