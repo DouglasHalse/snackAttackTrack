@@ -74,3 +74,6 @@ class RFIDReader:
         if platform.system() != "Windows":
             GPIO.cleanup()
         self.last_read_id = None
+
+    def clearLastReadId(self):
+        self.last_read_id = None

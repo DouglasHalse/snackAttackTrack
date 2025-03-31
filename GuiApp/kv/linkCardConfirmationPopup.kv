@@ -1,0 +1,44 @@
+#:kivy 2.1.0     
+
+<LinkCardConfirmationPopup>:
+    size_hint: (0.8, 0.6)
+    auto_dismiss: True
+    RoundedTwoColorGridLayout:
+        center_x: True
+        cols: 1
+        size_hint: (1, 1)
+        padding: '20dp'
+        spacing: '20dp'
+        Label:
+            id: title
+            size_hint_y: None
+            height: 40
+            font_size: 24
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            bold: True            
+            text: 'Add/Update linked card'
+        Label:
+            id: question
+            font_size: 22
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            bold: True            
+            text: 'UNDEFINED'
+        GridLayout:
+            rows: 1
+            size_hint: (1, None)
+            height: self.minimum_height
+            MediumGreenButton:
+                text: "Confirm"
+                on_press: root.onConfirm()
+            Widget: # Horizontal Spacer
+                size_hint: (1, None)
+                height: 75
+            MediumOrangeButton:
+                text: "Cancel"
+                on_press: root.onCancel()
+            
+            

@@ -20,6 +20,7 @@ from widgets.editUserScreen import EditUserScreen
 from widgets.historyScreen import HistoryScreen
 from widgets.editSnackScreen import EditSnackScreen
 from widgets.editSystemSettingsScreen import EditSystemSettingsScreen
+from widgets.linkCardScreen import LinkCardScreen
 from widgets.settingsManager import SettingsManager, SettingName, SettingDataType
 from database import createAllTables, closeDatabase
 
@@ -158,6 +159,7 @@ class snackAttackTrackApp(App):
         self.screenManager.add_widget(
             EditSystemSettingsScreen(name="editSystemSettingsScreen")
         )
+        self.screenManager.add_widget(LinkCardScreen(name="linkCardScreen"))
 
         if self.use_inspector:
             inspector.create_inspector(Window, self.screenManager)
