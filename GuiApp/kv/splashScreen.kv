@@ -13,15 +13,20 @@
                 color: 'white'
     GridLayout:
         cols: 1
-        padding: [0, 150]
+        Widget: # Vertical Spacer
+            size_hint: (1, 1)
         Image:
             source: 'Images/logo_type.png'
-            size: self.texture_size
+            size_hint: (None, 1)
+            width: root.width
+            allow_stretch: True
         Label:
             halign: 'center'
             size_hint: (1, None)
             height: 28
-            font_size: 27
+            font_size: self.width/28
             color: 'black'
             bold: True
             text: "Tap to login or create user..."
+        Widget: # Vertical Spacer
+            size_hint: (1, 1)
