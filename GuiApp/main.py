@@ -60,6 +60,13 @@ class snackAttackTrackApp(App):
         if keycode == 292:
             self.screenManager.RFIDReader.triggerFakeRead()
             return True
+        # F10
+        if keycode == 291:
+            if Window.size == (1280, 800):
+                Window.size = (800, 480)
+            else:
+                Window.size = (1280, 800)
+            return True
         return False
 
     def create_settings_manager(self) -> SettingsManager:
