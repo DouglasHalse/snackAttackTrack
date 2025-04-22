@@ -1,7 +1,44 @@
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.textinput import TextInput
 from kivy.clock import Clock
 from kivy.uix.vkeyboard import VKeyboard
 from kivy.uix.popup import Popup
+
+
+class CustomTextInput(TextInput):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.isCurrencyFilterActive = False
+        self.input_type = "text"  # Default input type
+        # Clock.schedule_once(self.apply_currency_filter, 1)
+        if self.input_filter == "currency":
+            # Use a custom filter function instead of overwriting input_filter
+            self.input_filter = "float"
+            self.isCurrencyFilterActive = True
+
+    def apply_currency_filter(self, dt):
+        if self.input_filter == "currency":
+            # Use a custom filter function instead of overwriting input_filter
+            self.input_filter = "float"
+            self.isCurrencyFilterActive = True
+
+    def currency_filter(self, substring, from_undo):
+        # Only allow numbers and a single decimal point
+        if "." in self.text and substring == ".":
+            return ""  # Prevent multiple decimal points
+        if "." in self.text:
+            # Limit to two decimal places
+            decimal_index = self.text.index(".")
+            if len(self.text[decimal_index + 1 :]) >= 2:
+                return ""
+        return substring
+
+    def insert_text(self, substring, from_undo=False):
+        if self.isCurrencyFilterActive:
+            print("Currency filter active, input: ", substring)
+            substring = self.currency_filter(substring, from_undo)
+            print("Currency filter active, output: ", substring)
+        return super().insert_text(substring, from_undo=from_undo)
 
 
 class TextInputWithHeader(GridLayout):

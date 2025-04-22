@@ -1,10 +1,12 @@
 #:kivy 2.1.0     
 
+<CustomTextInput>:
+
 <TextInputWithHeader>:
     size_factor: 16
     header_text: "UNDEFINED"
     hint_text: "UNDEFINED"
-    input_filter: None
+    input_type: "text"
     disable_input: False
     cols: 1
     size_hint: (1, None)
@@ -17,14 +19,14 @@
         height: root.size_factor
         text: root.header_text
         bold: True
-    TextInput:
+    CustomTextInput:
         id: input
         write_tab: False
         multiline: False
         hint_text: root.hint_text
         size_hint_y: None
         font_size: root.size_factor
-        input_filter: root.input_filter
+        input_type: root.input_type
         disabled: root.disable_input
         height: self.minimum_height
 

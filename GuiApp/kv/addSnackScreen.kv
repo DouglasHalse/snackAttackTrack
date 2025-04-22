@@ -18,16 +18,17 @@
                 id: snackNameInput
                 header_text: "Snack Name"
                 hint_text: "Enter snack name"
+                input_type: "text"
             LargeTextInputWithHeader:
                 id: snackQuantityInput
                 header_text: "Quantity"
                 hint_text: "Enter quantity"
-                input_filter: "int"
+                input_type: "int"
             LargeTextInputWithHeader:
                 id: snackPriceInput
                 header_text: "Price"
                 hint_text: "Enter price"
-                input_filter: "float"
+                input_type: "currency"
         GridLayout:
             rows: 1
             size_hint: (1, None)
