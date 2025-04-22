@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
-        "dev env"
+        "dev env",
+        "app"
     ],
     "python.testing.pytestArgs": [
         "GuiApp/tests",
