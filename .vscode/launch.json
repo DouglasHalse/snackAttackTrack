@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Python: Run Snack Attack Track GUI",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/GuiApp/main.py",
             "console": "integratedTerminal",
@@ -14,7 +14,7 @@
         },
         {
             "name": "Python: Run current file",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
@@ -22,7 +22,7 @@
         },
         {
             "name": "Python: Run image diff",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/.github/workflows/scripts/diffImages.py",
             "args": [
