@@ -17,7 +17,7 @@ if "%VIRTUAL_ENV%" == "" (
 
 REM Install the required packages
 %~dp0venv\Scripts\python.exe -m pip install --upgrade pip
-%~dp0venv\Scripts\python.exe -m pip install -r requirements-desktop-development.txt
+%~dp0venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 
 echo:
 echo "If you wish to run the GUI from Visual studio code, select the interpreter from the venv folder"

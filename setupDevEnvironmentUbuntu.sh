@@ -33,8 +33,8 @@ then
     exit 1
 fi
 
-# Install requirements-desktop-development in venv
-./venv/bin/python -m pip install -r requirements-desktop-development.txt
+# Install requirements-dev in venv
+./venv/bin/python -m pip install -r requirements-dev.txt
 
 echo "Setup complete"
 echo "If you wish to run the GUI from Visual studio code, select the interpreter /venv/Scripts/python"
