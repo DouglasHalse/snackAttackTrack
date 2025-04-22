@@ -1,5 +1,10 @@
 {
     "conventionalCommits.scopes": [
         "dev env"
-    ]
+    ],
+    "python.testing.pytestArgs": [
+        "GuiApp/tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
