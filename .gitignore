@@ -13,6 +13,7 @@ __pycache__/
 
 # Python virtual environment
 venv/
+.venv/
 database.db
 settings.json
 
