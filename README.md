@@ -4,37 +4,42 @@ Snack Attack Track is a subscription/membership management software meant to run
 
 ## Setup development environment
 
-(If you are trying to follow these steps for the first time, PLEASE let us know if you run into any problems so we can update the setup process)
+> [!TIP]
+> If you are trying to follow these steps for the first time, PLEASE let us know if you run into any problems so we can update the setup process
 
 ### Windows
 
 #### Prerequisites
 
-1. Python 3.9 (preferably installed from the Microsoft store)
-2. git (<https://git-scm.com/download/win>)
+1. Python 3.9 (preferably installed [from the Microsoft store](ms-windows-store://pdp/?ProductId=9p7qfqmjrfp7))
+2. [git](https://git-scm.com/download/win)
 
 #### Recommended dev-tools
 
-1. GitHub Desktop if you prefer GUI for git (<https://desktop.github.com/>)
-2. Visual Studio Code (<https://code.visualstudio.com/>)
+1. [GitHub Desktop](https://desktop.github.com/download) (if you prefer GUI for git)
+2. [Visual Studio Code](https://code.visualstudio.com/download)
 
 #### Installation
 
-1. Clone this repository to your Windows machine using git
-2. Run setupDevEnvironmentWindows.bat
+Clone the repository either with GUI or following terminal commands
+
+```shell
+git clone https://github.com/DouglasHalse/snackAttackTrack.git
+.\setupDevEnvironmentWindows.bat
+```
 
 #### Start GUI with debugging (with Visual Studio Code)
 
-1. In Visual Studio Code: Select 'Open Folder...' and select the cloned repository
-2. Hit Ctrl + Shift + P and write 'select interpreter' and click 'Python: Select Interpreter'
-3. Select the Python executable found in \<cloned repository\>/venv/Scripts/python.exe
-4. Hit F5 to start debugging with the preset "Python: Run Snack Attack Track GUI" defined in  \<cloned repository\>/.vscode/launch.json
+1. In Visual Studio Code: Select `File > Open Folder...` and select the cloned repository
+2. Hit <kbd>^ Ctrl</kbd> + <kbd>⇧ Shift</kbd> + <kbd>P</kbd> and write `select interpreter` and click `Python: Select Interpreter`
+3. Select the Python executable found in `venv/Scripts/python.exe`
+4. Hit <kbd>F5</kbd> to start debugging with the preset `Python: Run Snack Attack Track GUI`
 
 #### Start GUI without debugging
 
-1. Run runGuiWindows.bat
+Run `runGuiWindows.bat`
 
-### Ubuntu
+### Linux
 
 #### Prerequisites
 
@@ -42,35 +47,36 @@ Snack Attack Track is a subscription/membership management software meant to run
 
 #### Recommended dev-tools
 
-1. GitKraken Client if you prefer GUI for git (<https://www.gitkraken.com/>)
-2. Visual Studio Code (<https://code.visualstudio.com/>)
+1. [GitKraken Client](https://www.gitkraken.com/download) if you prefer GUI for git
+2. [Visual Studio Code](https://code.visualstudio.com/download)
 
 #### Installation
+Clone the repository either with GUI or following terminal commands
 
-[//]: <> (<area>-tag to escape hyper-link creation)
-
-1. Clone this repository to your Ubuntu machine using git
-2. Run 'bash setupDevEnvironmentUbuntu.<area>sh'
+```shell
+git clone https://github.com/DouglasHalse/snackAttackTrack.git
+bash setupDevEnvironmentUbuntu.sh
+```
 
 #### Start GUI with debugging (with Visual Studio Code)
 
-1. In Visual Studio Code: Select 'Open Folder...' and select the cloned repository
-2. Hit Ctrl + Shift + P and write 'select interpreter' and click 'Python: Select Interpreter'
-3. Select the Python executable found in \<cloned repository\>/venv/Scripts/python
-4. Hit F5 to start debugging with the preset "Python: Run Snack Attack Track GUI" defined in  \<cloned repository\>/.vscode/launch.json
+1. In Visual Studio Code: Select `File > Open Folder...` and select the cloned repository
+2. Hit <kbd>^ Ctrl</kbd> + <kbd>⇧ Shift</kbd> + <kbd>P</kbd> and write `select interpreter` and click `Python: Select Interpreter`
+3. Select the Python executable found in `venv/bin/python`
+4. Hit <kbd>F5</kbd> to start debugging with the preset `Python: Run Snack Attack Track GUI`
 
 #### Start GUI without debugging
 
-[//]: <> (<area>-tag to escape hyper-link creation)
-
-1. Run 'bash runGuiUbuntu.<area>sh'
+1. Run `bash runGuiUbuntu.sh` in a terminal
 
 ### Debugging gui layouts
-1. Press Ctrl + e to start kivy inspector
+1. Press <kbd>^ Ctrl</kbd> + <kbd>E</kbd> to start kivy inspector
 
 ### Pre-commit
-This will run pylint and black to format the code and check for any violations of the PEP 8 Python coding standards.
+This will run `pylint` and `black` to format the code and check for any violations of the `PEP 8` Python coding standards.
 
-1. pip install black pylint pre-commit or pip install -r requirements-dev.txt
-2. pre-commit install
-3. pre-commit run -a
+```shell
+pip install black pylint pre-commit
+pre-commit install
+pre-commit run -a
+```
