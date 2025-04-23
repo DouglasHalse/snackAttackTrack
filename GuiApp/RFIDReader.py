@@ -3,14 +3,41 @@ import platform
 import time
 import os
 
-if platform.system() == "Windows" or os.getenv("GITHUB_ACTIONS") == "true":
+
+# TODO make better
+def mock_gpio() -> bool:
+    if platform.system() == "Windows":
+        return True
+
+    if os.getenv("MOCK_RFID_READER") in [
+        "1",
+        "y",
+        "yes",
+        "Y",
+        "YES",
+        "on",
+        "ON",
+        "true",
+        "True",
+        "TRUE",
+    ]:
+        return True
+
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        return True
+
+    return False
+
+
+if mock_gpio():
     # Fake class for emulation
     class SimpleMFRC522:
         def read_id_no_block(self):
             time.sleep(1)
 
     class GPIO:
-        def cleanup(self):
+        @staticmethod
+        def cleanup():
             print("GPIO::cleanup")
 
 else:
