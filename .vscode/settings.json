@@ -3,10 +3,22 @@
         "dev env",
         "app"
     ],
+
     "python.testing.pytestArgs": [
         "GuiApp/tests",
         "-rP" // Show output for passed tests
     ],
+
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+    },
+    
+    "isort.args":["--profile", "black"],
 }
