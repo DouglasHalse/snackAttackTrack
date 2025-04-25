@@ -7,51 +7,57 @@
     ClickableRoundedTwoColorGridLayout:
         on_press: root.onBuyButtonPressed()
         cols: 1
-        padding: [0, 90]
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.2
         Image:
-            color: 'white'
-            height: 98
-            size_hint: (1, None)
+            size_hint_y: 0.3
+            fit_mode: 'contain'
+            mipmap: True
             source: 'Images/cart-shopping-fast.png'
         Widget: # Horizontal Spacer
-            size_hint: (1, 1)
+            size_hint_y: 0.2
         Label:
             text: 'Buy'
             bold: True
-            font_size: "30sp"
-            size_hint_y: None
-            height: 30
+            font_size: self.width/8
+            size_hint_y: 0.2
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.1
     ClickableRoundedTwoColorGridLayout:
         on_press: root.onTopUpButtonPressed()
         cols: 1
-        padding: [0, 90]
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.2
         Image:
-            color: 'white'
-            height: 98
-            size_hint: (1, None)
+            size_hint_y: 0.3
+            fit_mode: 'contain'
+            mipmap: True
             source: 'Images/money-income.png'
         Widget: # Horizontal Spacer
-            size_hint: (1, 1)
+            size_hint_y: 0.2
         Label:
             text: 'Top-up'
             bold: True
-            font_size: "30sp"
-            size_hint_y: None
-            height: 30
+            font_size: self.width/8
+            size_hint_y: 0.2
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.1
     ClickableRoundedTwoColorGridLayout:
         on_press: root.onHistoryButtonPressed()
         cols: 1
-        padding: [0, 90]
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.2
         Image:
-            color: 'white'
-            height: 98
-            size_hint: (1, None)
+            size_hint_y: 0.3
+            fit_mode: 'contain'
+            mipmap: True
             source: 'Images/time-past.png'
         Widget: # Horizontal Spacer
-            size_hint: (1, 1)
+            size_hint_y: 0.2
         Label:
             text: 'History'
             bold: True
-            font_size: "30sp"
-            size_hint_y: None
-            height: 30
+            font_size: self.width/8
+            size_hint_y: 0.2
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.1
