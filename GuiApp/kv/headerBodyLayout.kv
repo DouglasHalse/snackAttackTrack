@@ -12,22 +12,17 @@
     GridLayout:
         id: leftContent
         orientation: "lr-tb"
+        padding: 10
+        spacing: 10
         rows: 1
-        size_hint: 0.7, 1
         GridLayout:
             cols: 1
-            padding: ['20dp', 0, 0, 0]
-            spacing: 8
-            Widget: # Vertical Spacer
-                size_hint: (1, 1)
             Label:
                 id: welcomeTextLabel
                 text: 'WelcomeText'
                 halign: 'left'
                 valign: 'middle'
-                size_hint: (1, None)
-                height: 20
-                font_size: 20
+                font_size: min(self.height/1.3, self.width/25)
                 text_size: self.size
                 color: 'black'
                 bold: True
@@ -36,24 +31,22 @@
                 text: 'Your credits: 912.40'
                 halign: 'left'
                 valign: 'middle'
-                size_hint: (1, None)
-                height: 20
-                font_size: 20
+                font_size: min(self.height/1.3, self.width/25)
                 text_size: self.size
                 color: 'black'
                 bold: True
-            Widget: # Vertical Spacer
-                size_hint: (1, 1)
     GridLayout:
         id: rightContent
         orientation: "rl-tb"
         rows: 1
-        size_hint: 0.3, 1
+        size_hint_x: None
+        padding: 10
+        spacing: 10
+        width: self.minimum_width
         GridLayout:
             rows: 1
             size_hint: None, 1
-            width: '150dp'
-            padding: 10
+            width: self.height*2
             BoxLayoutButton:
                 on_press: root.onLogoutButtonPressed()
                 canvas:
@@ -64,13 +57,12 @@
                         size: self.size
                 Label:
                     text: 'Log out'
-                    font_size: "28sp"
+                    font_size: self.height/2
                     bold: True
                     size_hint: (1, 1)
 
 <Body>:
     rows: 1
-    size_hint: (1, 1)
     canvas:
         Color:
             rgba: app.colors["background"]
@@ -84,18 +76,15 @@
     on_press: root.onPressed()
     GridLayout:
         cols: 1
-        padding: 10
         Image: 
             source: 'Images/wrench-alt.png'
             
-
 <BackButton>:
     size_hint_x: None
     width: self.height
     on_press: root.onPressed()
     GridLayout:
         cols: 1
-        padding: 10
         Image: 
             source: 'Images/leftArrow.png'
 
