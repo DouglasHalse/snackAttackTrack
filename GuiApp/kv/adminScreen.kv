@@ -7,92 +7,108 @@
     ClickableRoundedTwoColorGridLayout:
         on_press: root.onEditSystemSettingsButtonPressed()
         cols: 1
-        padding: [0, 90]
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.2
         GridLayout:
             rows: 1
-            size_hint: (1, None)
-            padding: [70, 0]
-            Image:
-                size_hint: (None, None)
-                height: 98
-                width: 98
-                source: 'Images/settings-sliders.png'
+            size_hint_y: 0.3
             Widget: # Horizontal Spacer
-                size_hint: (1, None)
-                height: 98
+                size_hint_x: 0.2
             Image:
-                size_hint: (None, None)
-                height: 98
-                width: 98
+                fit_mode: 'contain'
+                mipmap: True
+                source: 'Images/settings-sliders.png'
+                size_hint_x: None
+                width: self.height
+            Widget: # Horizontal Spacer
+                size_hint_x: 0.1
+            Image:
+                fit_mode: 'contain'
+                mipmap: True
                 source: 'Images/wrench-alt.png'
-        Widget: # Vertical Spacer
-            size_hint: (1, 1)
+                size_hint_x: None
+                width: self.height
+            Widget: # Horizontal Spacer
+                size_hint_x: 0.2
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.2
         Label:
             text: 'System settings'
             bold: True
-            font_size: "30sp"
-            size_hint_y: None
-            height: 30
+            font_size: self.width/10
+            size_hint_y: 0.2
+        Widget: # Horizontal Spacer
+            size_hint_y: 0.1
     GridLayout:
         cols: 1
         spacing: 30
         ClickableRoundedTwoColorGridLayout:
             on_press: root.onEditSnacksButtonPressed()
             cols: 1
-            padding: [0, 20]
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.2
             GridLayout:
                 rows: 1
-                size_hint: (1, None)
-                height: 64
-                padding: [110, 0]
-                Image:
-                    size_hint: (None, None)
-                    height: 64
-                    width: 64
-                    source: 'Images/candy-bar.png'
+                size_hint_y: 0.3
                 Widget: # Horizontal Spacer
-                    size_hint: (1, None)
-                    height: 64
+                    size_hint_x: 0.2
                 Image:
-                    size_hint: (None, None)
-                    height: 64
-                    width: 64
+                    fit_mode: 'contain'
+                    mipmap: True
+                    source: 'Images/candy-bar.png'
+                    size_hint_x: None
+                    width: self.height
+                Widget: # Horizontal Spacer
+                    size_hint_x: 0.1
+                Image:
+                    fit_mode: 'contain'
+                    mipmap: True
                     source: 'Images/wrench-alt.png'
-            Widget: # Vertical Spacer
-                size_hint: (1, 1)
+                    size_hint_x: None
+                    width: self.height
+                Widget: # Horizontal Spacer
+                    size_hint_x: 0.2
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.2
             Label:
                 text: 'Edit snacks'
                 bold: True
-                font_size: "30sp"
-                size_hint_y: None
-                height: 30
+                font_size: self.width/10
+                size_hint_y: 0.2
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.1
         ClickableRoundedTwoColorGridLayout:
             on_press: root.onEditUsersButtonPressed()
             cols: 1
-            padding: [0, 20]
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.2
             GridLayout:
                 rows: 1
-                size_hint: (1, None)
-                height: 64
-                padding: [110, 0]
-                Image:
-                    size_hint: (None, None)
-                    height: 64
-                    width: 64
-                    source: 'Images/user.png'
+                size_hint_y: 0.3
                 Widget: # Horizontal Spacer
-                    size_hint: (1, None)
-                    height: 64
+                    size_hint_x: 0.2
                 Image:
-                    size_hint: (None, None)
-                    height: 64
-                    width: 64
+                    fit_mode: 'contain'
+                    mipmap: True
+                    source: 'Images/user.png'
+                    size_hint_x: None
+                    width: self.height
+                Widget: # Horizontal Spacer
+                    size_hint_x: 0.1
+                Image:
+                    fit_mode: 'contain'
+                    mipmap: True
                     source: 'Images/wrench-alt.png'
-            Widget: # Vertical Spacer
-                size_hint: (1, 1)
+                    size_hint_x: None
+                    width: self.height
+                Widget: # Horizontal Spacer
+                    size_hint_x: 0.2
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.2
             Label:
                 text: 'Edit users'
                 bold: True
-                font_size: "30sp"
-                size_hint_y: None
-                height: 30
+                font_size: self.width/10
+                size_hint_y: 0.2
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.1
