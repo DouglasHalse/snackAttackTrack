@@ -1,14 +1,13 @@
 from datetime import datetime
-from qrcode import make as makeQRCode
 
+from database import addCredits, addTopUpTransaction
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
-
+from qrcode import make as makeQRCode
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
-from widgets.settingsManager import SettingName
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
-from database import addCredits, addTopUpTransaction
+from widgets.settingsManager import SettingName
 
 
 class TopUpPaymentScreenContent(GridLayout):

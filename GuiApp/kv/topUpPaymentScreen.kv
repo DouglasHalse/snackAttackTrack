@@ -19,39 +19,45 @@
                 Label:
                     bold: True
                     text: "Step 1:"
-                    font_size: 28
+                    font_size: self.width/12
                 Label:
                     text: "Scan QR code with swish"
-                    font_size: 28
+                    font_size: self.width/12
             GridLayout:
                 cols: 1
                 Label:
                     bold: True
                     text: "Step 2:"
-                    font_size: 28
+                    font_size: self.width/12
                 Label:
                     text: "Send payment"
-                    font_size: 28
+                    font_size: self.width/12
             GridLayout:
                 cols: 1
                 Label:
                     bold: True
                     text: "Step 3:"
-                    font_size: 28
+                    font_size: self.width/12
                 Label:
                     text: "Click confirm below"
-                    font_size: 28
+                    font_size: self.width/12
         GridLayout:
             rows: 1
             size_hint: (1, None)
             height: self.minimum_height
             SmallGreenButton:
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 text: "Confirm"
                 on_press: root.onConfirm()
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
-                height: 50
+                height: 10
             SmallOrangeButton:
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 text: "Cancel"
                 on_press: root.onCancel()
                 
