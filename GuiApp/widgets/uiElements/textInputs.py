@@ -1,7 +1,6 @@
-from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
-from kivy.uix.vkeyboard import VKeyboard
-from kivy.uix.popup import Popup
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.modalview import ModalView
 
 
 class TextInputWithHeader(GridLayout):
@@ -35,6 +34,7 @@ class TextInputWithHeader(GridLayout):
         self.ids["input"].focus = value
 
     def on_focus(self, instance, value):
+        print(f"TextInputWithHeader focus changed: {value}")
         if value and self.enableVirtualKeyboardEntry:
             TextInputPopup(
                 originalTextInputWidget=self.ids["input"],
@@ -49,14 +49,14 @@ class LargeTextInputWithHeader(TextInputWithHeader):
         super().__init__(**kwargs)
 
 
-class TextInputPopup(Popup):
+class TextInputPopup(ModalView):
     def __init__(
         self,
         originalTextInputWidget,
         headerText: str,
         hintText: str,
         inputFilter: str,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.originalTextInputWidget = originalTextInputWidget
@@ -67,17 +67,8 @@ class TextInputPopup(Popup):
         self.ids["textInput"].input_filter = inputFilter
         self.ids["textInput"].setText(self.originalTextInputWidget.text)
         self.isCapslockActive = False
-        self.isShiftActive = False
 
-        self.kb = VKeyboard(
-            on_key_up=self.virtualKeyboardInputUp,
-            on_key_down=self.virtualKeyboardInputDown,
-            pos_hint={"center_x": 0.5},
-            size_hint=(0.8, None),
-        )
-        self.kb.layout = "keyboards/swedishKeyboardLayout.json"
-        self.ids["keyboardLayout"].add_widget(self.kb)
-        self.ids["textInput"].setFocus(True)
+        self.ids["virtualKeyboard"].bind(on_key_up=self.virtualKeyboardInputUp)
 
     def virtualKeyboardInputUp(self, keyboard, keycode, *args):
         if keycode == "backspace":
@@ -91,11 +82,7 @@ class TextInputPopup(Popup):
         if keycode == "tab":
             return
 
-        if keycode == "shift":
-            self.isShiftActive = False
-            return
-
-        if keycode == "capslock":
+        if keycode in ("capslock", "shift"):
             self.isCapslockActive = not self.isCapslockActive
             return
 
@@ -104,19 +91,12 @@ class TextInputPopup(Popup):
         if keycode == "spacebar":
             finalSymbolToAdd = " "
 
-        if self.isShiftActive and not self.isCapslockActive:
-            finalSymbolToAdd = finalSymbolToAdd.upper()
-
-        if self.isCapslockActive and not self.isShiftActive:
+        if self.isCapslockActive:
             finalSymbolToAdd = finalSymbolToAdd.upper()
 
         self.ids["textInput"].insertText(finalSymbolToAdd)
 
-    def virtualKeyboardInputDown(self, keyboard, keycode, *args):
-        if keycode == "shift":
-            self.isShiftActive = True
-
     def on_dismiss(self):
         self.originalTextInputWidget.text = self.ids["textInput"].getText()
-        self.ids["keyboardLayout"].remove_widget(self.kb)
+        self.originalTextInputWidget.focus = False
         return super().on_dismiss()

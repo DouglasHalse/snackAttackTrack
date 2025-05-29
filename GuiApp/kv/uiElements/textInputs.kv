@@ -34,21 +34,36 @@
 <TextInputPopup>:
     size_hint: (0.9, 0.9)
     auto_dismiss: True
-    title: "TextInputPopup"
     GridLayout:
         cols: 1
-        GridLayout:
-            cols: 1
-            padding: [90, 0]
-            Widget: # Vertical Spacer
-                size_hint: (1, 1)
-            LargeTextInputWithHeader:
-                id: textInput
-                enableVirtualKeyboardEntry: False
-            Widget: # Vertical Spacer
-                size_hint: (1, 1)
+        canvas:
+            Color:
+                rgba: app.colors["secondary_background"]
+            SmoothRoundedRectangle:
+                pos: self.pos
+                size: self.size
         GridLayout:
             rows: 1
-            size_hint: (1, None)
-            height: self.minimum_height
+            Widget: # Horizontal Spacer
+                size_hint: (0.2, 1)
+            GridLayout:
+                cols: 1
+                Widget: # Vertical Spacer
+                    size_hint: (1, 0.4)
+                LargeTextInputWithHeader:
+                    size_factor: 48
+                    id: textInput
+                    enableVirtualKeyboardEntry: False
+                Widget: # Vertical Spacer
+                    size_hint: (1, 0.4)
+            Widget: # Horizontal Spacer
+                size_hint: (0.2, 1)
+        GridLayout:
+            rows: 1
             id: keyboardLayout
+            VKeyboard:
+                id: virtualKeyboard
+                width: self.parent.width
+                height: self.parent.height
+                layout: "keyboards/swedishKeyboardLayout.json"
+                on_key_up: root.virtualKeyboardInputUp
