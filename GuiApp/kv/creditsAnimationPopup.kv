@@ -7,25 +7,19 @@
         center_x: True
         cols: 1
         size_hint: (1, 1)
-        BoxLayout:
-            orientation: "vertical"
-            size_hint: (1, .9)
-            Label:
-                id: titleLabel
-                text_size: self.size
-                padding: 10
-                halign: 'center'
-                valign: 'middle'
-                font_size: 42
-                bold: True
-                text: 'TITLE'
-                
-            Label:
-                id: creditsLabel
-                text_size: self.size
-                padding: 10
-                halign: 'center'
-                valign: 'middle'
-                font_size: 32
-                bold: True
-                text: 'Your credits: ??'
+        Label:
+            id: titleLabel
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            font_size: self.width / 15
+            bold: True
+            text: 'TITLE'
+        Label:
+            id: creditsLabel
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            font_size: self.width / 18
+            bold: True
+            text: 'Your credits: ??'
