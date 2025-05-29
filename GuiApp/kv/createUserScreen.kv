@@ -30,20 +30,23 @@
                 size_hint_x: 0.1
             RoundedTwoColorGridLayout:
                 cols: 1
-                spacing: 10
+                spacing: self.width / 50
                 padding: [20, 20]
                 size_hint_y: None
                 height: self.minimum_height
                 LargeTextInputWithHeader:
                     id: firstNameInput
+                    size_factor: self.parent.width / 25
                     header_text: "First name"
                     hint_text: "Enter first name"
                 LargeTextInputWithHeader:
                     id: lastNameInput
+                    size_factor: self.parent.width / 25
                     header_text: "Last name"
                     hint_text: "Enter last name"
                 LargeTextInputWithHeader:
                     id: cardIdInput
+                    size_factor: self.parent.width / 25
                     header_text: "Login card"
                     hint_text: "Blipp card to register (optional)"
                     disable_input: True
