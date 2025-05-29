@@ -7,72 +7,107 @@
     RoundedTwoColorGridLayout:
         rows: 1
         size_hint: (1, 0.5)
-        padding: [40, 30, 40, 40]
+        padding: 10
+        Widget: # Horizontal Spacer
+            size_hint_x: 0.2
         GridLayout:
             cols: 1
+            Widget: # Vertical Spacer
+                size_hint_y: 0.4
             Label:
-                size_hint: (1, 0.3)
-                font_size: 32
+                font_size: min(self.height/1.3, self.width/5)
+                size_hint_y: None
+                height: self.texture_size[1]
                 bold: True
                 halign: 'center'
                 text: "Current \ncredits:"
+            Widget: # Vertical Spacer
+                size_hint_y: 0.1
             TextInput:
                 id: creditsCurrent
                 disabled: True
                 write_tab: False
                 hint_text: "??"
+                halign: "center"
+                valign: "middle"
                 size_hint_y: None
-                height: 40
-                padding: [10, 10]
+                height: self.width/3
+                font_size: self.height/1.5
+            Widget: # Vertical Spacer
+                size_hint_y: 0.4
         GridLayout:
             cols: 1
             Label:
-                font_size: 32
+                font_size: min(self.height/1.3, self.width/5)
                 bold: True
                 text: "+"
         GridLayout:
             cols: 1
+            Widget: # Vertical Spacer
+                size_hint_y: 0.4
             Label:
-                font_size: 32
+                font_size: min(self.height/1.3, self.width/5)
+                size_hint_y: None
+                height: self.texture_size[1]
                 bold: True
                 halign: 'center'
                 text: "Add \ncredits:"
+            Widget: # Vertical Spacer
+                size_hint_y: 0.1
             TextInput:
                 id: creditsToAdd
                 write_tab: False
                 multiline: False
-                hint_text: "Enter amount"
+                hint_text: "0.00"
                 input_filter: "float"
+                halign: "center"
+                valign: "middle"
                 size_hint_y: None
-                height: 40
-                padding: [10, 10]
+                height: self.width/3
+                font_size: self.height/1.5
+            Widget: # Vertical Spacer
+                size_hint_y: 0.4
         GridLayout:
             cols: 1
             Label:
-                font_size: 32
+                font_size: min(self.height/1.3, self.width/5)
                 bold: True
                 text: "="
         GridLayout:
             cols: 1
+            Widget: # Vertical Spacer
+                size_hint_y: 0.4
             Label:
-                font_size: 32
+                font_size: min(self.height/1.3, self.width/5)
+                size_hint_y: None
+                height: self.texture_size[1]
                 bold: True
                 halign: 'center'
                 text: "Credits \nafterwards:"
+            Widget: # Vertical Spacer
+                size_hint_y: 0.1
             TextInput:
                 id: creditsAfterwards
                 disabled: True
                 write_tab: False
                 hint_text: "??"
+                halign: "center"
+                valign: "middle"
                 size_hint_y: None
-                height: 40
-                padding: [10, 10]
+                height: self.width/3
+                font_size: self.height/1.5
+            Widget: # Vertical Spacer
+                size_hint_y: 0.4
+        Widget: # Horizontal Spacer
+            size_hint_x: 0.2
     
     GridLayout:
         size_hint: (1, None)
         height: self.minimum_height
         rows: 1
-        padding: [30, 0]
+        Widget: # Horizontal Spacer
+            size_hint: (1, None)
+            height: 100
         LargeGreenButton:
             text: "Confirm"
             anchor_x: "left"
@@ -84,3 +119,6 @@
             text: "Cancel"
             anchor_x: "right"
             on_press: root.onCancel()
+        Widget: # Horizontal Spacer
+            size_hint: (1, None)
+            height: 100
