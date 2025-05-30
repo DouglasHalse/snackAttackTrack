@@ -6,32 +6,35 @@
     RoundedTwoColorGridLayout:
         cols: 1
         padding: 20
-        spacing: 20
         Label:
             size_hint_y: None
-            height: 56
-            font_size: 48
+            height: self.width / 15
             text_size: self.size
+            font_size: self.width / 17
             halign: 'center'
             valign: 'middle'
             bold: True            
             text: 'Greetings, who are you?'
+        Widget: # Vertical Spacer
+            size_hint_y: 0.1
         GridLayout:
             rows: 1
             GridLayout:
                 cols: 1
-                padding: [0, 10]
+                Widget: # Vertical Spacer
+                    size_hint_y: None
+                    height: self.parent.height / 20
                 Label:
                     size_hint_y: None
-                    height: 24
-                    font_size: 22
+                    height: self.width / 11
+                    font_size: self.width / 13
                     text_size: self.size
                     halign: 'center'
                     valign: 'middle'
                     bold: True            
                     text: 'Create a new user?'
                 Label:
-                    font_size: 22
+                    font_size: self.width / 15
                     text_size: self.size
                     halign: 'center'
                     valign: 'middle'
@@ -40,16 +43,18 @@
                 GridLayout:
                     rows: 1
                     size_hint_y: None
-                    height: 50
+                    height: self.minimum_height
                     Widget: # Horizontal Spacer
-                        size_hint: (1, None)
-                        height: 50
                     SmallGreenButton:
+                        width: self.parent.width / 2
+                        height: self.width / 3
+                        text_size: self.height / 2
                         text: "Create user"
                         on_press: root.createUserPressed()
                     Widget: # Horizontal Spacer
-                        size_hint: (1, None)
-                        height: 50
+                Widget: # Vertical Spacer
+                    size_hint_y: None
+                    height: self.parent.height / 20
             GridLayout:
                 size_hint: (None, 1)
                 width: 30
@@ -62,47 +67,52 @@
                         points: (self.x + (self.width/2), self.top, self.x + (self.width/2), self.y)
             GridLayout:
                 cols: 1
-                padding: [0, 10, 0, 0]
+                Widget: # Vertical Spacer
+                    size_hint_y: None
+                    height: self.parent.height / 20
                 Label:
                     size_hint_y: None
-                    height: 24
-                    font_size: 22
+                    height: self.width / 11
+                    font_size: self.width / 13
                     text_size: self.size
                     halign: 'center'
                     valign: 'middle'
                     bold: True            
                     text: 'Link card to existing user?'
                 Label:
-                    font_size: 22
+                    font_size: self.width / 15
                     text_size: self.size
                     multi_line: True
                     halign: 'center'
                     valign: 'middle'
                     bold: True            
-                    text: 'You can link this card to an existing user or update an existing user\'s card.'
+                    text: "You can link this card to an existing user or update an existing user\'s card."
                 GridLayout:
                     rows: 1
                     size_hint_y: None
-                    height: 50
+                    height: self.minimum_height
                     Widget: # Horizontal Spacer
-                        size_hint: (1, None)
-                        height: 50
                     SmallGreenButton:
+                        width: self.parent.width / 2
+                        height: self.width / 3
+                        text_size: self.height / 2
                         text: "Link card"
                         on_press: root.linkCardPressed()
                     Widget: # Horizontal Spacer
-                        size_hint: (1, None)
-                        height: 50
+                Widget: # Vertical Spacer
+                    size_hint_y: None
+                    height: self.parent.height / 20
+        Widget: # Vertical Spacer
+            size_hint_y: 0.1
         GridLayout:
             rows: 1
             size_hint_y: None
-            height: 50
+            height: self.minimum_height
             Widget: # Horizontal Spacer
-                size_hint: (1, None)
-                height: 50
             SmallOrangeButton:
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
                 text: "Close"
                 on_press: root.dismiss()
             Widget: # Horizontal Spacer
-                size_hint: (1, None)
-                height: 50
