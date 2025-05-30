@@ -1,7 +1,7 @@
-import threading
-import platform
-import time
 import os
+import platform
+import threading
+import time
 
 
 # TODO make better
@@ -41,8 +41,8 @@ if mock_gpio():
             print("GPIO::cleanup")
 
 else:
-    from RPi import GPIO
     from mfrc522 import SimpleMFRC522
+    from RPi import GPIO
 
 
 class RFIDReader:
@@ -87,6 +87,7 @@ class RFIDReader:
                 if platform.system() != "Windows":
                     GPIO.cleanup()
 
+        self.clearLastReadId()
         self.running.clear()
         self.reader_thread = threading.Thread(
             target=reader_task, daemon=True, name="RFID reader thread"
@@ -100,7 +101,7 @@ class RFIDReader:
             self.reader_thread.join()
         if platform.system() != "Windows":
             GPIO.cleanup()
-        self.last_read_id = None
+        self.clearLastReadId()
 
     def clearLastReadId(self):
         self.last_read_id = None
