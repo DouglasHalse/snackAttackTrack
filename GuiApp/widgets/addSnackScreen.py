@@ -1,10 +1,9 @@
+from database import addSnack
 from kivy.uix.gridlayout import GridLayout
-
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
-from database import addSnack
 
 
 class AddSnackScreenContent(GridLayout):
@@ -43,7 +42,7 @@ class AddSnackScreenContent(GridLayout):
 
         totalPrice *= 1 + purchaseFee
 
-        pricePerItem = float(totalPrice) / float(quantity)
+        pricePerItem = round(float(totalPrice) / float(quantity), 2)
 
         self.ids["numberOfItemsLabel"].text = f"{quantity} of {snackName}"
         self.ids["pricePerItemLabel"].text = f"{pricePerItem:.2f} credits per item"
@@ -78,7 +77,8 @@ class AddSnackScreenContent(GridLayout):
 
         totalPrice *= 1 + purchaseFee
 
-        pricePerItem = totalPrice / float(quantity)
+        pricePerItem = round(float(totalPrice) / float(quantity), 2)
+
         addSnack(
             itemName=snackName,
             quantity=quantity,
