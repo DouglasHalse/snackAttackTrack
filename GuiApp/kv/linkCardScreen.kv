@@ -20,8 +20,7 @@
             anchor_y: 'center'
             GridLayout:
                 cols: 1
-                padding: '10dp'
-                spacing: '10dp'
+                padding: '20dp'
                 size_hint: 0.95, 0.95
                 canvas:
                     Color:
@@ -31,23 +30,24 @@
                         size: self.size
                 Label:
                     size_hint_y: None
-                    height: 40
-                    font_size: 32
+                    height: self.width / 18
+                    font_size: self.width / 20
                     text_size: self.size
                     halign: 'center'
                     valign: 'middle'
                     bold: True            
                     text: 'What user do you want to link this card to?'
-                GridLayout:
-                    cols: 1
-                    id: selectUserLayout
-                    ClickableTable:
-                        id: usersTable
-                        headerHeight: 50
-                        entryHeight: 50
-                        columns: ["First name", "Last name", "Card"]
-                        columnExamples: ["LongName", "LongLastName", "23234234"]
-                        onEntryPressed: root.onUserEntryPressed
+                Widget: # Vertical Spacer
+                    size_hint_y: 0.1
+                ClickableTable:
+                    id: usersTable
+                    headerHeight: self.width / 15
+                    entryHeight: self.width / 15
+                    columns: ["First name", "Last name", "Card"]
+                    columnExamples: ["LongName", "LongLastName", "23234234"]
+                    onEntryPressed: root.onUserEntryPressed
+                Widget: # Vertical Spacer
+                    size_hint_y: 0.1
                 GridLayout:
                     rows: 1
                     size_hint: (1, None)
@@ -55,6 +55,9 @@
                     orientation: 'rl-tb'
                     MediumOrangeButton:
                         text: "Cancel"
+                        width: self.parent.width / 4
+                        height: self.width / 3
+                        text_size: self.height / 2
                         on_press: root.cancel()
 
                     
