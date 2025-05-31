@@ -11,19 +11,18 @@
             size: self.size
     GridLayout:
         cols: 1
-        padding: '10dp'
-        spacing: '10dp'
+        padding: '20dp'
         Label:
             size_hint_y: None
-            height: 32
-            font_size: 24
+            height: self.width / 8
+            font_size: self.width / 10
             text_size: self.size
             halign: 'center'
             valign: 'middle'
             bold: True            
             text: 'Insufficient funds'
         Label:
-            font_size: 18
+            font_size: self.width / 16
             text_size: self.size
             halign: 'center'
             valign: 'middle'
@@ -31,16 +30,19 @@
             text: 'Would you like to add funds now?'
         GridLayout:
             rows: 1
-            padding: ['10dp', 0]
             size_hint: (1, None)
             height: self.minimum_height
             orientation: 'rl-tb'
             SmallGreenButton:
                 text: "Top-up now"
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.on_top_up_pressed()
             Widget: # Horizontal Spacer
-                size_hint: (1, None)
-                height: 50
             SmallOrangeButton:
                 text: "Close"
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.on_close_pressed()
