@@ -1,21 +1,20 @@
 from datetime import datetime
 
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
+from database import (
+    UserData,
+    addEditTransaction,
+    getPatronData,
+    getPatronIdByCardId,
+    removePatron,
+    updatePatronData,
+)
 from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.popup import Popup
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.modalview import ModalView
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
-
-from database import (
-    UserData,
-    updatePatronData,
-    removePatron,
-    addEditTransaction,
-    getPatronIdByCardId,
-    getPatronData,
-)
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -127,7 +126,7 @@ class EditUserScreen(HeaderBodyScreen):
         self.manager.resetPatronToEdit()
 
 
-class RemoveUserConfirmationPopup(Popup):
+class RemoveUserConfirmationPopup(ModalView):
     def __init__(
         self, screenManager: CustomScreenManager, patronToRemove: UserData, **kwargs
     ):
