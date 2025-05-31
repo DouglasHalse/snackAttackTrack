@@ -5,8 +5,8 @@
 <BoolSettingRow>:
     rows: 1
     size_hint: (1, None)
-    height: 64
-    padding: [50, 0]
+    height: self.width / 12
+    padding: [20, 5]
     canvas:
         Color:
             rgba: app.colors["secondary_background"]
@@ -31,32 +31,27 @@
         halign: 'left'
         valign: 'middle'
         bold: True
-        font_size: "25sp"
+        font_size: self.height / 2
     GridLayout:
         rows: 1
-        size_hint: (None, None)
-        height: 64
-        width: 128
+        size_hint_x: None
+        width: self.parent.height * 4
         Widget: # Horizontal Spacer
-            size_hint: (1, None)
-            height: 64
         BoxLayoutButton:
             on_press: root.onSettingChanged()
             size_hint: (None, None)
-            height: 64
-            width: 64
+            height: self.parent.height
+            width: self.height
             Image:
                 id: toggleButtonImage
                 source: 'Images/toggle-on.png'
         Widget: # Horizontal Spacer
-            size_hint: (1, None)
-            height: 64
 
 <FloatSettingRow>:
     rows: 1
     size_hint: (1, None)
-    height: 64
-    padding: [50, 0]
+    height: self.width / 12
+    padding: [20, 5]
     canvas:
         Color:
             rgba: app.colors["secondary_background"]
@@ -81,23 +76,24 @@
         halign: 'left'
         valign: 'middle'
         bold: True
-        font_size: "25sp"
+        font_size: self.height / 2
     TextInput:
         id: textInput
         write_tab: False
         multiline: False
-        font_size: 42
+        font_size: self.height / 1.5
+        halign: "center"
+        valign: "middle"
         hint_text: "Enter amount"
         input_filter: "float"
-        size_hint: (None, None)
-        height: 64
-        width: 128
+        size_hint_x: None
+        width: self.parent.height * 4
 
 <StringSettingRow>:
     rows: 1
     size_hint: (1, None)
-    height: 64
-    padding: [50, 0]
+    height: self.width / 12
+    padding: [20, 5]
     canvas:
         Color:
             rgba: app.colors["secondary_background"]
@@ -122,50 +118,49 @@
         halign: 'left'
         valign: 'middle'
         bold: True
-        font_size: "25sp"
+        font_size: self.height / 2
     TextInput:
         id: textInput
         write_tab: False
         multiline: False
-        font_size: 42
+        font_size: self.height / 1.5
+        halign: "center"
+        valign: "middle"
         hint_text: "Enter amount"
         input_filter: "float"
-        size_hint: (None, None)
-        height: 64
-        width: 128
+        size_hint_x: None
+        width: self.parent.height * 4
 
 <SettingsSection>:
     cols: 1
     size_hint: 1, None
     height: self.minimum_height
-    
+
     Label:
         id: sectionNameLabel
         text_size: self.size
         size_hint_y: None
-        height: 20
+        height: self.parent.width / 24
+        font_size: self.parent.width / 26
         text: "SECTION NAME"
         bold: True
-        font_size: "20sp"
-
+        
     GridLayout:
         id: sectionContent
         cols: 1
-        padding: "10dp"
-        spacing: 10
+        padding: 10
+        spacing: self.parent.width / 80
         size_hint_y: None
         height: self.minimum_height
 
 
 <EditSystemSettingsScreenContent>:
     rows: 1
-    size_hint: (1, 1)
-    padding: '20dp'    
+    padding: 20
     RoundedTwoColorGridLayout:
         rows: 1
         padding: 10
         ScrollView:
-            size_hint: 1, 1
             do_scroll_x: False
             GridLayout:
                 id: settingsLayout
