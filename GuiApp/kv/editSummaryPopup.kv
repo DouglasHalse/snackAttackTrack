@@ -1,42 +1,48 @@
 #:kivy 2.1.0     
 
 <EditSummaryHeading@Label>:
-    font_size: 18
+    font_size: self.width / 20
     text_size: self.size
     size_hint_y: None
-    height: 20
+    height: self.width / 18
     halign: 'left'
     valign: 'middle'
     bold: True
 
 <EditSummaryData@Label>:
-    font_size: 16
+    font_size: self.width / 22
     text_size: self.size
     size_hint_y: None
-    height: 20
+    height: self.width / 20
     halign: 'left'
     valign: 'middle'
 
 <EditSummaryPopup>:
-    size_hint: (0.4, 0.65)
+    size_hint: (0.5, None)
     auto_dismiss: True
     GridLayout:
+        cols: 1
+        id: editSummaryPopupContent
+        size_hint_y: None
+        height: self.minimum_height
+        padding: 10
+        spacing: 10
         canvas:
             Color:
                 rgba: app.colors["secondary_background"]
             SmoothRoundedRectangle:
                 pos: self.pos
                 size: self.size
-        cols: 1
-        padding: '10dp'
-        spacing: '10dp'
         GridLayout:
             cols: 1
-            padding: [5, 0, 5, 0]
+            size_hint_y: None
+            height: self.minimum_height
             spacing: 10
             GridLayout:
                 cols: 1
                 spacing: 5
+                size_hint_y: None
+                height: self.minimum_height
                 EditSummaryHeading:
                     text: 'Edit date:'
                 EditSummaryData:
@@ -45,6 +51,8 @@
             GridLayout:
                 cols: 1
                 spacing: 5
+                size_hint_y: None
+                height: self.minimum_height
                 EditSummaryHeading:
                     text: 'Credits before edit:'
                 EditSummaryData:
@@ -53,6 +61,8 @@
             GridLayout:
                 cols: 1
                 spacing: 5
+                size_hint_y: None
+                height: self.minimum_height
                 EditSummaryHeading:
                     text: 'Credits after edit:'
                 EditSummaryData:
@@ -65,4 +75,7 @@
             orientation: 'rl-tb'
             SmallOrangeButton:
                 text: "Close"
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.dismiss()

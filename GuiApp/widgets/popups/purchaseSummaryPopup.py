@@ -1,4 +1,5 @@
 from database import HistoryData
+from kivy.clock import Clock
 from kivy.uix.modalview import ModalView
 
 
@@ -32,3 +33,17 @@ class PurchaseSummaryPopup(ModalView):
                 ],
                 entryIdentifier=None,
             )
+
+        Clock.schedule_once(
+            lambda dt: self._setHeightToContentHeight(),
+        )
+        Clock.schedule_once(
+            lambda dt: self._bindHeightToContentHeight(),
+            0,
+        )
+
+    def _setHeightToContentHeight(self, *args):
+        self.height = self.ids.purchaseSummaryPopupContent.height
+
+    def _bindHeightToContentHeight(self):
+        self.ids.purchaseSummaryPopupContent.bind(size=self._setHeightToContentHeight)

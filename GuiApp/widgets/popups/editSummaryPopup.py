@@ -1,6 +1,6 @@
-from kivy.uix.modalview import ModalView
-
 from database import HistoryData
+from kivy.clock import Clock
+from kivy.uix.modalview import ModalView
 
 
 class EditSummaryPopup(ModalView):
@@ -19,3 +19,12 @@ class EditSummaryPopup(ModalView):
         self.ids[
             "creditsAfterEditLabel"
         ].text = f"{historyData.amountAfterTransaction:.2f}"
+
+        Clock.schedule_once(lambda dt: self._setHeightToContentHeight())
+        Clock.schedule_once(lambda dt: self._bindHeightToContentHeight())
+
+    def _setHeightToContentHeight(self, *args):
+        self.height = self.ids.editSummaryPopupContent.height
+
+    def _bindHeightToContentHeight(self):
+        self.ids.editSummaryPopupContent.bind(size=self._setHeightToContentHeight)

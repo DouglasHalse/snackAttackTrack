@@ -34,7 +34,6 @@ class TextInputWithHeader(GridLayout):
         self.ids["input"].focus = value
 
     def on_focus(self, instance, value):
-        print(f"TextInputWithHeader focus changed: {value}")
         if value and self.enableVirtualKeyboardEntry:
             TextInputPopup(
                 originalTextInputWidget=self.ids["input"],

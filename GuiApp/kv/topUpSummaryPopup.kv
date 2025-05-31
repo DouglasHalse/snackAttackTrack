@@ -1,29 +1,32 @@
 #:kivy 2.1.0     
 
 <TopUpSummaryHeading@Label>:
-    font_size: 18
+    font_size: self.width / 20
     text_size: self.size
     size_hint_y: None
-    height: 20
+    height: self.width / 18
     halign: 'left'
     valign: 'middle'
     bold: True
 
 <TopUpSummaryData@Label>:
-    font_size: 16
+    font_size: self.width / 22
     text_size: self.size
     size_hint_y: None
-    height: 20
+    height: self.width / 20
     halign: 'left'
     valign: 'middle'
 
 <TopUpSummaryPopup>:
-    size_hint: (0.4, 0.65)
+    size_hint: (0.5, None)
     auto_dismiss: True
     GridLayout:
         cols: 1
-        padding: '10dp'
-        spacing: '10dp'
+        id: topUpSummaryPopupContent
+        size_hint_y: None
+        height: self.minimum_height
+        padding: 10
+        spacing: 10
         canvas:
             Color:
                 rgba: app.colors["secondary_background"]
@@ -32,11 +35,14 @@
                 size: self.size
         GridLayout:
             cols: 1
-            padding: [5, 0, 5, 0]
+            size_hint_y: None
+            height: self.minimum_height
             spacing: 10
             GridLayout:
                 cols: 1
+                size_hint_y: None
                 spacing: 5
+                height: self.minimum_height
                 TopUpSummaryHeading:
                     text: 'Top-up date:'
                 TopUpSummaryData:
@@ -44,7 +50,9 @@
                     id: topUpDateLabel
             GridLayout:
                 cols: 1
+                size_hint_y: None
                 spacing: 5
+                height: self.minimum_height
                 TopUpSummaryHeading:
                     text: 'Credits before Top-up:'
                 TopUpSummaryData:
@@ -52,7 +60,9 @@
                     id: creditsBeforeTopUpLabel
             GridLayout:
                 cols: 1
+                size_hint_y: None
                 spacing: 5
+                height: self.minimum_height
                 TopUpSummaryHeading:
                     text: 'Credits after Top-up:'
                 TopUpSummaryData:
@@ -65,4 +75,7 @@
             orientation: 'rl-tb'
             SmallOrangeButton:
                 text: "Close"
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.dismiss()

@@ -1,45 +1,52 @@
 #:kivy 2.1.0     
 
 <PurchaseSummaryHeading@Label>:
-    font_size: 18
+    font_size: self.width / 18
     text_size: self.size
     size_hint_y: None
-    height: 20
+    height: self.width / 16
     halign: 'left'
     valign: 'middle'
     bold: True
 
 <PurchaseSummaryData@Label>:
-    font_size: 16
+    font_size: self.width / 20
     text_size: self.size
     size_hint_y: None
-    height: 20
+    height: self.width / 18
     halign: 'left'
     valign: 'middle'
 
 <PurchaseSummaryPopup>:
-    size_hint: (0.9, 0.9)
+    size_hint: (0.9, None)
     auto_dismiss: True
-    canvas:
-        Color:
-            rgba: app.colors["secondary_background"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
     GridLayout:
         cols: 1
-        padding: '10dp'
-        spacing: '10dp'
+        id: purchaseSummaryPopupContent
+        size_hint_y: None
+        height: self.minimum_height
+        padding: 10
+        spacing: 10
+        canvas:
+            Color:
+                rgba: app.colors["secondary_background"]
+            SmoothRoundedRectangle:
+                pos: self.pos
+                size: self.size
         GridLayout:
             rows: 1
-            padding: [5, 0, 5, 0]
+            size_hint_y: None
+            height: self.minimum_height
             GridLayout:
                 cols: 1
-                size_hint: (0.4, 1)
-                padding: [5, 0, 5, 0]
+                size_hint_y: None
+                size_hint_x: 0.5
+                height: self.minimum_height
                 spacing: 10
                 GridLayout:
                     cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
                     spacing: 5
                     PurchaseSummaryHeading:
                         text: 'Purchase date:'
@@ -48,6 +55,8 @@
                         id: purchaseDateLabel
                 GridLayout:
                     cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
                     spacing: 5
                     PurchaseSummaryHeading:
                         text: 'Credits before purchase:'
@@ -56,6 +65,8 @@
                         id: creditsBeforeLabel
                 GridLayout:
                     cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
                     spacing: 5
                     PurchaseSummaryHeading:
                         text: 'Credits after purchase:'
@@ -64,6 +75,8 @@
                         id: creditsAfterLabel
                 GridLayout:
                     cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
                     spacing: 5
                     PurchaseSummaryHeading:
                         text: 'Total number of items bought:'
@@ -72,6 +85,8 @@
                         id: numberOfItemsBoughtLabel
                 GridLayout:
                     cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
                     spacing: 5
                     PurchaseSummaryHeading:
                         text: 'Total price of items bought:'
@@ -81,12 +96,14 @@
             GridLayout:
                 id: purchaseSummaryContent
                 cols: 1
-                size_hint: (0.6, 1)
+                size_hint_x: 0.5
                 spacing: 5
                 Label:
+                    size_hint_y: None
+                    font_size: self.width / 22
                     text_size: self.size
                     size_hint_y: None
-                    height: 20
+                    height: self.width / 20
                     text: "Items bought:"
                     bold: True
                 ClickableTable:
@@ -94,7 +111,7 @@
                     headerHeight: self.width / (15 / 2)
                     entryHeight: self.width / (15 / 2)
                     columns: ["Snack name", "Quantity", "Price"]
-                    columnExamples: ["Long snack name", "100", "43.43"]
+                    columnExamples: ["Long name", "100", "43.43"]
         GridLayout:
             rows: 1
             size_hint: (1, None)
@@ -102,4 +119,7 @@
             orientation: 'rl-tb'
             SmallOrangeButton:
                 text: "Close"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.dismiss()
