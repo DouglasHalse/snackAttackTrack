@@ -3,49 +3,63 @@
 <EditSnackScreenContent>:
     cols: 1
     padding: 20
-    spacing: 30
+    Widget: # Vertical Spacer
     GridLayout:
-        cols: 1
-        padding: [130, 0]
+        rows: 1
+        size_hint_y: None
+        padding: [self.width / 8, 0]
+        height: self.minimum_height
         RoundedTwoColorGridLayout:
             cols: 1
-            padding: [20, 15]
-            spacing: 10
+            padding: 20
+            spacing: self.width / 50
+            size_hint_y: None
+            height: self.minimum_height
             LargeTextInputWithHeader:
                 id: snackNameInput
+                size_factor: self.parent.width / 30
                 header_text: "Snack Name"
                 hint_text: "Enter snack name"
             LargeTextInputWithHeader:
                 id: snackQuantityInput
+                size_factor: self.parent.width / 30
                 header_text: "Quantity"
                 hint_text: "Enter quantity"
                 input_filter: "int"
             LargeTextInputWithHeader:
                 id: snackPriceInput
+                size_factor: self.parent.width / 30
                 header_text: "Price"
                 hint_text: "Enter price"
                 input_filter: "float"
-
+    Widget: # Vertical Spacer
     GridLayout:
         rows: 1
         size_hint: (1, None)
         height: self.minimum_height
-        padding: [20, 0]
+        Widget: # Horizontal Spacer
         MediumGreenButton:
             text: "Confirm"
+            width: self.parent.width / 4
+            height: self.width / 3
+            text_size: self.height / 2
             on_press: root.onConfirm()
         Widget: # Horizontal Spacer
-            size_hint: (1, None)
-            height: 75
         MediumOrangeButton:
             text: "Cancel"
+            width: self.parent.width / 4
+            height: self.width / 3
+            text_size: self.height / 2
             on_press: root.onCancel()
         Widget: # Horizontal Spacer
-            size_hint: (1, None)
-            height: 75
         MediumRedButton:
             text: "Remove"
+            width: self.parent.width / 4
+            height: self.width / 3
+            text_size: self.height / 2
             on_press: root.onRemove()
+        Widget: # Horizontal Spacer
+    Widget: # Vertical Spacer
 
 
 <RemoveSnackConfirmationPopup>:
