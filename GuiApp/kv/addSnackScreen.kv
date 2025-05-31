@@ -5,81 +5,93 @@
     padding: 30
     spacing: 30
     GridLayout:
-        size_hint: (0.5, 1)
         cols:1
+        size_hint: (0.5, 1)
         spacing: 20
+        Widget: # Vertical Spacer
         RoundedTwoColorGridLayout:
             cols: 1
-            spacing: 10
             padding: 20
-            size_hint: (1, None)
+            spacing: self.width / 50
+            size_hint_y: None
             height: self.minimum_height
             LargeTextInputWithHeader:
                 id: snackNameInput
+                size_factor: self.parent.width / 15
                 header_text: "Snack Name"
                 hint_text: "Enter snack name"
             LargeTextInputWithHeader:
                 id: snackQuantityInput
+                size_factor: self.parent.width / 15
                 header_text: "Quantity"
                 hint_text: "Enter quantity"
                 input_filter: "int"
             LargeTextInputWithHeader:
                 id: snackPriceInput
+                size_factor: self.parent.width / 15
                 header_text: "Price"
                 hint_text: "Enter price"
                 input_filter: "float"
+        Widget: # Vertical Spacer
         GridLayout:
             rows: 1
             size_hint: (1, None)
             height: self.minimum_height
+            Widget: # Horizontal Spacer
             SmallGreenButton:
                 text: "Confirm"
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.onConfirm()
             Widget: # Horizontal Spacer
-                size_hint: (1, None)
-                height: 50
             SmallOrangeButton:
                 text: "Cancel"
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.onCancel()
-
+            Widget: # Horizontal Spacer
+        Widget: # Vertical Spacer
     GridLayout:
         cols: 1
         size_hint: (0.5, 1)
-        padding: [5, 60, 5, 0]
-        spacing: 10
+        spacing: self.width / 50
+        Widget: # Vertical Spacer
         Label:
-            font_size: "30sp"
             size_hint_y: None
-            height: 30
+            height: self.parent.width / 8
+            font_size: self.parent.width / 10
             text: "This change will add"
             bold: True
             color: "black"
         Label:
             id: numberOfItemsLabel
-            font_size: "30sp"
             size_hint_y: None
-            height: 30
+            height: self.parent.width / 8
+            font_size: self.parent.width / 10
             text: "? of ?"
             color: "black"
         Label:
-            font_size: "30sp"
             size_hint_y: None
-            height: 30
+            height: self.parent.width / 8
+            font_size: self.parent.width / 10
             text: "which will cost users"
             bold: True
             color: "black"
         Label:
             id: pricePerItemLabel
-            font_size: "30sp"
             size_hint_y: None
-            height: 30
+            height: self.parent.width / 8
+            font_size: self.parent.width / 10
             text: "0.00 credits per item"
             color: "black"
         Label:
             id: purchaseFeeLabel
-            font_size: "30sp"
             size_hint_y: None
-            height: 30
+            height: self.parent.width / 8
+            font_size: self.parent.width / 10
             text: "including fee of 5.00%"
             bold: True
             color: "black"
+        Widget: # Vertical Spacer
