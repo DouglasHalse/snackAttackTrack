@@ -1,5 +1,4 @@
 from kivy.uix.gridlayout import GridLayout
-
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
@@ -35,7 +34,7 @@ class TopUpAmountScreenContent(GridLayout):
         newTotal = currentCredits + creditsToAdd
         self.ids["creditsAfterwards"].text = f"{newTotal:.2f}"
 
-    def onConfirm(self, *largs):
+    def onContinue(self, *largs):
 
         try:
             creditsToAdd = float(self.ids["creditsToAdd"].text)
