@@ -1,14 +1,13 @@
 from time import time
 
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.label import Label
-from kivy.clock import Clock
-from kivy.animation import AnimationTransition
-from kivy.uix.recycleview.views import RecycleDataViewBehavior
-
 import kivy.core.text
+from kivy.animation import AnimationTransition
+from kivy.clock import Clock
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
+from kivy.uix.recycleview.views import RecycleDataViewBehavior
 
 
 def get_str_pixel_width(string: str, **kwargs) -> int:
@@ -110,7 +109,7 @@ class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
         """
         Call the onEntryPressed function of the clickableTable with the entryIdentifier of the pressed entry on the table
         """
-        self.clickableTable.onEntryPressed(entryIdentifier=self.entryIdentifier)
+        self.clickableTable.onEntryPressed(self.entryIdentifier)
 
 
 class ClickableTable(GridLayout):
@@ -127,21 +126,22 @@ class ClickableTable(GridLayout):
         The callback function that will be called when an entry is pressed
     """
 
+    columns = None
+    columnExamples = None
+
     def __init__(
         self,
-        columns: list[str],
-        columnExamples: list[str] = None,
-        onEntryPressedCallback: callable = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.columns = columns
         self.columnProportions = []
+        Clock.schedule_once(lambda dt: self._setup_columns(), -1)
 
-        if columnExamples:
-            assert len(columns) == len(columnExamples)
+    def _setup_columns(self):
+        if self.columnExamples:
+            assert len(self.columns) == len(self.columnExamples)
             columnExampleWidths = []
-            for columnExample, columnName in zip(columnExamples, columns):
+            for columnExample, columnName in zip(self.columnExamples, self.columns):
                 widestContent = max(
                     get_str_pixel_width(columnExample), get_str_pixel_width(columnName)
                 )
@@ -151,10 +151,11 @@ class ClickableTable(GridLayout):
             self.columnProportions = [i / columnWidthSum for i in columnExampleWidths]
 
         else:
-            self.columnProportions = [1 / len(columns) for _ in range(len(columns))]
+            self.columnProportions = [
+                1 / len(self.columns) for _ in range(len(self.columns))
+            ]
 
-        self.onEntryPressedCallback = onEntryPressedCallback
-        for columnName, columnProportion in zip(columns, self.columnProportions):
+        for columnName, columnProportion in zip(self.columns, self.columnProportions):
             self.ids["tableHeader"].add_widget(
                 ClickableTableColumnLabel(
                     columnName=columnName, size_hint_x=columnProportion
@@ -169,14 +170,20 @@ class ClickableTable(GridLayout):
             The contents of the row
         entryIdentifier: any
             The identifier of the row that will be passed to the onEntryPressedCallback when the entry is pressed
+
+        This function schedules the addition of the entry to the table data
+        to ensure that it is added after the table has been initialized
         """
-        self.ids["rw"].data.append(
-            {
-                "clickableTable": self,
-                "entryContents": entryContents,
-                "columnProportions": self.columnProportions,
-                "entryIdentifier": entryIdentifier,
-            }
+        Clock.schedule_once(
+            lambda dt: self.ids["rw"].data.append(
+                {
+                    "clickableTable": self,
+                    "entryContents": entryContents,
+                    "columnProportions": self.columnProportions,
+                    "entryIdentifier": entryIdentifier,
+                }
+            ),
+            0,
         )
 
     def hasEntry(self, entryIdentifier):
@@ -228,12 +235,8 @@ class ClickableTable(GridLayout):
         """
         self.ids["rw"].data = []
 
-    def onEntryPressed(self, entryIdentifier):
+    def onEntryPressed(self, *largs):
         """
         Call the onEntryPressedCallback with the entryIdentifier of the pressed entry
         if the onEntryPressedCallback is not provided, print a default message
         """
-        if self.onEntryPressedCallback:
-            self.onEntryPressedCallback(entryIdentifier)
-        else:
-            print(f"Entry with id {entryIdentifier} pressed")

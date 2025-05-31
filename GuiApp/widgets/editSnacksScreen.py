@@ -1,10 +1,9 @@
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.behaviors import ButtonBehavior
 from database import getAllSnacks, getSnack
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
-from widgets.clickableTable import ClickableTable
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -17,19 +16,14 @@ class EditSnacksScreenContent(GridLayout):
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
-        self.snackTable = ClickableTable(
-            columns=["Snack name", "Quantity", "Price", "Image ID"],
-            columnExamples=["Long snack name", "100", "43.43", "AnImageId"],
-            onEntryPressedCallback=self.onEntryPressed,
-        )
-        self.add_widget(self.snackTable)
+
         self.addSnacksFromDatabase()
 
     def addSnacksFromDatabase(self):
         snacks = getAllSnacks()
 
         for snack in snacks:
-            self.snackTable.addEntry(
+            self.ids.snacksTable.addEntry(
                 entryContents=[
                     snack.snackName,
                     str(snack.quantity),
@@ -39,7 +33,7 @@ class EditSnacksScreenContent(GridLayout):
                 entryIdentifier=snack.snackId,
             )
 
-        self.snackTable.addEntry(
+        self.ids.snacksTable.addEntry(
             entryContents=["[i]Add a snack +[/i]"],
             entryIdentifier=self.ADD_SNACK_ENTRY_IDENTIFIER,
         )

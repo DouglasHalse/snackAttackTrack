@@ -1,24 +1,24 @@
-from enum import Enum
 from datetime import datetime
-from kivy.uix.gridlayout import GridLayout
+from enum import Enum
+
 from database import (
-    getAllSnacks,
     SnackData,
+    addPurchaseTransaction,
+    getAllSnacks,
+    getMostPurchasedSnacksByPatron,
     getSnack,
     removeSnack,
-    subtractSnackQuantity,
     subtractPatronCredits,
-    addPurchaseTransaction,
-    getMostPurchasedSnacksByPatron,
+    subtractSnackQuantity,
 )
+from kivy.uix.gridlayout import GridLayout
+from snackReorderer import SnackReorderer
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
-from widgets.clickableTable import ClickableTable
 from widgets.settingsManager import SettingName
-from snackReorderer import SnackReorderer
 
 
 class ItemLocation(Enum):
@@ -31,21 +31,6 @@ class BuyScreenContent(GridLayout):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.snackDict = {}
-
-        self.snackListInventory = ClickableTable(
-            columns=["Snack name", "Quantity", "Price"],
-            columnExamples=["Long snack name", "30", "15.00"],
-            onEntryPressedCallback=self.itemClickedInInventory,
-        )
-        self.snackListShoppingCart = ClickableTable(
-            columns=["Snack name", "Quantity", "Price"],
-            columnExamples=["Long snack name", "30", "15.00"],
-            onEntryPressedCallback=self.itemClickedInShoppingCart,
-        )
-
-        self.ids["inventoryItemSelection"].add_widget(self.snackListInventory)
-        self.ids["shoppingCartItemSelection"].add_widget(self.snackListShoppingCart)
-
         self.initInventory()
 
     def itemClickedInInventory(self, snackId: int):
@@ -64,9 +49,9 @@ class BuyScreenContent(GridLayout):
         snackData = getSnack(snackId)
 
         if self.snackDict[snackId][ItemLocation.INVENTORY] == 0:
-            self.snackListInventory.removeEntry(entryIdentifier=snackId)
-        elif self.snackListInventory.hasEntry(entryIdentifier=snackId):
-            self.snackListInventory.updateEntry(
+            self.ids.inventoryTable.removeEntry(entryIdentifier=snackId)
+        elif self.ids.inventoryTable.hasEntry(entryIdentifier=snackId):
+            self.ids.inventoryTable.updateEntry(
                 entryIdentifier=snackId,
                 newEntryContents=[
                     snackData.snackName,
@@ -75,7 +60,7 @@ class BuyScreenContent(GridLayout):
                 ],
             )
         else:
-            self.snackListInventory.addEntry(
+            self.ids.inventoryTable.addEntry(
                 entryContents=[
                     snackData.snackName,
                     str(self.snackDict[snackId][ItemLocation.INVENTORY]),
@@ -85,9 +70,9 @@ class BuyScreenContent(GridLayout):
             )
 
         if self.snackDict[snackId][ItemLocation.SHOPPINGCART] == 0:
-            self.snackListShoppingCart.removeEntry(entryIdentifier=snackId)
-        elif self.snackListShoppingCart.hasEntry(entryIdentifier=snackId):
-            self.snackListShoppingCart.updateEntry(
+            self.ids.shoppingCartTable.removeEntry(entryIdentifier=snackId)
+        elif self.ids.shoppingCartTable.hasEntry(entryIdentifier=snackId):
+            self.ids.shoppingCartTable.updateEntry(
                 entryIdentifier=snackId,
                 newEntryContents=[
                     snackData.snackName,
@@ -96,7 +81,7 @@ class BuyScreenContent(GridLayout):
                 ],
             )
         else:
-            self.snackListShoppingCart.addEntry(
+            self.ids.shoppingCartTable.addEntry(
                 entryContents=[
                     snackData.snackName,
                     str(self.snackDict[snackId][ItemLocation.SHOPPINGCART]),
@@ -125,15 +110,15 @@ class BuyScreenContent(GridLayout):
                 ItemLocation.SHOPPINGCART: 0,
             }
 
-        self.snackListInventory.clearEntries()
-        self.snackListShoppingCart.clearEntries()
+        self.ids.inventoryTable.clearEntries()
+        self.ids.shoppingCartTable.clearEntries()
 
         for snackDictEntry in self.snackDict.items():
             snackId = snackDictEntry[0]
             snack = getSnack(snackId)
             snacksInInventory = snackDictEntry[1][ItemLocation.INVENTORY]
 
-            self.snackListInventory.addEntry(
+            self.ids.inventoryTable.addEntry(
                 entryContents=[
                     snack.snackName,
                     str(snacksInInventory),

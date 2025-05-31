@@ -89,6 +89,12 @@
                     height: 20
                     text: "Items bought:"
                     bold: True
+                ClickableTable:
+                    id: itemsBoughtTable
+                    headerHeight: self.width / (15 / 2)
+                    entryHeight: self.width / (15 / 2)
+                    columns: ["Snack name", "Quantity", "Price"]
+                    columnExamples: ["Long snack name", "100", "43.43"]
         GridLayout:
             rows: 1
             size_hint: (1, None)

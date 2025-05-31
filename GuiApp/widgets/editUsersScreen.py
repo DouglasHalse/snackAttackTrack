@@ -1,12 +1,9 @@
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
+from database import getAllPatrons, getPatronData
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
-from widgets.clickableTable import ClickableTable
-
-
-from database import getAllPatrons, getPatronData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -17,18 +14,12 @@ class EditUsersScreenContent(GridLayout):
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
-        self.usersTable = ClickableTable(
-            columns=["First name", "Last name", "User ID", "Total credits"],
-            columnExamples=["LongName", "LongLastName", "23", "100.00"],
-            onEntryPressedCallback=self.onUserEntryPressed,
-        )
-        self.add_widget(self.usersTable)
         self.addUsersFromDatabase()
 
     def addUsersFromDatabase(self):
         users = getAllPatrons()
         for user in users:
-            self.usersTable.addEntry(
+            self.ids.usersTable.addEntry(
                 entryContents=[
                     user.firstName,
                     user.lastName,

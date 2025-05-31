@@ -5,4 +5,10 @@
     cols: 1
     size_hint: (1, 1)
     padding: '10dp'
-        
+    ClickableTable:
+        id: historyTable
+        headerHeight: self.width / 15
+        entryHeight: self.width / 15
+        columns: ["Date", "Credits before", "Credits after", "Type"]
+        columnExamples: ["2025-01-12 15:04:31", "10000.00", "10000.00", "Purchase"]
+        onEntryPressed: root.onHistoryEntryPressed

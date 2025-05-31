@@ -4,3 +4,10 @@
     rows: 1
     size_hint: (1, 1)
     padding: '20dp'
+    ClickableTable:
+        id: snacksTable
+        headerHeight: self.width / 15
+        entryHeight: self.width / 15
+        columns: ["Snack name", "Quantity", "Price", "Image ID"]
+        columnExamples: ["Long snack name", "100", "43.43", "AnImageId"]
+        onEntryPressed: root.onEntryPressed
