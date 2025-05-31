@@ -15,7 +15,7 @@
         spacing: '10dp'
         Label:
             id: errorMessagePopupLabel
-            font_size: 18
+            font_size: self.width / 15
             text_size: self.size
             halign: 'center'
             valign: 'middle'
@@ -28,4 +28,7 @@
             orientation: 'rl-tb'
             SmallOrangeButton:
                 text: "Close"
+                width: self.parent.width / 2
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.dismiss()
