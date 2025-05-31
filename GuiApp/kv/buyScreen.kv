@@ -3,8 +3,7 @@
 
 <BuyScreenContent>:
     cols: 1
-    size_hint: (1, 1)
-    padding: ['20dp', '5dp']
+    padding: [20, 5]
     GridLayout:
         rows: 1
         spacing: 30
@@ -15,8 +14,8 @@
             Label:
                 text_size: self.size
                 size_hint_y: None
-                height: 24
-                font_size: '22dp'
+                height: self.width / 12
+                font_size: self.width / 14
                 text: "Inventory"
                 bold: True
             ClickableTable:
@@ -33,8 +32,8 @@
             Label:
                 text_size: self.size
                 size_hint_y: None
-                height: 24
-                font_size: '22dp'
+                height: self.width / 12
+                font_size: self.width / 14
                 text: "Shopping cart"
                 bold: True
             ClickableTable:
@@ -46,20 +45,17 @@
                 onEntryPressed: root.itemClickedInShoppingCart
     GridLayout:
         rows: 1
-        size_hint: (0.5, None)
+        size_hint_y: None
         height: self.minimum_height
         spacing: 30
         padding: [0, 10]
         GridLayout:
             rows: 1
             size_hint_x: 0.5
-            height: 50
             Label:
                 text: 'Total price: 0.00 credits'
                 id: totalPriceLabel
-                size_hint: (1, None)
-                height: 50
-                font_size: 24
+                font_size: self.width / 14
                 text_size: self.size
                 halign: 'left'
                 valign: 'middle'
@@ -70,12 +66,16 @@
             height: self.minimum_height
             SmallGreenButton:
                 text: "Buy"
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.onBuy()
             Widget: # Horizontal Spacer
-                size_hint: (1, None)
-                height: 50
             SmallOrangeButton:
                 text: "Cancel"
+                width: self.parent.width / 2.5
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.onCancel()
                 
 
