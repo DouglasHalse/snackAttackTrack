@@ -1,34 +1,34 @@
 import argparse
-from kivy.app import App
-from kivy.core.window import Window
-from kivy.modules import inspector
-from kivy.lang import Builder
-
-from widgets.customScreenManager import CustomScreenManager
-from widgets.splashScreen import SplashScreenWidget
-from widgets.loginScreen import LoginScreen
-from widgets.mainUserScreen import MainUserScreen
-from widgets.createUserScreen import CreateUserScreen
-from widgets.adminScreen import AdminScreen
-from widgets.editSnacksScreen import EditSnacksScreen
-from widgets.editUsersScreen import EditUsersScreen
-from widgets.addSnackScreen import AddSnackScreen
-from widgets.topUpAmountScreen import TopUpAmountScreen
-from widgets.topUpPaymentScreen import TopUpPaymentScreen
-from widgets.buyScreen import BuyScreen
-from widgets.editUserScreen import EditUserScreen
-from widgets.historyScreen import HistoryScreen
-from widgets.editSnackScreen import EditSnackScreen
-from widgets.editSystemSettingsScreen import EditSystemSettingsScreen
-from widgets.linkCardScreen import LinkCardScreen
-from widgets.settingsManager import SettingsManager, SettingName, SettingDataType
-from database import createAllTables, closeDatabase
 
 # Disable all the unused-import violations due to .kv files
 # pylint: disable=unused-import
-import widgets.uiElements.textInputs
+import widgets.clickableTable
 import widgets.uiElements.buttons
 import widgets.uiElements.layouts
+import widgets.uiElements.textInputs
+from database import closeDatabase, createAllTables
+from kivy.app import App
+from kivy.core.window import Window
+from kivy.lang import Builder
+from kivy.modules import inspector
+from widgets.addSnackScreen import AddSnackScreen
+from widgets.adminScreen import AdminScreen
+from widgets.buyScreen import BuyScreen
+from widgets.createUserScreen import CreateUserScreen
+from widgets.customScreenManager import CustomScreenManager
+from widgets.editSnackScreen import EditSnackScreen
+from widgets.editSnacksScreen import EditSnacksScreen
+from widgets.editSystemSettingsScreen import EditSystemSettingsScreen
+from widgets.editUserScreen import EditUserScreen
+from widgets.editUsersScreen import EditUsersScreen
+from widgets.historyScreen import HistoryScreen
+from widgets.linkCardScreen import LinkCardScreen
+from widgets.loginScreen import LoginScreen
+from widgets.mainUserScreen import MainUserScreen
+from widgets.settingsManager import SettingDataType, SettingName, SettingsManager
+from widgets.splashScreen import SplashScreenWidget
+from widgets.topUpAmountScreen import TopUpAmountScreen
+from widgets.topUpPaymentScreen import TopUpPaymentScreen
 
 # pylint: enable=unused-import
 

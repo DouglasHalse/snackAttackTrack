@@ -1,29 +1,21 @@
-from kivy.uix.gridlayout import GridLayout
-
 from database import (
+    TransactionType,
+    getTransaction,
     getTransactions,
     transactionTypeToPresentableString,
-    getTransaction,
-    TransactionType,
 )
+from kivy.uix.gridlayout import GridLayout
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
-from widgets.popups.purchaseSummaryPopup import PurchaseSummaryPopup
 from widgets.popups.editSummaryPopup import EditSummaryPopup
+from widgets.popups.purchaseSummaryPopup import PurchaseSummaryPopup
 from widgets.popups.topUpSummaryPopup import TopUpSummaryPopup
-from widgets.clickableTable import ClickableTable
 
 
 class HistoryScreenContent(GridLayout):
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
-
-        self.historyTable = ClickableTable(
-            columns=["Date", "Credits before", "Credits after", "Type"],
-            columnExamples=["2025-01-12 15:04:31", "10000.00", "10000.00", "Purchase"],
-            onEntryPressedCallback=self.onHistoryEntryPressed,
-        )
 
         currentPatron = self.screenManager.getCurrentPatron()
         self.transactions = getTransactions(currentPatron.patronId)
@@ -34,7 +26,7 @@ class HistoryScreenContent(GridLayout):
         )
 
         for transaction in self.transactions:
-            self.historyTable.addEntry(
+            self.ids.historyTable.addEntry(
                 entryContents=[
                     transaction.transactionDate.strftime("%Y-%m-%d %H:%M:%S"),
                     f"{transaction.amountBeforeTransaction:.2f}",
@@ -43,8 +35,6 @@ class HistoryScreenContent(GridLayout):
                 ],
                 entryIdentifier=transaction.transactionId,
             )
-
-        self.add_widget(self.historyTable)
 
     def onHistoryEntryPressed(self, transactionId):
         transaction = getTransaction(transactionId)

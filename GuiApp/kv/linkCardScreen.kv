@@ -41,6 +41,13 @@
                 GridLayout:
                     cols: 1
                     id: selectUserLayout
+                    ClickableTable:
+                        id: usersTable
+                        headerHeight: 50
+                        entryHeight: 50
+                        columns: ["First name", "Last name", "Card"]
+                        columnExamples: ["LongName", "LongLastName", "23234234"]
+                        onEntryPressed: root.onUserEntryPressed
                 GridLayout:
                     rows: 1
                     size_hint: (1, None)

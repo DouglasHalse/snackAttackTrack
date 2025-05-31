@@ -1,7 +1,5 @@
-from kivy.uix.modalview import ModalView
-
 from database import HistoryData
-from widgets.clickableTable import ClickableTable
+from kivy.uix.modalview import ModalView
 
 
 class PurchaseSummaryPopup(ModalView):
@@ -25,14 +23,8 @@ class PurchaseSummaryPopup(ModalView):
         )
         self.ids["totalPriceLabel"].text = f"{totalPrice:.2f}"
 
-        self.snackTable = ClickableTable(
-            columns=["Snack name", "Quantity", "Price"],
-            columnExamples=["Long snack name", "100", "43.43"],
-            onEntryPressedCallback=None,
-            size_hint_x=0.5,
-        )
         for boughtSnack in historyData.transactionItems:
-            self.snackTable.addEntry(
+            self.ids.itemsBoughtTable.addEntry(
                 entryContents=[
                     boughtSnack.snackName,
                     str(boughtSnack.quantity),
@@ -40,5 +32,3 @@ class PurchaseSummaryPopup(ModalView):
                 ],
                 entryIdentifier=None,
             )
-
-        self.ids["purchaseSummaryContent"].add_widget(self.snackTable)

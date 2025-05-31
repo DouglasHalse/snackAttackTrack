@@ -1,32 +1,25 @@
-from kivy.uix.screenmanager import Screen
-from widgets.clickableTable import ClickableTable
-from widgets.popups.linkCardConfirmationPopup import LinkCardConfirmationPopup
 from database import getAllPatrons, getPatronData
+from kivy.uix.screenmanager import Screen
+from widgets.popups.linkCardConfirmationPopup import LinkCardConfirmationPopup
 
 
 class LinkCardScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.cardId = None
-        self.usersTable = ClickableTable(
-            columns=["First name", "Last name", "Card"],
-            columnExamples=["LongName", "LongLastName", "23234234"],
-            onEntryPressedCallback=self.onUserEntryPressed,
-        )
-        self.ids.selectUserLayout.add_widget(self.usersTable)
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
         self.addUsersFromDatabase()
 
     def on_leave(self, *args):
-        self.usersTable.clearEntries()
+        self.ids.usersTable.clearEntries()
         return super().on_leave(*args)
 
     def addUsersFromDatabase(self):
         patrons = getAllPatrons()
         for patron in patrons:
-            self.usersTable.addEntry(
+            self.ids.usersTable.addEntry(
                 entryContents=[
                     patron.firstName,
                     patron.lastName,

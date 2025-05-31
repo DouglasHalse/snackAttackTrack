@@ -19,6 +19,13 @@
                 font_size: '22dp'
                 text: "Inventory"
                 bold: True
+            ClickableTable:
+                id: inventoryTable
+                headerHeight: self.width / (15 / 2)
+                entryHeight: self.width / (15 / 2)
+                columns: ["Snack name", "Quantity", "Price"]
+                columnExamples: ["Long snack", "30", "15.00"]
+                onEntryPressed: root.itemClickedInInventory
         GridLayout:
             id: shoppingCartItemSelection
             cols: 1
@@ -30,6 +37,13 @@
                 font_size: '22dp'
                 text: "Shopping cart"
                 bold: True
+            ClickableTable:
+                id: shoppingCartTable
+                headerHeight: self.width / (15 / 2)
+                entryHeight: self.width / (15 / 2)
+                columns: ["Snack name", "Quantity", "Price"]
+                columnExamples: ["Long snack", "30", "15.00"]
+                onEntryPressed: root.itemClickedInShoppingCart
     GridLayout:
         rows: 1
         size_hint: (0.5, None)

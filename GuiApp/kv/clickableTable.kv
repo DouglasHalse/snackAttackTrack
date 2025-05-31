@@ -1,11 +1,9 @@
 #:kivy 2.1.0
 
 <ClickableTableColumnLabel>:
-    size_hint_y: None
     text: 'COLUMN NAME'
     bold: True
-    height: '40dp'
-    font_size: '22dp'
+    font_size: self.height / 2
 
 <ClickableTableColumnEntryLabel>:
     rows: 1
@@ -16,11 +14,11 @@
             text: 'ENTRY NAME'
             size_hint_x: None
             size_hint_y: None
-            height: '50dp'
+            height: entry.height
             width: entry.width
             pos: entry.pos
             markup: True
-            font_size: '22dp'
+            font_size: self.height / 2
             bold: True
             halign: "left"
             valign: 'middle'
@@ -28,10 +26,8 @@
 <ClickableTableEntry>:
     rows: 1
     size_hint_y: None
-    height: '50dp'
     on_press: root.onPress()
     markup: True
-    padding: [10, 0]
     canvas:
         Color:
             rgba: app.colors["secondary_background"]
@@ -54,14 +50,15 @@
 <ClickableTable>:
     rows: 1
     spacing: 30
+    headerHeight: 50
+    entryHeight: 50
     RoundedTwoColorGridLayout:
         cols: 1
-        padding: [0, 10]
         GridLayout:
             rows: 1
             size_hint: 1, None
-            padding: ["10dp", 0, "10dp", "20dp"]
-            height: '50dp'
+            padding: [15, 5]
+            height: root.headerHeight
             id: tableHeader
             canvas.after:
                 Color:
@@ -69,14 +66,16 @@
                 SmoothLine:
                     width: 2.5
                     points: (self.x + 2.5, self.y + 2.5, self.x + self.width - 2.5, self.y + 2.5)
-        RecycleView:
-            id: rw
-            viewclass: 'ClickableTableEntry'
-            RecycleBoxLayout:
-                spacing: 10
-                padding: 10
-                default_size: None, dp(50)
-                default_size_hint: 1, None
-                size_hint_y: None
-                height: self.minimum_height
-                orientation: 'vertical'
+        GridLayout:
+            rows: 1
+            padding: [15, 5]
+            RecycleView:
+                id: rw
+                viewclass: 'ClickableTableEntry'
+                RecycleBoxLayout:
+                    spacing: 10
+                    default_size: None, root.entryHeight
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
