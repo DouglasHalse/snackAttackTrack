@@ -1,6 +1,6 @@
-from kivy.uix.modalview import ModalView
-
 from database import HistoryData
+from kivy.clock import Clock
+from kivy.uix.modalview import ModalView
 
 
 class TopUpSummaryPopup(ModalView):
@@ -19,3 +19,18 @@ class TopUpSummaryPopup(ModalView):
         self.ids[
             "creditsAfterTopUpLabel"
         ].text = f"{historyData.amountAfterTransaction:.2f}"
+
+        Clock.schedule_once(
+            lambda dt: self._bindHeightToContentHeight(),
+            0,
+        )
+
+        Clock.schedule_once(
+            lambda dt: self._setHeightToContentHeight(),
+        )
+
+    def _setHeightToContentHeight(self, *args):
+        self.height = self.ids.topUpSummaryPopupContent.height
+
+    def _bindHeightToContentHeight(self):
+        self.ids.topUpSummaryPopupContent.bind(size=self._setHeightToContentHeight)
