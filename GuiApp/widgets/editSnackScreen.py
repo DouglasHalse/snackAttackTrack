@@ -1,13 +1,11 @@
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
+from database import SnackData, removeSnack, updateSnackData
 from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.popup import Popup
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.modalview import ModalView
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
-
-
-from database import SnackData, updateSnackData, removeSnack
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -88,7 +86,7 @@ class EditSnackScreen(HeaderBodyScreen):
         self.manager.resetSnackToEdit()
 
 
-class RemoveSnackConfirmationPopup(Popup):
+class RemoveSnackConfirmationPopup(ModalView):
     def __init__(
         self, screenManager: CustomScreenManager, snackToRemove: SnackData, **kwargs
     ):
