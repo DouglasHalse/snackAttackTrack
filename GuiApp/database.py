@@ -1,12 +1,13 @@
 import sqlite3
-from enum import Enum
 from datetime import datetime
+from enum import Enum
 
 
 class TransactionType(Enum):
     PURCHASE = "PURCHASE"
     TOP_UP = "TOP_UP"
     EDIT = "EDIT"
+    GAMBLE = "GAMBLE"
 
 
 def transactionTypeToPresentableString(transactionType: TransactionType) -> str:
@@ -16,6 +17,8 @@ def transactionTypeToPresentableString(transactionType: TransactionType) -> str:
         return "Top-up"
     if transactionType == TransactionType.EDIT:
         return "Edit"
+    if transactionType == TransactionType.GAMBLE:
+        return "Gamble"
     return "Unknown"
 
 
@@ -112,6 +115,51 @@ def createAllTables():
         cursor.execute(query)
 
     connection.commit()
+
+
+def addGambleTransaction(
+    patronID: int,
+    amountBeforeTransaction: float,
+    amountAfterTransaction: float,
+    transactionDate: str,
+    transactionItem: SnackData,
+):
+    # Verify data types
+    assert isinstance(patronID, int)
+    assert isinstance(amountBeforeTransaction, float)
+    assert isinstance(amountAfterTransaction, float)
+    assert isinstance(transactionDate, datetime)
+    assert isinstance(transactionItem, SnackData)
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        INSERT INTO Transactions (TransactionType, PatronID, TransactionDate, AmountBeforeTransaction, AmountAfterTransaction)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            TransactionType.GAMBLE.value,
+            patronID,
+            transactionDate,
+            amountBeforeTransaction,
+            amountAfterTransaction,
+        ),
+    )
+    transactionID = cursor.lastrowid
+    cursor.execute(
+        """
+        INSERT INTO TransactionItems (TransactionID, ItemName, Quantity, PricePerItem)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            transactionID,
+            transactionItem.snackName,
+            transactionItem.quantity,
+            transactionItem.pricePerItem,
+        ),
+    )
+    conn.commit()
 
 
 def addPurchaseTransaction(

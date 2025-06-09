@@ -1,0 +1,125 @@
+#:kivy 2.1.0     
+
+<GambleSummaryHeading@Label>:
+    font_size: self.width / 18
+    text_size: self.size
+    size_hint_y: None
+    height: self.width / 16
+    halign: 'left'
+    valign: 'middle'
+    bold: True
+
+<GambleSummaryData@Label>:
+    font_size: self.width / 20
+    text_size: self.size
+    size_hint_y: None
+    height: self.width / 18
+    halign: 'left'
+    valign: 'middle'
+
+<GambleSummaryPopup>:
+    size_hint: (0.9, None)
+    auto_dismiss: True
+    GridLayout:
+        cols: 1
+        id: gambleSummaryPopupContent
+        size_hint_y: None
+        height: self.minimum_height
+        padding: 10
+        spacing: 10
+        canvas:
+            Color:
+                rgba: app.colors["secondary_background"]
+            SmoothRoundedRectangle:
+                pos: self.pos
+                size: self.size
+        GridLayout:
+            rows: 1
+            size_hint_y: None
+            height: self.minimum_height
+            GridLayout:
+                cols: 1
+                size_hint_y: None
+                size_hint_x: 0.5
+                height: self.minimum_height
+                spacing: 10
+                GridLayout:
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: 5
+                    GambleSummaryHeading:
+                        text: 'Gamble date:'
+                    GambleSummaryData:
+                        text: 'DATA NOT SET'
+                        id: gambleDateLabel
+                GridLayout:
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: 5
+                    GambleSummaryHeading:
+                        text: 'Credits before gamble:'
+                    GambleSummaryData:
+                        text: 'DATA NOT SET'
+                        id: creditsBeforeLabel
+                GridLayout:
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: 5
+                    GambleSummaryHeading:
+                        text: 'Credits after gamble:'
+                    GambleSummaryData:
+                        text: 'DATA NOT SET'
+                        id: creditsAfterLabel
+                GridLayout:
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: 5
+                    GambleSummaryHeading:
+                        text: 'Cost of gamble:'
+                    GambleSummaryData:
+                        text: 'DATA NOT SET'
+                        id: costOfGambleLabel
+                GridLayout:
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: 5
+                    GambleSummaryHeading:
+                        text: 'Return:'
+                    GambleSummaryData:
+                        text: 'DATA NOT SET'
+                        id: returnLabel
+            GridLayout:
+                id: purchaseSummaryContent
+                cols: 1
+                size_hint_x: 0.5
+                spacing: 5
+                Label:
+                    size_hint_y: None
+                    font_size: self.width / 22
+                    text_size: self.size
+                    size_hint_y: None
+                    height: self.width / 20
+                    text: "Item won:"
+                    bold: True
+                ClickableTable:
+                    id: itemsWonTable
+                    headerHeight: self.width / (15 / 2)
+                    entryHeight: self.width / (15 / 2)
+                    columns: ["Snack name", "Value"]
+                    columnExamples: ["Long name", "43.43"]
+        GridLayout:
+            rows: 1
+            size_hint: (1, None)
+            height: self.minimum_height
+            orientation: 'rl-tb'
+            SmallOrangeButton:
+                text: "Close"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.dismiss()

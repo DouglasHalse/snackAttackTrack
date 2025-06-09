@@ -1,0 +1,49 @@
+#:kivy 2.1.0     
+
+
+<WheelOfSnacksContent>:
+    rows: 1
+    padding: 20
+    spacing: 20
+    GridLayout:
+        cols: 1
+        GridLayout:
+            rows: 1
+            Widget:
+                size_hint_x: 0.1
+            ClickableTable:
+                id: win_table
+                headerHeight: self.width / (8)
+                entryHeight: self.width / (10)
+                columns: ["Snack name", "Value"]
+                columnExamples: ["Long name", "14.99%"]
+            Widget:
+                size_hint_x: 0.1
+        Widget:
+            size_hint_y: 0.1
+        Label:
+            id: cost_label
+            size_hint_y: None
+            height: self.parent.width / 14
+            font_size: self.parent.width / 16
+            text: "One spin costs: ??.?? Credits"
+            color: "black"
+        Widget:
+            size_hint_y: 0.1
+        GridLayout:
+            rows: 1
+            size_hint_y: None
+            height: self.minimum_height
+            Widget:
+            SmallGreenButton:
+                id: spin_button
+                text: "Spin!"
+                width: self.parent.width / 2
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.onSpinButtonPressed()
+            Widget:
+    WheelOfSnacksWidget:
+        id: wheel_widget
+        
+        
