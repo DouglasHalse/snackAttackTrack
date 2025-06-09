@@ -1,5 +1,4 @@
 from kivy.uix.gridlayout import GridLayout
-
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 
@@ -17,6 +16,9 @@ class MainUserScreenContent(GridLayout):
 
     def onHistoryButtonPressed(self):
         self.screenManager.transitionToScreen("historyScreen")
+
+    def onGambleButtonPressed(self):
+        self.screenManager.transitionToScreen("wheelOfSnacksScreen")
 
 
 class MainUserScreen(HeaderBodyScreen):

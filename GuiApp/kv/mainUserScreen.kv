@@ -4,25 +4,47 @@
     rows: 1
     padding: 30
     spacing: 30
-    ClickableRoundedTwoColorGridLayout:
-        on_press: root.onBuyButtonPressed()
+    GridLayout:
         cols: 1
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Image:
-            size_hint_y: 0.3
-            fit_mode: 'contain'
-            mipmap: True
-            source: 'Images/cart-shopping-fast.png'
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Label:
-            text: 'Buy'
-            bold: True
-            font_size: self.width/8
-            size_hint_y: 0.2
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.1
+        spacing: 30
+        ClickableRoundedTwoColorGridLayout:
+            on_press: root.onBuyButtonPressed()
+            cols: 1
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.2
+            Image:
+                size_hint_y: 0.3
+                fit_mode: 'contain'
+                mipmap: True
+                source: 'Images/cart-shopping-fast.png'
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.2
+            Label:
+                text: 'Buy'
+                bold: True
+                font_size: self.width/8
+                size_hint_y: 0.2
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.1
+        ClickableRoundedTwoColorGridLayout:
+            on_press: root.onGambleButtonPressed()
+            cols: 1
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.2
+            Image:
+                size_hint_y: 0.3
+                fit_mode: 'contain'
+                mipmap: True
+                source: 'Images/cart-shopping-fast.png'
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.2
+            Label:
+                text: 'Gamble'
+                bold: True
+                font_size: self.width/8
+                size_hint_y: 0.2
+            Widget: # Horizontal Spacer
+                size_hint_y: 0.1
     ClickableRoundedTwoColorGridLayout:
         on_press: root.onTopUpButtonPressed()
         cols: 1
