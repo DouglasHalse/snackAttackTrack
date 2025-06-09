@@ -5,7 +5,9 @@ import argparse
 import widgets.clickableTable
 import widgets.uiElements.buttons
 import widgets.uiElements.layouts
+import widgets.uiElements.ParticleEmitter
 import widgets.uiElements.textInputs
+import widgets.uiElements.WheelOfSnacksWidget
 from database import closeDatabase, createAllTables
 from kivy.app import App
 from kivy.core.window import Window
@@ -29,6 +31,7 @@ from widgets.settingsManager import SettingDataType, SettingName, SettingsManage
 from widgets.splashScreen import SplashScreenWidget
 from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
+from widgets.wheelOfSnacksScreen import WheelOfSnacksScreen
 
 # pylint: enable=unused-import
 
@@ -144,6 +147,22 @@ class snackAttackTrackApp(App):
             max_value=1,
         )
 
+        sm.add_setting_if_undefined(
+            settingName=SettingName.ENABLE_GAMBLING,
+            default_value=True,
+            datatype=SettingDataType.BOOL,
+            min_value=0,
+            max_value=1,
+        )
+
+        sm.add_setting_if_undefined(
+            settingName=SettingName.EXCITING_GAMBLING,
+            default_value=True,
+            datatype=SettingDataType.BOOL,
+            min_value=0,
+            max_value=1,
+        )
+
         return sm
 
     def build(self):
@@ -167,6 +186,7 @@ class snackAttackTrackApp(App):
             EditSystemSettingsScreen(name="editSystemSettingsScreen")
         )
         self.screenManager.add_widget(LinkCardScreen(name="linkCardScreen"))
+        self.screenManager.add_widget(WheelOfSnacksScreen(name="wheelOfSnacksScreen"))
 
         if self.use_inspector:
             inspector.create_inspector(Window, self.screenManager)

@@ -8,6 +8,7 @@ from kivy.uix.gridlayout import GridLayout
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
 from widgets.popups.editSummaryPopup import EditSummaryPopup
+from widgets.popups.gambleSummaryPopup import GambleSummaryPopup
 from widgets.popups.purchaseSummaryPopup import PurchaseSummaryPopup
 from widgets.popups.topUpSummaryPopup import TopUpSummaryPopup
 
@@ -44,6 +45,8 @@ class HistoryScreenContent(GridLayout):
             EditSummaryPopup(historyData=transaction).open()
         elif transaction.transactionType == TransactionType.TOP_UP:
             TopUpSummaryPopup(historyData=transaction).open()
+        elif transaction.transactionType == TransactionType.GAMBLE:
+            GambleSummaryPopup(historyData=transaction).open()
         else:
             print(
                 f"History entry pressed: {transactionId} ({transaction.transactionType.value})"

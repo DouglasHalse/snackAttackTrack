@@ -1,0 +1,38 @@
+#:kivy 2.1.0     
+
+<WinPopup>:
+    size_hint: (None, None)
+    auto_dismiss: True
+    width: 1
+    height: 1
+    ParticleEmitter:
+        id: particle_emitter
+        size_hint: (1, 1)
+    ClickableRoundedTwoColorGridLayout:
+        on_press: root.dismiss()
+        center_x: True
+        cols: 1
+        size_hint: (1, 1)
+        Widget:
+            size_hint_y: 0.1
+        Label:
+            size_hint_y: 0.2
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            font_size: self.width / 15
+            bold: True
+            text: 'Congratulations!'
+        Widget:
+            size_hint_y: 0.1
+        Label:
+            id: won_item_label
+            size_hint_y: 0.3
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            font_size: self.width / 18
+            bold: True
+            text: 'You won: \n???'
+        Widget:
+            size_hint_y: 0.1

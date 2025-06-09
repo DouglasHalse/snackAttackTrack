@@ -1,0 +1,49 @@
+#:kivy 2.1.0     
+
+
+<WheelPointer>:
+    angle: root.angle if hasattr(root, 'angle') else 0
+    canvas.before:
+        PushMatrix
+        Rotate:
+            angle: root.angle % 360
+            axis: 0, 0, 1
+            origin: root.center
+        Color:
+            rgba: (0, 0, 0, 1)
+        SmoothTriangle:
+            points: (root.x, root.top, root.x, root.y, root.right, root.center_y)
+    canvas.after:
+        PopMatrix
+
+<WheelWidget>:
+    angle: root.angle if hasattr(root, 'angle') else 0
+    canvas.before:
+        PushMatrix
+        Rotate:
+            angle: root.angle % 360
+            axis: 0, 0, 1
+            origin: root.center
+    canvas.after:
+        PopMatrix
+        
+<WheelOfSnacksWidget>:
+    anchor_x: 'center'
+    anchor_y: 'center'
+    RelativeLayout:
+        id: wheel_layout
+        size_hint: (1, None)
+        height: min(self.parent.size)*0.90
+        WheelWidget:
+            id: wheel
+            size_hint: (None, None)
+            size: (min(self.parent.size), min(self.parent.size))
+            pos_hint: {'center_y': 0.5}
+            x: (self.parent.width-self.width)/2 + min(self.parent.height, self.parent.width)/24
+        WheelPointer:
+            id: pointer
+            size_hint: (None, None)
+            width: min(self.parent.height, self.parent.width)/12
+            height: self.width
+            pos_hint: {'center_y': 0.5}
+            x: (self.parent.width/2) - (min(self.parent.size)/2) - self.width/2

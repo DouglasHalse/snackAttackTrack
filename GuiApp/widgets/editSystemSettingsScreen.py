@@ -1,14 +1,14 @@
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from widgets.customScreenManager import CustomScreenManager
 from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import (
-    SettingsManager,
     SettingName,
+    SettingsManager,
     get_presentable_setting_name,
 )
-from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.uiElements.textInputs import TextInputPopup
 
 
@@ -139,6 +139,7 @@ class SettingsSection(GridLayout):
 
 
 class EditSystemSettingsScreenContent(GridLayout):
+    # pylint: disable=too-many-locals
     def __init__(self, screenManager: CustomScreenManager, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
@@ -223,10 +224,40 @@ class EditSystemSettingsScreenContent(GridLayout):
 
         buyScreenSection.ids["sectionContent"].add_widget(orderInventoryByMostPurchased)
 
+        # Gambling settings
+        gamblingSection = SettingsSection(sectionName="Gambling")
+
+        enableGambling = BoolSettingRow(
+            settingName=SettingName.ENABLE_GAMBLING,
+            settingManager=self.screenManager.settingsManager,
+        )
+
+        excitingGambling = BoolSettingRow(
+            settingName=SettingName.EXCITING_GAMBLING,
+            settingManager=self.screenManager.settingsManager,
+        )
+
+        excitingGambling.set_disabled(
+            not self.screenManager.settingsManager.get_setting_value(
+                settingName=SettingName.ENABLE_GAMBLING
+            )
+        )
+
+        self.screenManager.settingsManager.register_on_setting_change_callback(
+            SettingName.ENABLE_GAMBLING,
+            lambda value: excitingGambling.set_disabled(not value),
+        )
+
+        gamblingSection.ids["sectionContent"].add_widget(enableGambling)
+        gamblingSection.ids["sectionContent"].add_widget(excitingGambling)
+
         # Add sections to the layout
         self.ids["settingsLayout"].add_widget(navigationSection)
         self.ids["settingsLayout"].add_widget(financialSection)
         self.ids["settingsLayout"].add_widget(buyScreenSection)
+        self.ids["settingsLayout"].add_widget(gamblingSection)
+
+    # pylint: enable=too-many-locals
 
 
 class EditSystemSettingsScreen(HeaderBodyScreen):

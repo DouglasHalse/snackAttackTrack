@@ -1,63 +1,43 @@
 #:kivy 2.1.0     
 
+<MainUserScreenOption@ClickableRoundedTwoColorGridLayout>:
+    image_source: 'Images/user.png'
+    option_name: 'OPTION'
+    cols: 1
+    Widget: # Horizontal Spacer
+        size_hint_y: 0.2
+    Image:
+        size_hint_y: 0.3
+        fit_mode: 'contain'
+        mipmap: True
+        source: root.image_source if hasattr(root, 'image_source') else 'Images/user.png'
+    Widget: # Horizontal Spacer
+        size_hint_y: 0.2
+    Label:
+        text: root.option_name if hasattr(root, 'option_name') else 'OPTION'
+        bold: True
+        font_size: self.width/8
+        size_hint_y: 0.2
+    Widget: # Horizontal Spacer
+        size_hint_y: 0.1
+
+<GambleOption>:
+    image_source: 'Images/roulette.png'
+    option_name: 'Gamble'
+
+<BuyOption>:
+    image_source: 'Images/cart-shopping-fast.png'
+    option_name: 'Buy'
+
+<TopUpOption>:
+    image_source: 'Images/money-income.png'
+    option_name: 'Top-up'
+
+<HistoryOption>:
+    image_source: 'Images/time-past.png'
+    option_name: 'History'
+
 <MainUserScreenContent>:
     rows: 1
     padding: 30
     spacing: 30
-    ClickableRoundedTwoColorGridLayout:
-        on_press: root.onBuyButtonPressed()
-        cols: 1
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Image:
-            size_hint_y: 0.3
-            fit_mode: 'contain'
-            mipmap: True
-            source: 'Images/cart-shopping-fast.png'
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Label:
-            text: 'Buy'
-            bold: True
-            font_size: self.width/8
-            size_hint_y: 0.2
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.1
-    ClickableRoundedTwoColorGridLayout:
-        on_press: root.onTopUpButtonPressed()
-        cols: 1
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Image:
-            size_hint_y: 0.3
-            fit_mode: 'contain'
-            mipmap: True
-            source: 'Images/money-income.png'
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Label:
-            text: 'Top-up'
-            bold: True
-            font_size: self.width/8
-            size_hint_y: 0.2
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.1
-    ClickableRoundedTwoColorGridLayout:
-        on_press: root.onHistoryButtonPressed()
-        cols: 1
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Image:
-            size_hint_y: 0.3
-            fit_mode: 'contain'
-            mipmap: True
-            source: 'Images/time-past.png'
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Label:
-            text: 'History'
-            bold: True
-            font_size: self.width/8
-            size_hint_y: 0.2
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.1

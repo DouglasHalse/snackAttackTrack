@@ -1,10 +1,8 @@
-from kivy.uix.screenmanager import Screen
-from kivy.uix.gridlayout import GridLayout
+from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
-from kivy.clock import Clock
-
-
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.screenmanager import Screen
 from widgets.customScreenManager import CustomScreenManager
 from widgets.settingsManager import SettingName
 
@@ -24,19 +22,27 @@ class Header(GridLayout):
         super().__init__(**kwargs)
         self.screenManager: CustomScreenManager = screenManager
         self.currentPatron = self.screenManager.getCurrentPatron()
-        self.ids["welcomeTextLabel"].text = f"Welcome {self.currentPatron.firstName}"
-        self.ids[
-            "patronCreditsLabel"
-        ].text = f"Your credits: {self.currentPatron.totalCredits:.2f}"
+        self.headerSuffix = None
+        self.refreshHeader()
+
         if enableSettingsButton:
             self.ids["rightContent"].add_widget(
                 SettingsButton(screenManager=self.screenManager)
             )
         if previousScreen:
-            backButton = BackButton(
+            self.backButton = BackButton(
                 previousScreen=previousScreen, screenManager=self.screenManager
             )
-            self.ids["leftContent"].add_widget(backButton, index=1)
+            self.ids["leftContent"].add_widget(self.backButton, index=1)
+
+    def refreshHeader(self):
+        self.currentPatron = self.screenManager.getCurrentPatron()
+        self.ids["welcomeTextLabel"].text = f"Welcome {self.currentPatron.firstName}"
+        if self.headerSuffix:
+            self.setSuffix(self.headerSuffix)
+        self.ids[
+            "patronCreditsLabel"
+        ].text = f"Your credits: {self.currentPatron.totalCredits:.2f}"
 
     def onLogoutButtonPressed(self, *largs):
         self.screenManager.transitionToScreen(
@@ -44,7 +50,8 @@ class Header(GridLayout):
         )
 
     def setSuffix(self, suffix: str):
-        self.ids["welcomeTextLabel"].text += " - " + suffix
+        self.headerSuffix = suffix
+        self.ids["welcomeTextLabel"].text += " - " + self.headerSuffix
 
 
 class Body(GridLayout):

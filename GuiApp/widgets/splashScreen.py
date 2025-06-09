@@ -1,6 +1,6 @@
+from database import getPatronIdByCardId
 from kivy.uix.screenmanager import Screen
 from widgets.popups.createUserOrLinkCardPopup import CreateUserOrLinkCardPopup
-from database import getPatronIdByCardId
 
 
 class SplashScreenWidget(Screen):
