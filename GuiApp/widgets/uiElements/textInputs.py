@@ -1,3 +1,5 @@
+import re
+
 from kivy.clock import Clock
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.modalview import ModalView
@@ -59,13 +61,21 @@ class TextInputPopup(ModalView):
     ):
         super().__init__(**kwargs)
         self.originalTextInputWidget = originalTextInputWidget
+        self.input_filter = inputFilter
 
         # Make copy of input widget
         self.ids["textInput"].header_text = headerText
         self.ids["textInput"].hint_text = hintText
-        self.ids["textInput"].input_filter = inputFilter
+        self.ids["textInput"].input_filter = (
+            "float" if inputFilter == "currency" else inputFilter
+        )
         self.ids["textInput"].setText(self.originalTextInputWidget.text)
         self.isCapslockActive = False
+
+        if inputFilter in ("float", "currency", "int"):
+            self.ids["virtualKeyboard"].layout = "keyboards/numericKeyboardLayout.json"
+        else:
+            self.ids["virtualKeyboard"].layout = "keyboards/swedishKeyboardLayout.json"
 
         self.ids["virtualKeyboard"].bind(on_key_up=self.virtualKeyboardInputUp)
 
@@ -92,6 +102,15 @@ class TextInputPopup(ModalView):
 
         if self.isCapslockActive:
             finalSymbolToAdd = finalSymbolToAdd.upper()
+
+        if self.input_filter == "currency":
+            current_text = self.ids["textInput"].getText()
+            # Simulate the new text after input
+            new_text = current_text + finalSymbolToAdd
+            # Only allow digits and one decimal point, and max two decimals
+
+            if not re.match(r"^\d*\.?\d{0,2}$", new_text):
+                return
 
         self.ids["textInput"].insertText(finalSymbolToAdd)
 

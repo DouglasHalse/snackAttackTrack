@@ -21,7 +21,7 @@ class TopUpAmountScreenContent(GridLayout):
                 originalTextInputWidget=self.ids["creditsToAdd"],
                 headerText="Credits to add",
                 hintText="Enter amount",
-                inputFilter="float",
+                inputFilter="currency",
             ).open()
 
     def updateCreditsAfterwards(self, instance, text):
