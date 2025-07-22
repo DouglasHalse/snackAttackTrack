@@ -26,7 +26,7 @@ class SplashScreenWidget(Screen):
             return
 
         self.manager.login(patronId)
-        self.manager.transitionToScreen("buyScreen")
+        self.manager.transitionToScreen("mainUserPage")
 
     def onPressed(self):
         self.manager.transitionToScreen("loginScreen")
