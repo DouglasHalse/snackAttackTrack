@@ -1,11 +1,11 @@
-from kivy.uix.screenmanager import Screen
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.behaviors import ButtonBehavior
+from database import UserData, getAllPatrons, getPatronIdByCardId
 from kivy.clock import Clock
-
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen
 from widgets.customScreenManager import CustomScreenManager
+from widgets.popups.createUserOrLinkCardPopup import CreateUserOrLinkCardPopup
 from widgets.settingsManager import SettingName
-from database import getAllPatrons, UserData
 
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
@@ -44,14 +44,34 @@ class LoginScreen(Screen):
                 ),
             )
 
+        return super().on_pre_enter(*args)
+
+    def on_enter(self, *args):
+        self.manager.RFIDReader.start(self.cardRead)
         return super().on_enter(*args)
 
-    def goToSplashScreen(self, *args):
-        self.manager.transitionToScreen("splashScreen", transitionDirection="right")
+    def on_pre_leave(self, *args):
+        self.manager.RFIDReader.stop()
+        return super().on_pre_leave(*args)
 
     def on_leave(self, *args):
         Clock.unschedule(self.goToSplashScreen)
         self.ids["LoginScreenUserGridLayout"].clear_widgets()
+        return super().on_leave(*args)
+
+    def cardRead(self, cardId, *args):
+        patronId = getPatronIdByCardId(cardId=cardId)
+        if patronId is None:
+            CreateUserOrLinkCardPopup(
+                screenManager=self.manager, readCard=cardId
+            ).open()
+            return
+
+        self.manager.login(patronId)
+        self.manager.transitionToScreen("mainUserPage")
+
+    def goToSplashScreen(self, *args):
+        self.manager.transitionToScreen("splashScreen", transitionDirection="right")
 
     def on_touch_down(self, touch):
         # Reset timer for returning to splash screen
