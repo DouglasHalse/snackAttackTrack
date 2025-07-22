@@ -8,24 +8,22 @@ class SplashScreenWidget(Screen):
         super().__init__(**kwargs)
 
     def on_enter(self, *args):
-        self.manager.registerCardReadCallback(self.cardRead)
-        self.manager.RFIDReader.start()
+        self.manager.RFIDReader.start(self.card_read_callback)
         return super().on_enter(*args)
 
-    def on_leave(self, *args):
-        self.manager.unregisterCardReadCallback()
+    def on_pre_leave(self, *args):
         self.manager.RFIDReader.stop()
-        return super().on_leave(*args)
+        return super().on_pre_leave(*args)
 
-    def cardRead(self, cardId, *args):
-        patronId = getPatronIdByCardId(cardId=cardId)
-        if patronId is None:
+    def card_read_callback(self, cardId, *args):
+        user_id = getPatronIdByCardId(cardId=cardId)
+        if user_id is None:
             CreateUserOrLinkCardPopup(
                 screenManager=self.manager, readCard=cardId
             ).open()
             return
 
-        self.manager.login(patronId)
+        self.manager.login(user_id)
         self.manager.transitionToScreen("mainUserPage")
 
     def onPressed(self):

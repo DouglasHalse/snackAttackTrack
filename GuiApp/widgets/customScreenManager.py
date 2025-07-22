@@ -1,14 +1,8 @@
-from functools import partial
-
-from kivy.uix.screenmanager import ScreenManager
-from kivy.uix.screenmanager import SlideTransition
-from kivy.properties import StringProperty
-from kivy.properties import ObjectProperty
-from kivy.clock import Clock
-
-from database import UserData, SnackData, getPatronData
-from widgets.settingsManager import SettingsManager
+from database import SnackData, UserData, getPatronData
+from kivy.properties import ObjectProperty, StringProperty
+from kivy.uix.screenmanager import ScreenManager, SlideTransition
 from RFIDReader import RFIDReader
+from widgets.settingsManager import SettingsManager
 
 # pylint: disable=too-many-instance-attributes
 
@@ -23,20 +17,6 @@ class CustomScreenManager(ScreenManager):
         self.current: StringProperty
         self.transition: ObjectProperty
         self.RFIDReader = RFIDReader()
-        self._cardReadCallback = None
-        self.RFIDReader.registerCallbackFunction(self.onCardRead)
-
-    def registerCardReadCallback(self, function):
-        self._cardReadCallback = function
-
-    def unregisterCardReadCallback(self):
-        self._cardReadCallback = None
-
-    def onCardRead(self, cardId):
-        if self._cardReadCallback:
-            Clock.schedule_once(
-                partial(self._cardReadCallback, cardId), 0
-            )  # call after the next frame
 
     def login(self, patronId):
         self._currentPatron = getPatronData(patronID=patronId)
