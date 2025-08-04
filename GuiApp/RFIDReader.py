@@ -3,6 +3,8 @@ import platform
 import threading
 import time
 
+from kivy.clock import Clock
+
 
 # TODO make better
 def mock_gpio() -> bool:
@@ -84,7 +86,7 @@ class RFIDReader:
                         and card_id != self.last_read_id
                         and self.callback
                     ):
-                        self.callback(card_id)
+                        Clock.schedule_once(lambda dt: self.callback(card_id), 0)
                         self.last_read_id = card_id
                     time.sleep(0.1)  # Add a small sleep to reduce CPU load
             except RuntimeError as e:
