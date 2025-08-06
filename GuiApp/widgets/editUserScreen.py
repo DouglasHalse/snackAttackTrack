@@ -31,6 +31,9 @@ class EditUserScreenContent(GridLayout):
         self.ids["creditsInput"].setText(f"{self.patronToEdit.totalCredits:.2f}")
         self.ids["cardIdInput"].setText(self.patronToEdit.employeeID)
 
+        if self.patronToEdit.employeeID:
+            self.ids["cardIdInput"].header_text = "Login card (tap card to change)"
+
     def cardRead(self, cardId, *args):
         self.ids["cardIdInput"].setText(str(cardId))
 
