@@ -30,7 +30,6 @@ class EditUserScreenContent(GridLayout):
         self.ids["lastNameInput"].setText(self.patronToEdit.lastName)
         self.ids["creditsInput"].setText(f"{self.patronToEdit.totalCredits:.2f}")
         self.ids["cardIdInput"].setText(self.patronToEdit.employeeID)
-        self.screenManager.registerCardReadCallback(self.cardRead)
 
     def cardRead(self, cardId, *args):
         self.ids["cardIdInput"].setText(str(cardId))
@@ -113,16 +112,23 @@ class EditUserScreen(HeaderBodyScreen):
     def __init__(self, **kwargs):
         super().__init__(previousScreen="editUsersScreen", **kwargs)
         self.headerSuffix = "Edit User screen"
+        self.content = None
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
-        self.body.add_widget(EditUserScreenContent(screenManager=self.manager))
-        self.manager.RFIDReader.start()
+        self.content = EditUserScreenContent(screenManager=self.manager)
+        self.body.add_widget(self.content)
+
+    def on_enter(self, *args):
+        self.manager.RFIDReader.start(self.content.cardRead)
+        return super().on_enter(*args)
+
+    def on_pre_leave(self, *args):
+        self.manager.RFIDReader.stop()
+        return super().on_pre_leave(*args)
 
     def on_leave(self, *args):
         super().on_leave(*args)
-        self.manager.RFIDReader.stop()
-        self.manager.unregisterCardReadCallback()
         self.manager.resetPatronToEdit()
 
 

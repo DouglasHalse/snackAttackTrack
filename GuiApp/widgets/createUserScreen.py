@@ -1,7 +1,6 @@
+from database import addPatron, getPatronData, getPatronIdByCardId
 from kivy.uix.screenmanager import Screen
-
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
-from database import addPatron, getPatronIdByCardId, getPatronData
 
 
 class CreateUserScreen(Screen):
@@ -45,13 +44,14 @@ class CreateUserScreen(Screen):
         self.ids.cardIdInput.setText(str(cardId))
 
     def on_enter(self, *args):
-        self.manager.registerCardReadCallback(self.cardRead)
-        self.manager.RFIDReader.start()
+        self.manager.RFIDReader.start(self.cardRead)
         return super().on_enter(*args)
 
-    def on_leave(self, *args):
+    def on_pre_leave(self, *args):
         self.manager.RFIDReader.stop()
-        self.manager.unregisterCardReadCallback()
+        return super().on_pre_leave(*args)
+
+    def on_leave(self, *args):
         self.ids.firstNameInput.clearText()
         self.ids.lastNameInput.clearText()
         self.ids.cardIdInput.clearText()
