@@ -29,7 +29,9 @@ class TopUpPaymentScreenContent(GridLayout):
             name=self.userData.firstName,
             swishNumber=swishNumber,
         )
-        self.ids["qrCodeLayout"].add_widget(Image(source="qr.png"))
+        image = Image(source="qr.png")
+        self.ids["qrCodeLayout"].add_widget(image)
+        image.reload()
 
     def onConfirm(self, *largs):
         addTopUpTransaction(
