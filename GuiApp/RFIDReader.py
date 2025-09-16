@@ -1,7 +1,6 @@
 import os
 import platform
 import threading
-import time
 
 from kivy.clock import Clock
 
@@ -35,7 +34,7 @@ if mock_gpio():
     # Fake class for emulation
     class SimpleMFRC522:
         def read_id_no_block(self):
-            time.sleep(1)
+            pass
 
     class GPIO:
         @staticmethod
@@ -88,7 +87,7 @@ class RFIDReader:
                     ):
                         Clock.schedule_once(lambda dt: self.callback(card_id), 0)
                         self.last_read_id = card_id
-                    time.sleep(0.1)  # Add a small sleep to reduce CPU load
+                    self.running.wait(0.1)  # Add a small sleep to reduce CPU load
             except RuntimeError as e:
                 print(f"Runtime error reading RFID: {e}")
             except IOError as e:
