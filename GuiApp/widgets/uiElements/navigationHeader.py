@@ -1,5 +1,5 @@
 from kivy.app import App
-from kivy.properties import BooleanProperty
+from kivy.properties import BooleanProperty, StringProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -12,6 +12,7 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 class NavigationHeader(GridLayout):
     __events__ = ("on_back_button_pressed",)
     use_settings_button = BooleanProperty(False)
+    page_name = StringProperty(None, allownone=True)
 
     def __init__(
         self,
@@ -62,6 +63,8 @@ class NavigationHeader(GridLayout):
 
     def set_welcome_name(self, first_name):
         self.ids.welcomeTextLabel.text = f"Welcome, {first_name}"
+        if self.page_name:
+            self.ids.welcomeTextLabel.text += f" - {self.page_name}"
 
     def set_current_credits(self, current_credits):
         self.ids.patronCreditsLabel.text = f"Your credits: {current_credits:.2f}"
