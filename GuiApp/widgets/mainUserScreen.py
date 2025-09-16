@@ -2,36 +2,23 @@ from database import getAllSnacks
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
-from widgets.uiElements.layouts import ClickableRoundedTwoColorGridLayout
+from widgets.uiElements.buttons import ImageAndTextButton
 
 
-class MainUserScreenOption(ClickableRoundedTwoColorGridLayout):
-    __events__ = ("on_release",)
-
-    def on_release(self):
-        if self.disabled:
-            return
-        self.dispatch("on_release")
+class GambleOption(ImageAndTextButton):
+    pass
 
 
-class GambleOption(MainUserScreenOption):
-    def on_release(self):
-        pass
+class BuyOption(ImageAndTextButton):
+    pass
 
 
-class BuyOption(MainUserScreenOption):
-    def on_release(self):
-        pass
+class TopUpOption(ImageAndTextButton):
+    pass
 
 
-class TopUpOption(MainUserScreenOption):
-    def on_release(self):
-        pass
-
-
-class HistoryOption(MainUserScreenOption):
-    def on_release(self):
-        pass
+class HistoryOption(ImageAndTextButton):
+    pass
 
 
 class MainUserScreen(GridLayoutScreen):

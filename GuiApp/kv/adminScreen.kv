@@ -1,114 +1,42 @@
 #:kivy 2.1.0     
 
-<AdminScreenContent>:
-    rows: 1
-    padding: 30
-    spacing: 30
-    ClickableRoundedTwoColorGridLayout:
-        on_press: root.onEditSystemSettingsButtonPressed()
-        cols: 1
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        GridLayout:
-            rows: 1
-            size_hint_y: 0.3
-            Widget: # Horizontal Spacer
-                size_hint_x: 0.2
-            Image:
-                fit_mode: 'contain'
-                mipmap: True
-                source: 'Images/settings-sliders.png'
-                size_hint_x: None
-                width: self.height
-            Widget: # Horizontal Spacer
-                size_hint_x: 0.1
-            Image:
-                fit_mode: 'contain'
-                mipmap: True
-                source: 'Images/wrench-alt.png'
-                size_hint_x: None
-                width: self.height
-            Widget: # Horizontal Spacer
-                size_hint_x: 0.2
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.2
-        Label:
-            text: 'System settings'
-            bold: True
-            font_size: self.width/10
-            size_hint_y: 0.2
-        Widget: # Horizontal Spacer
-            size_hint_y: 0.1
+<SystemSettingsOption>:
+    image_path: 'Images/settings-sliders.png'
+    text: 'System settings'
+
+<EditSnacksOption>:
+    image_path: 'Images/candy-bar.png'
+    text: 'Edit snacks'
+
+<EditUsersOption>:
+    image_path: 'Images/user.png'
+    text: 'Edit users'
+
+<AdminScreen@GridLayoutScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_settings_button: False
     GridLayout:
-        cols: 1
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        rows: 1
+        padding: 30
         spacing: 30
-        ClickableRoundedTwoColorGridLayout:
-            on_press: root.onEditSnacksButtonPressed()
+        SystemSettingsOption:
+            id: systemSettingsOption
+            on_release: root.onSystemSettingsButtonPressed
+        GridLayout:
             cols: 1
-            Widget: # Horizontal Spacer
-                size_hint_y: 0.2
-            GridLayout:
-                rows: 1
-                size_hint_y: 0.3
-                Widget: # Horizontal Spacer
-                    size_hint_x: 0.2
-                Image:
-                    fit_mode: 'contain'
-                    mipmap: True
-                    source: 'Images/candy-bar.png'
-                    size_hint_x: None
-                    width: self.height
-                Widget: # Horizontal Spacer
-                    size_hint_x: 0.1
-                Image:
-                    fit_mode: 'contain'
-                    mipmap: True
-                    source: 'Images/wrench-alt.png'
-                    size_hint_x: None
-                    width: self.height
-                Widget: # Horizontal Spacer
-                    size_hint_x: 0.2
-            Widget: # Horizontal Spacer
-                size_hint_y: 0.2
-            Label:
-                text: 'Edit snacks'
-                bold: True
-                font_size: self.width/10
-                size_hint_y: 0.2
-            Widget: # Horizontal Spacer
-                size_hint_y: 0.1
-        ClickableRoundedTwoColorGridLayout:
-            on_press: root.onEditUsersButtonPressed()
-            cols: 1
-            Widget: # Horizontal Spacer
-                size_hint_y: 0.2
-            GridLayout:
-                rows: 1
-                size_hint_y: 0.3
-                Widget: # Horizontal Spacer
-                    size_hint_x: 0.2
-                Image:
-                    fit_mode: 'contain'
-                    mipmap: True
-                    source: 'Images/user.png'
-                    size_hint_x: None
-                    width: self.height
-                Widget: # Horizontal Spacer
-                    size_hint_x: 0.1
-                Image:
-                    fit_mode: 'contain'
-                    mipmap: True
-                    source: 'Images/wrench-alt.png'
-                    size_hint_x: None
-                    width: self.height
-                Widget: # Horizontal Spacer
-                    size_hint_x: 0.2
-            Widget: # Horizontal Spacer
-                size_hint_y: 0.2
-            Label:
-                text: 'Edit users'
-                bold: True
-                font_size: self.width/10
-                size_hint_y: 0.2
-            Widget: # Horizontal Spacer
-                size_hint_y: 0.1
+            spacing: 30
+            EditSnacksOption:
+                id: editSnacksOption
+                on_release: root.onEditSnacksButtonPressed
+            EditUsersOption:
+                id: editUsersOption
+                on_release: root.onEditUsersButtonPressed
