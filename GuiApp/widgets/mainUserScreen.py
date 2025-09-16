@@ -1,97 +1,70 @@
 from database import getAllSnacks
-from kivy.uix.gridlayout import GridLayout
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
 from widgets.uiElements.layouts import ClickableRoundedTwoColorGridLayout
 
 
 class MainUserScreenOption(ClickableRoundedTwoColorGridLayout):
-    __events__ = ("on_clicked",)
+    __events__ = ("on_release",)
 
-    def on_press(self):
-        self.dispatch("on_clicked")
+    def on_release(self):
+        if self.disabled:
+            return
+        self.dispatch("on_release")
 
 
 class GambleOption(MainUserScreenOption):
-    def on_clicked(self):
+    def on_release(self):
         pass
 
 
 class BuyOption(MainUserScreenOption):
-    def on_clicked(self):
+    def on_release(self):
         pass
 
 
 class TopUpOption(MainUserScreenOption):
-    def on_clicked(self):
+    def on_release(self):
         pass
 
 
 class HistoryOption(MainUserScreenOption):
-    def on_clicked(self):
+    def on_release(self):
         pass
 
 
-class MainUserScreenContent(GridLayout):
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+class MainUserScreen(GridLayoutScreen):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager: CustomScreenManager = screenManager
-
-        gamble_enabled = self.screenManager.settingsManager.get_setting_value(
-            settingName=SettingName.ENABLE_GAMBLING
-        )
-
-        top_up_option = TopUpOption()
-        buy_option = BuyOption()
-        history_option = HistoryOption()
-
-        top_up_option.bind(on_clicked=self.onTopUpButtonPressed)
-        buy_option.bind(on_clicked=self.onBuyButtonPressed)
-        history_option.bind(on_clicked=self.onHistoryButtonPressed)
-
-        if gamble_enabled:
-            gamble_option = GambleOption()
-
-            gamble_option.bind(on_clicked=self.onGambleButtonPressed)
-
-            history_and_top_up_layout = GridLayout(cols=1, spacing=30)
-            history_and_top_up_layout.add_widget(top_up_option)
-            history_and_top_up_layout.add_widget(history_option)
-
-            self.add_widget(gamble_option)
-            self.add_widget(buy_option)
-            self.add_widget(history_and_top_up_layout)
-        else:
-            self.add_widget(history_option)
-            self.add_widget(buy_option)
-            self.add_widget(top_up_option)
+        self.ids.topUpOption.bind(on_release=self.onTopUpButtonPressed)
+        self.ids.buyOption.bind(on_release=self.onBuyButtonPressed)
+        self.ids.historyOption.bind(on_release=self.onHistoryButtonPressed)
+        self.ids.gambleOption.bind(on_release=self.onGambleButtonPressed)
+        self.ids.header.bind(on_back_button_pressed=self.onBackButtonPressed)
 
     def onBuyButtonPressed(self, _):
-        self.screenManager.transitionToScreen("buyScreen")
+        self.manager.transitionToScreen("buyScreen")
 
     def onTopUpButtonPressed(self, _):
-        self.screenManager.transitionToScreen("topUpAmountScreen")
+        self.manager.transitionToScreen("topUpAmountScreen")
 
     def onHistoryButtonPressed(self, _):
-        self.screenManager.transitionToScreen("historyScreen")
+        self.manager.transitionToScreen("historyScreen")
 
     def onGambleButtonPressed(self, _):
         numberOfSnacks = len(getAllSnacks())
         if numberOfSnacks < 2:
             ErrorMessagePopup(errorMessage="Need at least 2 snacks to gamble").open()
             return
-        self.screenManager.transitionToScreen("wheelOfSnacksScreen")
+        self.manager.transitionToScreen("wheelOfSnacksScreen")
 
-
-class MainUserScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(
-            previousScreen="loginScreen", enableSettingsButton=True, **kwargs
-        )
-        self.headerSuffix = "Main user screen"
+    def onBackButtonPressed(self, *largs):
+        self.manager.transitionToScreen("loginScreen", transitionDirection="right")
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
-        self.body.add_widget(MainUserScreenContent(screenManager=self.manager))
+        gamble_enabled = self.manager.settingsManager.get_setting_value(
+            settingName=SettingName.ENABLE_GAMBLING
+        )
+        self.ids.gambleOption.disabled = not gamble_enabled
