@@ -37,7 +37,33 @@
     image_source: 'Images/time-past.png'
     option_name: 'History'
 
-<MainUserScreenContent>:
-    rows: 1
-    padding: 30
-    spacing: 30
+
+
+<MainUserScreen@GridLayoutScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_settings_button: True
+    GridLayout:
+        id: optionsGrid
+        rows: 1
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        padding: 30
+        spacing: 30
+        GambleOption:
+            id: gambleOption
+        BuyOption:
+            id: buyOption
+        GridLayout:
+            cols: 1
+            spacing: 30
+            TopUpOption:
+                id: topUpOption
+            HistoryOption:
+                id: historyOption
