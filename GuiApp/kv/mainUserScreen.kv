@@ -1,41 +1,20 @@
 #:kivy 2.1.0     
 
-<MainUserScreenOption@ClickableRoundedTwoColorGridLayout>:
-    image_source: 'Images/user.png'
-    option_name: 'OPTION'
-    cols: 1
-    Widget: # Horizontal Spacer
-        size_hint_y: 0.2
-    Image:
-        size_hint_y: 0.3
-        fit_mode: 'contain'
-        mipmap: True
-        source: root.image_source if hasattr(root, 'image_source') else 'Images/user.png'
-    Widget: # Horizontal Spacer
-        size_hint_y: 0.2
-    Label:
-        text: root.option_name if hasattr(root, 'option_name') else 'OPTION'
-        bold: True
-        font_size: self.width/8
-        size_hint_y: 0.2
-    Widget: # Horizontal Spacer
-        size_hint_y: 0.1
-
 <GambleOption>:
-    image_source: 'Images/roulette.png'
-    option_name: 'Gamble'
+    image_path: 'Images/roulette.png'
+    text: 'Gamble'
 
 <BuyOption>:
-    image_source: 'Images/cart-shopping-fast.png'
-    option_name: 'Buy'
+    image_path: 'Images/cart-shopping-fast.png'
+    text: 'Buy'
 
 <TopUpOption>:
-    image_source: 'Images/money-income.png'
-    option_name: 'Top-up'
+    image_path: 'Images/money-income.png'
+    text: 'Top-up'
 
 <HistoryOption>:
-    image_source: 'Images/time-past.png'
-    option_name: 'History'
+    image_path: 'Images/time-past.png'
+    text: 'History'
 
 
 
