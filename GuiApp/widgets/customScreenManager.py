@@ -57,6 +57,7 @@ class CustomScreenManager(ScreenManager):
 
     def refreshCurrentPatron(self):
         self._currentPatron = getPatronData(patronID=self._currentPatron.patronId)
+        self.logged_in_user = self._currentPatron
 
     def transitionToScreen(self, screenName, transitionDirection: str = "left"):
         self.transition = SlideTransition(direction=transitionDirection)
