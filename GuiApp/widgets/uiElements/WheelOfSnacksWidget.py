@@ -19,7 +19,7 @@ from kivy.graphics.stencil_instructions import (
     StencilUnUse,
     StencilUse,
 )
-from kivy.properties import NumericProperty
+from kivy.properties import BooleanProperty, NumericProperty
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.widget import Widget
 
@@ -37,6 +37,13 @@ class WheelWidget(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._label_textures = {}  # Cache for label textures
+        self._saved_instruction_groups = {}
+
+    def on_size(self, *args):
+        self.clear_cache()
+
+    def clear_cache(self):
+        self._label_textures = {}
         self._saved_instruction_groups = {}
 
     def get_label_texture(self, snack_name, font_size):
@@ -240,6 +247,7 @@ class WheelOfSnacksWidget(AnchorLayout):
     wheel_angle = NumericProperty(0)
     pointer_angle = NumericProperty(0)
     label_pan_position_scale = NumericProperty(0)
+    enable = BooleanProperty(False)
     label_pan_animation = None
     __events__ = ("on_spin_complete",)
 
@@ -256,41 +264,43 @@ class WheelOfSnacksWidget(AnchorLayout):
             + Animation(label_pan_position_scale=0, duration=0.0)
         )
         self.label_pan_animation.repeat = True
+        self.bind(label_pan_position_scale=self.schedule_wheel_update)
+        self.bind(size=self.schedule_wheel_update)
 
-        self.label_pan_animation.start(self)
+    def on_enable(self, _, enable):
+        if enable:
+            self.label_pan_animation.start(self)
+            self.schedule_wheel_update(None, None)
+        else:
+            self.label_pan_animation.stop(self)
+            self.label_pan_position_scale = 0
 
     def cleanup(self):
         Animation.cancel_all(self)
         Clock.unschedule(self.label_pan_animation)
 
+    def schedule_wheel_update(self, _, __):
+        if not self.enable:
+            return
+        Clock.schedule_once(
+            lambda dt: self.ids.wheel.create_wheel(
+                snacks=self.snacks,
+                label_pan_position_scale=self.label_pan_position_scale,
+            ),
+            0,
+        )
+
     def set_snacks(self, snacks):
+        new_snack_names = [snack.snackName for snack in snacks]
+        current_snack_names = [snack.snackName for snack in self.snacks]
+        if current_snack_names != new_snack_names:
+            self.ids.wheel.clear_cache()
+
         self.snacks = snacks
         self.sliceWidth = 360 / len(self.snacks)
         self.border_angles = [
             self.sliceWidth * self.snacks.index(snack) for snack in self.snacks
         ]
-        Clock.schedule_once(
-            lambda dt: self.ids.wheel.create_wheel(
-                snacks=self.snacks,
-                label_pan_position_scale=self.label_pan_position_scale,
-            ),
-            0,
-        )
-
-    def on_label_pan_position_scale(self, _, new_scale):
-        self.ids.wheel.create_wheel(
-            snacks=self.snacks,
-            label_pan_position_scale=self.label_pan_position_scale,
-        )
-
-    def on_size(self, _, new_size):
-        Clock.schedule_once(
-            lambda dt: self.ids.wheel.create_wheel(
-                snacks=self.snacks,
-                label_pan_position_scale=self.label_pan_position_scale,
-            ),
-            0,
-        )
 
     def map_from_to(self, x, a, b, c, d):
         y = (x - a) / (b - a) * (d - c) + c
