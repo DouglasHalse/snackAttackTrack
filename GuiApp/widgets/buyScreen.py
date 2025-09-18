@@ -11,10 +11,8 @@ from database import (
     subtractPatronCredits,
     subtractSnackQuantity,
 )
-from kivy.uix.gridlayout import GridLayout
 from snackReorderer import SnackReorderer
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
@@ -26,12 +24,19 @@ class ItemLocation(Enum):
     SHOPPINGCART = 1
 
 
-class BuyScreenContent(GridLayout):
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+class BuyScreen(GridLayoutScreen):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
         self.snackDict = {}
+        self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
+
+    def on_back_button_pressed(self, *args):
+        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+
+    def on_pre_enter(self, *args):
         self.initInventory()
+        self.updateTotalPrice()
+        return super().on_pre_enter(*args)
 
     def itemClickedInInventory(self, snackId: int):
         self.snackDict[snackId][ItemLocation.INVENTORY] -= 1
@@ -93,11 +98,11 @@ class BuyScreenContent(GridLayout):
     def initInventory(self):
         snacks = getAllSnacks()
 
-        if self.screenManager.settingsManager.get_setting_value(
+        if self.manager.settingsManager.get_setting_value(
             settingName=SettingName.ORDER_INVENTORY_BY_MOST_PURCHASED
         ):
             mostPurchasedSnacks = getMostPurchasedSnacksByPatron(
-                patronId=self.screenManager.getCurrentPatron().patronId
+                patronId=self.manager.getCurrentPatron().patronId
             )
 
             SnackReorderer.reorder_snacks_based_on_guide_list(
@@ -176,10 +181,10 @@ class BuyScreenContent(GridLayout):
         snacksInShoppingCart = self.getSnacksInShoppingCart()
         totalPrice = self.getTotalPriceOfSnacks(snacksInShoppingCart)
 
-        currentPatron = self.screenManager.getCurrentPatron()
+        currentPatron = self.manager.getCurrentPatron()
 
         if totalPrice > currentPatron.totalCredits:
-            popup = InsufficientFundsPopup(screenManager=self.screenManager)
+            popup = InsufficientFundsPopup(screenManager=self.manager)
             popup.open()
             return
 
@@ -212,7 +217,7 @@ class BuyScreenContent(GridLayout):
         )
 
         # Update current patron with new data
-        self.screenManager.refreshCurrentPatron()
+        self.manager.refreshCurrentPatron()
 
         CreditsAnimationPopup(
             title="Thank you for your purchase!",
@@ -220,29 +225,13 @@ class BuyScreenContent(GridLayout):
             creditsAfter=creditsAfterPurchase,
         ).open()
 
-        if self.screenManager.settingsManager.get_setting_value(
+        if self.manager.settingsManager.get_setting_value(
             settingName=SettingName.AUTO_LOGOUT_AFTER_PURCHASE
         ):
-            self.screenManager.logout()
-            self.screenManager.transitionToScreen(
-                "splashScreen", transitionDirection="right"
-            )
+            self.manager.logout()
+            self.manager.transitionToScreen("splashScreen", transitionDirection="right")
         else:
-            self.screenManager.transitionToScreen(
-                "mainUserPage", transitionDirection="right"
-            )
+            self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
 
     def onCancel(self):
-        self.screenManager.transitionToScreen(
-            "mainUserPage", transitionDirection="right"
-        )
-
-
-class BuyScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="mainUserPage", **kwargs)
-        self.headerSuffix = "Buy snacks screen"
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(BuyScreenContent(screenManager=self.manager))
+        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
