@@ -1,81 +1,94 @@
 #:kivy 2.1.0
 
 
-<BuyScreenContent>:
+<BuyScreen>:
+    rows: 2
     cols: 1
-    padding: [20, 5]
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Buy Screen"
     GridLayout:
-        rows: 1
-        spacing: 30
-        GridLayout:
-            id: inventoryItemSelection
-            cols: 1
-            spacing: 5
-            Label:
-                text_size: self.size
-                size_hint_y: None
-                height: self.width / 12
-                font_size: self.width / 14
-                text: "Inventory"
-                bold: True
-            ClickableTable:
-                id: inventoryTable
-                headerHeight: self.width / (15 / 2)
-                entryHeight: self.width / (15 / 2)
-                columns: ["Snack name", "Quantity", "Price"]
-                columnExamples: ["Long snack", "30", "15.00"]
-                onEntryPressed: root.itemClickedInInventory
-        GridLayout:
-            id: shoppingCartItemSelection
-            cols: 1
-            spacing: 5
-            Label:
-                text_size: self.size
-                size_hint_y: None
-                height: self.width / 12
-                font_size: self.width / 14
-                text: "Shopping cart"
-                bold: True
-            ClickableTable:
-                id: shoppingCartTable
-                headerHeight: self.width / (15 / 2)
-                entryHeight: self.width / (15 / 2)
-                columns: ["Snack name", "Quantity", "Price"]
-                columnExamples: ["Long snack", "30", "15.00"]
-                onEntryPressed: root.itemClickedInShoppingCart
-    GridLayout:
-        rows: 1
-        size_hint_y: None
-        height: self.minimum_height
-        spacing: 30
-        padding: [0, 10]
+        cols: 1
+        padding: [20, 5]
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
         GridLayout:
             rows: 1
-            size_hint_x: 0.5
-            Label:
-                text: 'Total price: 0.00 credits'
-                id: totalPriceLabel
-                font_size: self.width / 14
-                text_size: self.size
-                halign: 'left'
-                valign: 'middle'
-                bold: True
+            spacing: 30
+            GridLayout:
+                id: inventoryItemSelection
+                cols: 1
+                spacing: 5
+                Label:
+                    text_size: self.size
+                    size_hint_y: None
+                    height: self.width / 12
+                    font_size: self.width / 14
+                    text: "Inventory"
+                    bold: True
+                ClickableTable:
+                    id: inventoryTable
+                    headerHeight: self.width / (15 / 2)
+                    entryHeight: self.width / (15 / 2)
+                    columns: ["Snack name", "Quantity", "Price"]
+                    columnExamples: ["Long snack", "30", "15.00"]
+                    onEntryPressed: root.itemClickedInInventory
+            GridLayout:
+                id: shoppingCartItemSelection
+                cols: 1
+                spacing: 5
+                Label:
+                    text_size: self.size
+                    size_hint_y: None
+                    height: self.width / 12
+                    font_size: self.width / 14
+                    text: "Shopping cart"
+                    bold: True
+                ClickableTable:
+                    id: shoppingCartTable
+                    headerHeight: self.width / (15 / 2)
+                    entryHeight: self.width / (15 / 2)
+                    columns: ["Snack name", "Quantity", "Price"]
+                    columnExamples: ["Long snack", "30", "15.00"]
+                    onEntryPressed: root.itemClickedInShoppingCart
         GridLayout:
             rows: 1
-            size_hint: (0.5, None)
+            size_hint_y: None
             height: self.minimum_height
-            SmallGreenButton:
-                text: "Buy"
-                width: self.parent.width / 2.5
-                height: self.width / 3
-                text_size: self.height / 2
-                on_press: root.onBuy()
-            Widget: # Horizontal Spacer
-            SmallOrangeButton:
-                text: "Cancel"
-                width: self.parent.width / 2.5
-                height: self.width / 3
-                text_size: self.height / 2
-                on_press: root.onCancel()
-                
+            spacing: 30
+            padding: [0, 10]
+            GridLayout:
+                rows: 1
+                size_hint_x: 0.5
+                Label:
+                    text: 'Total price: 0.00 credits'
+                    id: totalPriceLabel
+                    font_size: self.width / 14
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'middle'
+                    bold: True
+            GridLayout:
+                rows: 1
+                size_hint: (0.5, None)
+                height: self.minimum_height
+                SmallGreenButton:
+                    text: "Buy"
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    on_press: root.onBuy()
+                Widget: # Horizontal Spacer
+                SmallOrangeButton:
+                    text: "Cancel"
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    on_press: root.onCancel()
+                    
 
