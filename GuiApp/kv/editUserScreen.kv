@@ -1,70 +1,83 @@
 #:kivy 2.1.0
 
-<EditUserScreenContent>:
+<EditUserScreen>:
+    rows: 2
     cols: 1
-    padding: 20
-    Widget: # Vertical Spacer
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Edit User"
     GridLayout:
-        rows: 1
-        size_hint_y: None
-        padding: [self.width / 8, 0]
-        height: self.minimum_height
-        RoundedTwoColorGridLayout:
-            cols: 1
-            padding: 20
-            spacing: self.width / 50
+        cols: 1
+        padding: 20
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Widget: # Vertical Spacer
+        GridLayout:
+            rows: 1
             size_hint_y: None
+            padding: [self.width / 8, 0]
             height: self.minimum_height
-            TextInputWithHeader:
-                id: firstNameInput
-                size_factor: self.parent.width / 32
-                header_text: "First name"
-                hint_text: "Enter first name"
-            TextInputWithHeader:
-                id: lastNameInput
-                size_factor: self.parent.width / 32
-                header_text: "Last name"
-                hint_text: "Enter last name"
-            TextInputWithHeader:
-                id: creditsInput
-                size_factor: self.parent.width / 32
-                header_text: "Credits"
-                hint_text: "Enter credits"
-                input_filter: "currency"
-            TextInputWithHeader:
-                id: cardIdInput
-                size_factor: self.parent.width / 32
-                header_text: "Login card"
-                hint_text: "Tap card to register (optional)"
-                disable_input: True
-    Widget: # Vertical Spacer
-    GridLayout:
-        rows: 1
-        size_hint: (1, None)
-        height: self.minimum_height
-        Widget: # Horizontal Spacer
-        MediumGreenButton:
-            text: "Confirm"
-            width: self.parent.width / 4
-            height: self.width / 3
-            text_size: self.height / 2
-            on_press: root.onConfirm()
-        Widget: # Horizontal Spacer
-        MediumOrangeButton:
-            text: "Cancel"
-            width: self.parent.width / 4
-            height: self.width / 3
-            text_size: self.height / 2
-            on_press: root.onCancel()
-        Widget: # Horizontal Spacer
-        MediumRedButton:
-            text: "Remove"
-            width: self.parent.width / 4
-            height: self.width / 3
-            text_size: self.height / 2
-            on_press: root.onRemove()
-        Widget: # Horizontal Spacer
-    Widget: # Vertical Spacer
+            RoundedTwoColorGridLayout:
+                cols: 1
+                padding: 20
+                spacing: self.width / 50
+                size_hint_y: None
+                height: self.minimum_height
+                TextInputWithHeader:
+                    id: firstNameInput
+                    size_factor: self.parent.width / 32
+                    header_text: "First name"
+                    hint_text: "Enter first name"
+                TextInputWithHeader:
+                    id: lastNameInput
+                    size_factor: self.parent.width / 32
+                    header_text: "Last name"
+                    hint_text: "Enter last name"
+                TextInputWithHeader:
+                    id: creditsInput
+                    size_factor: self.parent.width / 32
+                    header_text: "Credits"
+                    hint_text: "Enter credits"
+                    input_filter: "currency"
+                TextInputWithHeader:
+                    id: cardIdInput
+                    size_factor: self.parent.width / 32
+                    header_text: "Login card"
+                    hint_text: "Tap card to register (optional)"
+                    disable_input: True
+        Widget: # Vertical Spacer
+        GridLayout:
+            rows: 1
+            size_hint: (1, None)
+            height: self.minimum_height
+            Widget: # Horizontal Spacer
+            MediumGreenButton:
+                text: "Confirm"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.onConfirm()
+            Widget: # Horizontal Spacer
+            MediumOrangeButton:
+                text: "Cancel"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.onCancel()
+            Widget: # Horizontal Spacer
+            MediumRedButton:
+                text: "Remove"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.onRemove()
+            Widget: # Horizontal Spacer
+        Widget: # Vertical Spacer
 
 
 <RemoveUserConfirmationPopup>:
