@@ -154,19 +154,32 @@
         height: self.minimum_height
 
 
-<EditSystemSettingsScreenContent>:
-    rows: 1
-    padding: 20
-    RoundedTwoColorGridLayout:
-        rows: 1
-        padding: 10
-        ScrollView:
-            do_scroll_x: False
-            GridLayout:
-                id: settingsLayout
-                cols: 1
-                padding: 10
-                spacing: 10
-                size_hint_y: None
-                height: self.minimum_height
-                
+<EditSystemSettingsScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_back_button: True
+        page_name: "System Settings"
+    GridLayout:
+        cols: 1
+        padding: 20
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        RoundedTwoColorGridLayout:
+            rows: 1
+            padding: 10
+            ScrollView:
+                do_scroll_x: False
+                GridLayout:
+                    id: settingsLayout
+                    cols: 1
+                    padding: 10
+                    spacing: 10
+                    size_hint_y: None
+                    height: self.minimum_height
+                    
