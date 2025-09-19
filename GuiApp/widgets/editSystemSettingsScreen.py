@@ -1,8 +1,8 @@
+from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import (
     SettingName,
@@ -138,59 +138,64 @@ class SettingsSection(GridLayout):
         self.ids["sectionNameLabel"].text = sectionName
 
 
-class EditSystemSettingsScreenContent(GridLayout):
+class EditSystemSettingsScreen(GridLayoutScreen):
     # pylint: disable=too-many-locals
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
+        Clock.schedule_once(lambda dt: self.init_settings())
+        self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
 
+    def on_back_button_pressed(self, *args):
+        self.manager.transitionToScreen("adminScreen", transitionDirection="right")
+
+    def init_settings(self):
         # Navigation settings
         navigationSection = SettingsSection(sectionName="Navigation")
         autoLogoutOnPurchase = BoolSettingRow(
             settingName=SettingName.AUTO_LOGOUT_AFTER_PURCHASE,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
         autoLogoutTimeoutEnable = BoolSettingRow(
             settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
         autoLogoutTimeoutTime = FloatSettingRow(
             settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
 
         # Disable AUTO_LOGOUT_TIMEOUT if AUTO_LOGOUT_ENABLE is False
         autoLogoutTimeoutTime.set_disabled(
-            not self.screenManager.settingsManager.get_setting_value(
+            not self.manager.settingsManager.get_setting_value(
                 settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
             )
         )
 
         # Disable AUTO_LOGOUT_TIMEOUT if AUTO_LOGOUT_ENABLE is changed to False
-        self.screenManager.settingsManager.register_on_setting_change_callback(
+        self.manager.settingsManager.register_on_setting_change_callback(
             SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE,
             lambda value: autoLogoutTimeoutTime.set_disabled(not value),
         )
 
         goToSplashScreenOnIdleEnable = BoolSettingRow(
             settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
 
         goToSplashScreenOnIdleTime = FloatSettingRow(
             settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_TIME,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
 
         # Disable GO_TO_SPLASH_SCREEN_ON_IDLE_TIME if GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE is False
         goToSplashScreenOnIdleTime.set_disabled(
-            not self.screenManager.settingsManager.get_setting_value(
+            not self.manager.settingsManager.get_setting_value(
                 settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE
             )
         )
 
         # Disable GO_TO_SPLASH_SCREEN_ON_IDLE_TIME if GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE is changed to False
-        self.screenManager.settingsManager.register_on_setting_change_callback(
+        self.manager.settingsManager.register_on_setting_change_callback(
             SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE,
             lambda value: goToSplashScreenOnIdleTime.set_disabled(not value),
         )
@@ -205,11 +210,11 @@ class EditSystemSettingsScreenContent(GridLayout):
         financialSection = SettingsSection(sectionName="Financial")
         purchaseFee = FloatSettingRow(
             settingName=SettingName.PURCHASE_FEE,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
         paymentSwishNumber = StringSettingRow(
             settingName=SettingName.PAYMENT_SWISH_NUMBER,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
 
         financialSection.ids["sectionContent"].add_widget(purchaseFee)
@@ -219,7 +224,7 @@ class EditSystemSettingsScreenContent(GridLayout):
 
         orderInventoryByMostPurchased = BoolSettingRow(
             settingName=SettingName.ORDER_INVENTORY_BY_MOST_PURCHASED,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
 
         buyScreenSection.ids["sectionContent"].add_widget(orderInventoryByMostPurchased)
@@ -229,21 +234,21 @@ class EditSystemSettingsScreenContent(GridLayout):
 
         enableGambling = BoolSettingRow(
             settingName=SettingName.ENABLE_GAMBLING,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
 
         excitingGambling = BoolSettingRow(
             settingName=SettingName.EXCITING_GAMBLING,
-            settingManager=self.screenManager.settingsManager,
+            settingManager=self.manager.settingsManager,
         )
 
         excitingGambling.set_disabled(
-            not self.screenManager.settingsManager.get_setting_value(
+            not self.manager.settingsManager.get_setting_value(
                 settingName=SettingName.ENABLE_GAMBLING
             )
         )
 
-        self.screenManager.settingsManager.register_on_setting_change_callback(
+        self.manager.settingsManager.register_on_setting_change_callback(
             SettingName.ENABLE_GAMBLING,
             lambda value: excitingGambling.set_disabled(not value),
         )
@@ -258,15 +263,3 @@ class EditSystemSettingsScreenContent(GridLayout):
         self.ids["settingsLayout"].add_widget(gamblingSection)
 
     # pylint: enable=too-many-locals
-
-
-class EditSystemSettingsScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="adminScreen", **kwargs)
-        self.headerSuffix = "Edit system settings screen"
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(
-            EditSystemSettingsScreenContent(screenManager=self.manager)
-        )
