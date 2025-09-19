@@ -1,19 +1,24 @@
-from kivy.uix.gridlayout import GridLayout
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.uiElements.textInputs import TextInputPopup
 
 
-class TopUpAmountScreenContent(GridLayout):
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+class TopUpAmountScreen(GridLayoutScreen):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
-        self.userData = self.screenManager.getCurrentPatron()
-        self.ids["creditsCurrent"].text = f"{self.userData.totalCredits:.2f}"
-        self.ids["creditsAfterwards"].text = f"{self.userData.totalCredits:.2f}"
+
+    def on_pre_enter(self, *args):
+        userData = self.manager.getCurrentPatron()
+        self.ids["creditsCurrent"].text = f"{userData.totalCredits:.2f}"
+        self.ids["creditsAfterwards"].text = f"{userData.totalCredits:.2f}"
+        self.ids["creditsToAdd"].text = ""
         self.ids["creditsToAdd"].bind(text=self.updateCreditsAfterwards)
         self.ids["creditsToAdd"].bind(focus=self.on_focus)
+        self.ids.header.bind(on_back_button_pressed=self.on_back)
+        return super().on_pre_enter(*args)
+
+    def on_back(self, _):
+        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
 
     def on_focus(self, instance, value):
         if value:
@@ -50,22 +55,8 @@ class TopUpAmountScreenContent(GridLayout):
             ErrorMessagePopup(errorMessage="Minimum amount is 1.0 Credits").open()
             return
 
-        self.screenManager.get_screen("topUpPaymentScreen").setAmountToBePayed(
-            creditsToAdd
-        )
-        self.screenManager.transitionToScreen("topUpPaymentScreen")
+        self.manager.get_screen("topUpPaymentScreen").setAmountToBePayed(creditsToAdd)
+        self.manager.transitionToScreen("topUpPaymentScreen")
 
     def onCancel(self, *largs):
-        self.screenManager.transitionToScreen(
-            "mainUserPage", transitionDirection="right"
-        )
-
-
-class TopUpAmountScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="mainUserPage", **kwargs)
-        self.headerSuffix = "Top up amount screen"
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(TopUpAmountScreenContent(screenManager=self.manager))
+        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
