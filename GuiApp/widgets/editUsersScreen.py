@@ -1,22 +1,17 @@
 from database import getAllPatrons, getPatronData
-from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 
 
-class BoxLayoutButton(ButtonBehavior, BoxLayout):
-    pass
-
-
-class EditUsersScreenContent(GridLayout):
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+class EditUsersScreen(GridLayoutScreen):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
-        self.addUsersFromDatabase()
+        self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
 
-    def addUsersFromDatabase(self):
+    def on_back_button_pressed(self, *args):
+        self.manager.transitionToScreen("adminScreen", transitionDirection="right")
+
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
         users = getAllPatrons()
         for user in users:
             self.ids.usersTable.addEntry(
@@ -29,17 +24,10 @@ class EditUsersScreenContent(GridLayout):
                 entryIdentifier=user.patronId,
             )
 
+    def on_leave(self, *args):
+        self.ids.usersTable.clearEntries()
+
     def onUserEntryPressed(self, identifier):
         userToEdit = getPatronData(patronID=identifier)
-        self.screenManager.setPatronToEdit(patronToEdit=userToEdit)
-        self.screenManager.transitionToScreen("editUserScreen")
-
-
-class EditUsersScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="adminScreen", **kwargs)
-        self.headerSuffix = "Edit users screen"
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(EditUsersScreenContent(screenManager=self.manager))
+        self.manager.setPatronToEdit(patronToEdit=userToEdit)
+        self.manager.transitionToScreen("editUserScreen")
