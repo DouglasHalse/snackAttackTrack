@@ -19,7 +19,6 @@ class CustomScreenManager(ScreenManager):
     def __init__(self, settingsManager: SettingsManager):
         super().__init__()
         self._currentPatron: UserData = None
-        self._patronToEdit: UserData = None
         self._snackToEdit: SnackData = None
         self.settingsManager: SettingsManager = settingsManager
         self.current: StringProperty
@@ -33,15 +32,6 @@ class CustomScreenManager(ScreenManager):
     def logout(self):
         self._currentPatron = None
         self.logged_in_user = None
-
-    def setPatronToEdit(self, patronToEdit: UserData):
-        self._patronToEdit = patronToEdit
-
-    def getPatronToEdit(self) -> UserData:
-        return self._patronToEdit
-
-    def resetPatronToEdit(self):
-        self._patronToEdit = None
 
     def setSnackToEdit(self, snackToEdit: SnackData):
         self._snackToEdit = snackToEdit

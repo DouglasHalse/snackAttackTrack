@@ -29,5 +29,5 @@ class EditUsersScreen(GridLayoutScreen):
 
     def onUserEntryPressed(self, identifier):
         userToEdit = getPatronData(patronID=identifier)
-        self.manager.setPatronToEdit(patronToEdit=userToEdit)
+        self.manager.get_screen("editUserScreen").user_to_edit = userToEdit
         self.manager.transitionToScreen("editUserScreen")
