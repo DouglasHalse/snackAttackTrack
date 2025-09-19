@@ -1,15 +1,27 @@
 #:kivy 2.1.0
 
 
-<EditUsersScreenContent>:
-    rows: 1
-    size_hint: (1, 1)
-    padding: '20dp'
-    ClickableTable:
-        id: usersTable
-        headerHeight: self.width / 15
-        entryHeight: self.width / 15
-        columns: ["First name", "Last name", "Login card", "Total credits"]
-        columnExamples: ["LongName", "LongLastName", "1231231123", "100.00"]
-        onEntryPressed: root.onUserEntryPressed
+<EditUsersScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Edit Users"
+    GridLayout:
+        cols: 1
+        padding: '20dp'
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        ClickableTable:
+            id: usersTable
+            headerHeight: self.width / 15
+            entryHeight: self.width / 15
+            columns: ["First name", "Last name", "Login card", "Total credits"]
+            columnExamples: ["LongName", "LongLastName", "1231231123", "100.00"]
+            onEntryPressed: root.onUserEntryPressed
 
