@@ -1,63 +1,80 @@
 #:kivy 2.1.0     
 
-<TopUpPaymentScreenContent>:
-    rows: 1
-    padding: 30
-    spacing: 30
+<TopUpPaymentScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Top-up Payment"
     GridLayout:
-        cols: 1
-        id: qrCodeLayout
-    GridLayout:
-        cols: 1
-        spacing: 10
-        RoundedTwoColorGridLayout:
+        rows: 1
+        padding: 30
+        spacing: 30
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        GridLayout:
+            cols: 1
+            Image:
+                id: qrCodeImage
+                source: ""
+                allow_stretch: True
+                keep_ratio: True
+        GridLayout:
             cols: 1
             spacing: 10
-            padding: [0, 20]
-            GridLayout:
+            RoundedTwoColorGridLayout:
                 cols: 1
-                Label:
-                    bold: True
-                    text: "Step 1:"
-                    font_size: self.width/12
-                Label:
-                    text: "Scan QR code with swish"
-                    font_size: self.width/12
+                spacing: 10
+                padding: [0, 20]
+                GridLayout:
+                    cols: 1
+                    Label:
+                        bold: True
+                        text: "Step 1:"
+                        font_size: self.width/12
+                    Label:
+                        text: "Scan QR code with swish"
+                        font_size: self.width/12
+                GridLayout:
+                    cols: 1
+                    Label:
+                        bold: True
+                        text: "Step 2:"
+                        font_size: self.width/12
+                    Label:
+                        text: "Send payment"
+                        font_size: self.width/12
+                GridLayout:
+                    cols: 1
+                    Label:
+                        bold: True
+                        text: "Step 3:"
+                        font_size: self.width/12
+                    Label:
+                        text: "Click confirm below"
+                        font_size: self.width/12
             GridLayout:
-                cols: 1
-                Label:
-                    bold: True
-                    text: "Step 2:"
-                    font_size: self.width/12
-                Label:
-                    text: "Send payment"
-                    font_size: self.width/12
-            GridLayout:
-                cols: 1
-                Label:
-                    bold: True
-                    text: "Step 3:"
-                    font_size: self.width/12
-                Label:
-                    text: "Click confirm below"
-                    font_size: self.width/12
-        GridLayout:
-            rows: 1
-            size_hint: (1, None)
-            height: self.minimum_height
-            SmallGreenButton:
-                width: self.parent.width / 2.5
-                height: self.width / 3
-                text_size: self.height / 2
-                text: "Confirm"
-                on_press: root.onConfirm()
-            Widget: # Horizontal Spacer
+                rows: 1
                 size_hint: (1, None)
-                height: 10
-            SmallOrangeButton:
-                width: self.parent.width / 2.5
-                height: self.width / 3
-                text_size: self.height / 2
-                text: "Cancel"
-                on_press: root.onCancel()
+                height: self.minimum_height
+                SmallGreenButton:
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    text: "Confirm"
+                    on_press: root.onConfirm()
+                Widget: # Horizontal Spacer
+                    size_hint: (1, None)
+                    height: 10
+                SmallOrangeButton:
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    text: "Cancel"
+                    on_press: root.onCancel()
                 
