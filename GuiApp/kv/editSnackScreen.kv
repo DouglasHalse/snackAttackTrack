@@ -1,65 +1,78 @@
 #:kivy 2.1.0
 
-<EditSnackScreenContent>:
+<EditSnackScreen>:
+    rows: 2
     cols: 1
-    padding: 20
-    Widget: # Vertical Spacer
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Edit Snack"
     GridLayout:
-        rows: 1
-        size_hint_y: None
-        padding: [self.width / 8, 0]
-        height: self.minimum_height
-        RoundedTwoColorGridLayout:
-            cols: 1
-            padding: 20
-            spacing: self.width / 50
+        cols: 1
+        padding: 20
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Widget: # Vertical Spacer
+        GridLayout:
+            rows: 1
             size_hint_y: None
+            padding: [self.width / 8, 0]
             height: self.minimum_height
-            LargeTextInputWithHeader:
-                id: snackNameInput
-                size_factor: self.parent.width / 30
-                header_text: "Snack Name"
-                hint_text: "Enter snack name"
-            LargeTextInputWithHeader:
-                id: snackQuantityInput
-                size_factor: self.parent.width / 30
-                header_text: "Quantity"
-                hint_text: "Enter quantity"
-                input_filter: "int"
-            LargeTextInputWithHeader:
-                id: snackPriceInput
-                size_factor: self.parent.width / 30
-                header_text: "Price"
-                hint_text: "Enter price"
-                input_filter: "currency"
-    Widget: # Vertical Spacer
-    GridLayout:
-        rows: 1
-        size_hint: (1, None)
-        height: self.minimum_height
-        Widget: # Horizontal Spacer
-        MediumGreenButton:
-            text: "Confirm"
-            width: self.parent.width / 4
-            height: self.width / 3
-            text_size: self.height / 2
-            on_press: root.onConfirm()
-        Widget: # Horizontal Spacer
-        MediumOrangeButton:
-            text: "Cancel"
-            width: self.parent.width / 4
-            height: self.width / 3
-            text_size: self.height / 2
-            on_press: root.onCancel()
-        Widget: # Horizontal Spacer
-        MediumRedButton:
-            text: "Remove"
-            width: self.parent.width / 4
-            height: self.width / 3
-            text_size: self.height / 2
-            on_press: root.onRemove()
-        Widget: # Horizontal Spacer
-    Widget: # Vertical Spacer
+            RoundedTwoColorGridLayout:
+                cols: 1
+                padding: 20
+                spacing: self.width / 50
+                size_hint_y: None
+                height: self.minimum_height
+                LargeTextInputWithHeader:
+                    id: snackNameInput
+                    size_factor: self.parent.width / 30
+                    header_text: "Snack Name"
+                    hint_text: "Enter snack name"
+                LargeTextInputWithHeader:
+                    id: snackQuantityInput
+                    size_factor: self.parent.width / 30
+                    header_text: "Quantity"
+                    hint_text: "Enter quantity"
+                    input_filter: "int"
+                LargeTextInputWithHeader:
+                    id: snackPriceInput
+                    size_factor: self.parent.width / 30
+                    header_text: "Price"
+                    hint_text: "Enter price"
+                    input_filter: "currency"
+        Widget: # Vertical Spacer
+        GridLayout:
+            rows: 1
+            size_hint: (1, None)
+            height: self.minimum_height
+            Widget: # Horizontal Spacer
+            MediumGreenButton:
+                text: "Confirm"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.onConfirm()
+            Widget: # Horizontal Spacer
+            MediumOrangeButton:
+                text: "Cancel"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.onCancel()
+            Widget: # Horizontal Spacer
+            MediumRedButton:
+                text: "Remove"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.onRemove()
+            Widget: # Horizontal Spacer
+        Widget: # Vertical Spacer
 
 
 <RemoveSnackConfirmationPopup>:
