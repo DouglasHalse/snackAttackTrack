@@ -1,97 +1,110 @@
 #:kivy 2.1.0     
 
-<AddSnackScreenContent>:
-    rows: 1
-    padding: 30
-    spacing: 30
+<AddSnackScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Add Snack"
     GridLayout:
-        cols:1
-        size_hint: (0.5, 1)
-        spacing: 20
-        Widget: # Vertical Spacer
-        RoundedTwoColorGridLayout:
-            cols: 1
-            padding: 20
-            spacing: self.width / 50
-            size_hint_y: None
-            height: self.minimum_height
-            LargeTextInputWithHeader:
-                id: snackNameInput
-                size_factor: self.parent.width / 15
-                header_text: "Snack Name"
-                hint_text: "Enter snack name"
-            LargeTextInputWithHeader:
-                id: snackQuantityInput
-                size_factor: self.parent.width / 15
-                header_text: "Quantity"
-                hint_text: "Enter quantity"
-                input_filter: "int"
-            LargeTextInputWithHeader:
-                id: snackPriceInput
-                size_factor: self.parent.width / 15
-                header_text: "Price"
-                hint_text: "Enter price"
-                input_filter: "currency"
-        Widget: # Vertical Spacer
+        rows: 1
+        padding: 30
+        spacing: 30
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
         GridLayout:
-            rows: 1
-            size_hint: (1, None)
-            height: self.minimum_height
-            Widget: # Horizontal Spacer
-            SmallGreenButton:
-                text: "Confirm"
-                width: self.parent.width / 2.5
-                height: self.width / 3
-                text_size: self.height / 2
-                on_press: root.onConfirm()
-            Widget: # Horizontal Spacer
-            SmallOrangeButton:
-                text: "Cancel"
-                width: self.parent.width / 2.5
-                height: self.width / 3
-                text_size: self.height / 2
-                on_press: root.onCancel()
-            Widget: # Horizontal Spacer
-        Widget: # Vertical Spacer
-    GridLayout:
-        cols: 1
-        size_hint: (0.5, 1)
-        spacing: self.width / 50
-        Widget: # Vertical Spacer
-        Label:
-            size_hint_y: None
-            height: self.parent.width / 8
-            font_size: self.parent.width / 10
-            text: "This change will add"
-            bold: True
-            color: "black"
-        Label:
-            id: numberOfItemsLabel
-            size_hint_y: None
-            height: self.parent.width / 8
-            font_size: self.parent.width / 10
-            text: "? of ?"
-            color: "black"
-        Label:
-            size_hint_y: None
-            height: self.parent.width / 8
-            font_size: self.parent.width / 10
-            text: "which will cost users"
-            bold: True
-            color: "black"
-        Label:
-            id: pricePerItemLabel
-            size_hint_y: None
-            height: self.parent.width / 8
-            font_size: self.parent.width / 10
-            text: "0.00 credits per item"
-            color: "black"
-        Label:
-            id: purchaseFeeLabel
-            size_hint_y: None
-            height: self.parent.width / 8
-            font_size: self.parent.width / 10
-            text: "including fee of 5.00%"
-            bold: True
-            color: "black"
-        Widget: # Vertical Spacer
+            cols:1
+            size_hint: (0.5, 1)
+            spacing: 20
+            Widget: # Vertical Spacer
+            RoundedTwoColorGridLayout:
+                cols: 1
+                padding: 20
+                spacing: self.width / 50
+                size_hint_y: None
+                height: self.minimum_height
+                LargeTextInputWithHeader:
+                    id: snackNameInput
+                    size_factor: self.parent.width / 15
+                    header_text: "Snack Name"
+                    hint_text: "Enter snack name"
+                LargeTextInputWithHeader:
+                    id: snackQuantityInput
+                    size_factor: self.parent.width / 15
+                    header_text: "Quantity"
+                    hint_text: "Enter quantity"
+                    input_filter: "int"
+                LargeTextInputWithHeader:
+                    id: snackPriceInput
+                    size_factor: self.parent.width / 15
+                    header_text: "Price"
+                    hint_text: "Enter price"
+                    input_filter: "currency"
+            Widget: # Vertical Spacer
+            GridLayout:
+                rows: 1
+                size_hint: (1, None)
+                height: self.minimum_height
+                Widget: # Horizontal Spacer
+                SmallGreenButton:
+                    text: "Confirm"
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    on_press: root.onConfirm()
+                Widget: # Horizontal Spacer
+                SmallOrangeButton:
+                    text: "Cancel"
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    on_press: root.onCancel()
+                Widget: # Horizontal Spacer
+            Widget: # Vertical Spacer
+        GridLayout:
+            cols: 1
+            size_hint: (0.5, 1)
+            spacing: self.width / 50
+            Widget: # Vertical Spacer
+            Label:
+                size_hint_y: None
+                height: self.parent.width / 8
+                font_size: self.parent.width / 10
+                text: "This change will add"
+                bold: True
+                color: "black"
+            Label:
+                id: numberOfItemsLabel
+                size_hint_y: None
+                height: self.parent.width / 8
+                font_size: self.parent.width / 10
+                text: "? of ?"
+                color: "black"
+            Label:
+                size_hint_y: None
+                height: self.parent.width / 8
+                font_size: self.parent.width / 10
+                text: "which will cost users"
+                bold: True
+                color: "black"
+            Label:
+                id: pricePerItemLabel
+                size_hint_y: None
+                height: self.parent.width / 8
+                font_size: self.parent.width / 10
+                text: "0.00 credits per item"
+                color: "black"
+            Label:
+                id: purchaseFeeLabel
+                size_hint_y: None
+                height: self.parent.width / 8
+                font_size: self.parent.width / 10
+                text: "including fee of 5.00%"
+                bold: True
+                color: "black"
+            Widget: # Vertical Spacer

@@ -1,23 +1,33 @@
 from database import addSnack
-from kivy.uix.gridlayout import GridLayout
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
 
 
-class AddSnackScreenContent(GridLayout):
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+class AddSnackScreen(GridLayoutScreen):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
         self.ids["snackNameInput"].setInputChangedCallback(self.updateText)
         self.ids["snackQuantityInput"].setInputChangedCallback(self.updateText)
         self.ids["snackPriceInput"].setInputChangedCallback(self.updateText)
+        self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
 
-        purchaseFee = self.screenManager.settingsManager.get_setting_value(
+    def on_back_button_pressed(self, *args):
+        self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
+
+    def on_pre_enter(self, *args):
+        purchaseFee = self.manager.settingsManager.get_setting_value(
             settingName=SettingName.PURCHASE_FEE
         )
         self.ids["purchaseFeeLabel"].text = f"including fee of {purchaseFee*100:.2f}%"
+
+    def on_leave(self, *args):
+        self.ids["snackNameInput"].setText("")
+        self.ids["snackQuantityInput"].setText("")
+        self.ids["snackPriceInput"].setText("")
+        self.ids["numberOfItemsLabel"].text = "? of ?"
+        self.ids["pricePerItemLabel"].text = "0.00 credits per item"
+        return super().on_leave(*args)
 
     def updateText(self, instance, text):
         snackName = self.ids["snackNameInput"].getText()
@@ -36,7 +46,7 @@ class AddSnackScreenContent(GridLayout):
         except ValueError:
             return
 
-        purchaseFee = self.screenManager.settingsManager.get_setting_value(
+        purchaseFee = self.manager.settingsManager.get_setting_value(
             settingName=SettingName.PURCHASE_FEE
         )
 
@@ -71,7 +81,7 @@ class AddSnackScreenContent(GridLayout):
             ErrorMessagePopup(errorMessage="Price cannot be 0 or negative").open()
             return
 
-        purchaseFee = self.screenManager.settingsManager.get_setting_value(
+        purchaseFee = self.manager.settingsManager.get_setting_value(
             settingName=SettingName.PURCHASE_FEE
         )
 
@@ -85,21 +95,7 @@ class AddSnackScreenContent(GridLayout):
             imageID="None",
             pricePerItem=pricePerItem,
         )
-        self.screenManager.transitionToScreen(
-            "editSnacksScreen", transitionDirection="right"
-        )
+        self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
 
     def onCancel(self, *largs):
-        self.screenManager.transitionToScreen(
-            "editSnacksScreen", transitionDirection="right"
-        )
-
-
-class AddSnackScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="editSnacksScreen", **kwargs)
-        self.headerSuffix = "Add snack screen"
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(AddSnackScreenContent(screenManager=self.manager))
+        self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
