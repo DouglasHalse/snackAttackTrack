@@ -148,6 +148,12 @@ class EditSystemSettingsScreen(GridLayoutScreen):
     def on_back_button_pressed(self, *args):
         self.manager.transitionToScreen("adminScreen", transitionDirection="right")
 
+    def on_leave(self, *args):
+        # Reset scroll view after leave
+        self.ids.settingsScrollView.effect_y.reset(0)
+        self.ids.settingsScrollView.scroll_y = 1.0
+        return super().on_leave(*args)
+
     def init_settings(self):
         # Navigation settings
         navigationSection = SettingsSection(sectionName="Navigation")
