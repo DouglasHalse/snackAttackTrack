@@ -103,3 +103,25 @@
     height: 100
     text_size: 42
     text: "UNDEFINED"
+
+
+<ImageAndTextButton>:
+    cols: 1
+    Widget: # Horizontal Spacer
+        size_hint_y: 0.2
+    Image:
+        id: image
+        size_hint_y: 0.3
+        fit_mode: 'contain'
+        mipmap: True
+        source: root.image_path if hasattr(root, 'image_path') else 'Images/user.png'
+    Widget: # Horizontal Spacer
+        size_hint_y: 0.2
+    Label:
+        id: text
+        text: root.text if hasattr(root, 'text') else 'OPTION'
+        bold: True
+        font_size: self.width/8
+        size_hint_y: 0.2
+    Widget: # Horizontal Spacer
+        size_hint_y: 0.1

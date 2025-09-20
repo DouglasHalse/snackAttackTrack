@@ -1,6 +1,6 @@
 #:kivy 2.1.0     
 
-<Header>:
+<NavigationHeader>:
     rows: 1
     size_hint: 1, 0.2
     canvas:
@@ -15,11 +15,13 @@
         padding: 10
         spacing: 10
         rows: 1
+        NavigationBackButton:
+            id: backButton
         GridLayout:
             cols: 1
             Label:
                 id: welcomeTextLabel
-                text: 'WelcomeText'
+                text: app.screenManager.getCurrentPatron().firstName if app.screenManager.getCurrentPatron() else "Welcome, Guest"
                 halign: 'left'
                 valign: 'middle'
                 font_size: min(self.height/1.3, self.width/25)
@@ -28,7 +30,7 @@
                 bold: True
             Label:
                 id: patronCreditsLabel
-                text: 'Your credits: 912.40'
+                text: 'Your credits: UNKNOWN'
                 halign: 'left'
                 valign: 'middle'
                 font_size: min(self.height/1.3, self.width/25)
@@ -49,7 +51,7 @@
             width: self.height*2
             BoxLayoutButton:
                 id: logoutButton
-                on_press: root.onLogoutButtonPressed()
+                on_press: root.on_logout_button_pressed()
                 canvas:
                     Color:
                         rgba: app.colors["red_button"]
@@ -62,40 +64,18 @@
                     bold: True
                     size_hint: (1, 1)
 
-<Body>:
-    rows: 1
-    canvas:
-        Color:
-            rgba: app.colors["background"]
-        Rectangle:
-            pos: self.pos
-            size: self.size
-
-<SettingsButton>:
+<NavigationSettingsButton>:
     size_hint_x: None
     width: self.height
-    on_press: root.onPressed()
     GridLayout:
         cols: 1
         Image: 
             source: 'Images/wrench-alt.png'
             
-<BackButton>:
+<NavigationBackButton>:
     size_hint_x: None
     width: self.height
-    on_press: root.onPressed()
     GridLayout:
         cols: 1
         Image: 
             source: 'Images/leftArrow.png'
-
-<HeaderBodyScreen>:
-    canvas:
-        Color:
-            rgba: .9, .9, .9, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    GridLayout:
-        id: screenLayout
-        cols: 1

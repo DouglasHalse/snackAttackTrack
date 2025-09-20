@@ -5,6 +5,7 @@ import argparse
 import widgets.clickableTable
 import widgets.uiElements.buttons
 import widgets.uiElements.layouts
+import widgets.uiElements.navigationHeader
 import widgets.uiElements.ParticleEmitter
 import widgets.uiElements.textInputs
 import widgets.uiElements.WheelOfSnacksWidget

@@ -4,29 +4,31 @@ from database import (
     getTransactions,
     transactionTypeToPresentableString,
 )
-from kivy.uix.gridlayout import GridLayout
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.editSummaryPopup import EditSummaryPopup
 from widgets.popups.gambleSummaryPopup import GambleSummaryPopup
 from widgets.popups.purchaseSummaryPopup import PurchaseSummaryPopup
 from widgets.popups.topUpSummaryPopup import TopUpSummaryPopup
 
 
-class HistoryScreenContent(GridLayout):
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+class HistoryScreen(GridLayoutScreen):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
+        self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
 
-        currentPatron = self.screenManager.getCurrentPatron()
-        self.transactions = getTransactions(currentPatron.patronId)
+    def on_back_button_pressed(self, *args):
+        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+
+    def on_pre_enter(self, *args):
+        currentPatron = self.manager.getCurrentPatron()
+        transactions = getTransactions(currentPatron.patronId)
 
         # Redorder transactions so that the most recent transactions are at the top
-        self.transactions = sorted(
-            self.transactions, key=lambda x: x.transactionDate, reverse=True
+        transactions = sorted(
+            transactions, key=lambda x: x.transactionDate, reverse=True
         )
 
-        for transaction in self.transactions:
+        for transaction in transactions:
             self.ids.historyTable.addEntry(
                 entryContents=[
                     transaction.transactionDate.strftime("%Y-%m-%d %H:%M:%S"),
@@ -36,6 +38,10 @@ class HistoryScreenContent(GridLayout):
                 ],
                 entryIdentifier=transaction.transactionId,
             )
+        return super().on_pre_enter(*args)
+
+    def on_leave(self, *args):
+        self.ids.historyTable.clearEntries()
 
     def onHistoryEntryPressed(self, transactionId):
         transaction = getTransaction(transactionId)
@@ -51,13 +57,3 @@ class HistoryScreenContent(GridLayout):
             print(
                 f"History entry pressed: {transactionId} ({transaction.transactionType.value})"
             )
-
-
-class HistoryScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="mainUserPage", **kwargs)
-        self.headerSuffix = "History screen"
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(HistoryScreenContent(screenManager=self.manager))

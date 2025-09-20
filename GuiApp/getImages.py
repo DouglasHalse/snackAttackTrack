@@ -1,10 +1,9 @@
-import os
 import asyncio
+import os
 
-from main import snackAttackTrackApp
-from kivy.core.window import Window
 from database import addPatron, addSnack, getAllPatrons, getAllSnacks
-
+from kivy.core.window import Window
+from main import snackAttackTrackApp
 
 DELAY = 0.5
 PATH = "imagesOutput/"
@@ -35,7 +34,6 @@ async def navigateScreensCoroutine():
     snacks = getAllSnacks()
 
     app.screenManager.login(patrons[0].patronId)
-    app.screenManager.setPatronToEdit(patrons[1])
     app.screenManager.setSnackToEdit(snacks[0])
 
     for screen in app.screenManager.screens:

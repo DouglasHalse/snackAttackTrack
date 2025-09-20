@@ -1,14 +1,26 @@
 #:kivy 2.1.0
 
 
-<HistoryScreenContent>:
+<HistoryScreen>:
+    rows: 2
     cols: 1
-    size_hint: (1, 1)
-    padding: '10dp'
-    ClickableTable:
-        id: historyTable
-        headerHeight: self.width / 15
-        entryHeight: self.width / 15
-        columns: ["Date", "Credits before", "Credits after", "Type"]
-        columnExamples: ["2025-01-12 15:04:31", "10000.00", "10000.00", "Purchase"]
-        onEntryPressed: root.onHistoryEntryPressed
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "History"
+    GridLayout:
+        cols: 1
+        padding: 10
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        ClickableTable:
+            id: historyTable
+            headerHeight: self.width / 15
+            entryHeight: self.width / 15
+            columns: ["Date", "Credits before", "Credits after", "Type"]
+            columnExamples: ["2025-01-12 15:04:31", "10000.00", "10000.00", "Purchase"]
+            onEntryPressed: root.onHistoryEntryPressed

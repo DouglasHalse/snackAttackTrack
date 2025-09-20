@@ -7,20 +7,23 @@ from database import (
     subtractPatronCredits,
     subtractSnackQuantity,
 )
-from kivy.uix.gridlayout import GridLayout
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
 from widgets.popups.WinPopup import WinPopup
 from widgets.settingsManager import SettingName
 
 
-class WheelOfSnacksContent(GridLayout):
-    __events__ = ("on_spin_started",)
-
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+class WheelOfSnacksScreen(GridLayoutScreen):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
+        self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
+        self.winPopup = None
+
+    def on_back_button_pressed(self, *args):
+        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+
+    def on_pre_enter(self, *args):
+        super().on_pre_enter(*args)
         snacks = getAllSnacks()
         # Order snacks by pricePerItem
         snacks = sorted(snacks, key=lambda x: x.pricePerItem, reverse=True)
@@ -29,8 +32,17 @@ class WheelOfSnacksContent(GridLayout):
         self.ids.cost_label.text = f"One spin costs: {average_cost:.2f} Credits"
         self.set_win_table_snacks(snacks)
         self.ids.wheel_widget.set_snacks(snacks)
+        self.ids.wheel_widget.enable = True
         self.ids.wheel_widget.bind(on_spin_complete=self.on_spin_complete)
-        self.winPopup = None
+
+    def on_leave(self, *args):
+        self.ids.wheel_widget.enable = False
+
+    def enable_navigation_header_buttons(self, enable: bool):
+        self.ids.header.ids.logoutButton.disabled = not enable
+        self.ids.header.ids.backButton.disabled = not enable
+        if not enable:
+            self.manager.refreshCurrentPatron()
 
     def set_win_table_snacks(self, snacks):
         self.ids.win_table.clearEntries()
@@ -52,16 +64,14 @@ class WheelOfSnacksContent(GridLayout):
         self.winPopup.open()
 
         self.ids.spin_button.disabled = False
-        self.dispatch("on_spin_started", False)
+        self.enable_navigation_header_buttons(True)
 
         new_snacks = getAllSnacks()
         new_snacks = sorted(new_snacks, key=lambda x: x.pricePerItem, reverse=True)
 
         # If there is only one snack left, go back to the main user page
         if len(new_snacks) == 1:
-            self.screenManager.transitionToScreen(
-                "mainUserPage", transitionDirection="right"
-            )
+            self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
             return
 
         average_cost = sum(s.pricePerItem for s in new_snacks) / len(new_snacks)
@@ -77,9 +87,9 @@ class WheelOfSnacksContent(GridLayout):
         snacks = getAllSnacks()
         cost_to_spin = round(sum(s.pricePerItem for s in snacks) / len(snacks), 2)
 
-        currentPatron = self.screenManager.getCurrentPatron()
+        currentPatron = self.manager.getCurrentPatron()
         if currentPatron.totalCredits < cost_to_spin:
-            popup = InsufficientFundsPopup(screenManager=self.screenManager)
+            popup = InsufficientFundsPopup(screenManager=self.manager)
             popup.open()
             return
 
@@ -87,7 +97,7 @@ class WheelOfSnacksContent(GridLayout):
         # Spin validation passed
         #
 
-        exciting = self.screenManager.settingsManager.get_setting_value(
+        exciting = self.manager.settingsManager.get_setting_value(
             settingName=SettingName.EXCITING_GAMBLING
         )
 
@@ -114,29 +124,6 @@ class WheelOfSnacksContent(GridLayout):
         )
 
         # Update current patron with new data
-        self.screenManager.refreshCurrentPatron()
+        self.manager.refreshCurrentPatron()
 
-        self.dispatch("on_spin_started", True)
-
-
-class WheelOfSnacksScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="mainUserPage", **kwargs)
-        self.headerSuffix = "Wheel of Snacks"
-        self.content = None
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.content = WheelOfSnacksContent(screenManager=self.manager)
-        self.body.add_widget(self.content)
-        self.content.bind(on_spin_started=self.on_enable_buttons)
-
-    def on_leave(self, *args):
-        super().on_leave(*args)
-        self.content.ids.wheel_widget.cleanup()
-
-    def on_enable_buttons(self, instance, spinning_started):
-        self.header.ids.logoutButton.disabled = spinning_started
-        self.header.backButton.disabled = spinning_started
-        if spinning_started:
-            self.header.refreshHeader()
+        self.enable_navigation_header_buttons(False)

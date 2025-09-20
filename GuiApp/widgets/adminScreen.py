@@ -1,29 +1,37 @@
-from kivy.uix.gridlayout import GridLayout
-
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
+from widgets.uiElements.buttons import ImageAndTextButton
 
 
-class AdminScreenContent(GridLayout):
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
-        super().__init__(**kwargs)
-        self.screenManager = screenManager
-
-    def onEditSystemSettingsButtonPressed(self, *largs):
-        self.screenManager.transitionToScreen("editSystemSettingsScreen")
-
-    def onEditSnacksButtonPressed(self, *largs):
-        self.screenManager.transitionToScreen("editSnacksScreen")
-
-    def onEditUsersButtonPressed(self, *largs):
-        self.screenManager.transitionToScreen("editUsersScreen")
+class SystemSettingsOption(ImageAndTextButton):
+    pass
 
 
-class AdminScreen(HeaderBodyScreen):
+class EditSnacksOption(ImageAndTextButton):
+    pass
+
+
+class EditUsersOption(ImageAndTextButton):
+    pass
+
+
+class AdminScreen(GridLayoutScreen):
     def __init__(self, **kwargs):
-        super().__init__(previousScreen="mainUserPage", **kwargs)
-        self.headerSuffix = "Admin screen"
+        super().__init__(**kwargs)
+        self.ids.systemSettingsOption.bind(
+            on_release=self.onSystemSettingsButtonPressed
+        )
+        self.ids.editSnacksOption.bind(on_release=self.onEditSnacksButtonPressed)
+        self.ids.editUsersOption.bind(on_release=self.onEditUsersButtonPressed)
+        self.ids.header.bind(on_back_button_pressed=self.onBackButtonPressed)
 
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(AdminScreenContent(screenManager=self.manager))
+    def onSystemSettingsButtonPressed(self, _):
+        self.manager.transitionToScreen("editSystemSettingsScreen")
+
+    def onEditSnacksButtonPressed(self, _):
+        self.manager.transitionToScreen("editSnacksScreen")
+
+    def onEditUsersButtonPressed(self, _):
+        self.manager.transitionToScreen("editUsersScreen")
+
+    def onBackButtonPressed(self, _):
+        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
