@@ -243,6 +243,9 @@ class ClickableTable(GridLayout):
         """
         self.ids["rw"].data = []
 
+        # Scroll back to the top when cleared
+        self.ids["rw"].scroll_y = 1.0
+
     def onEntryPressed(self, *largs):
         """
         Call the onEntryPressedCallback with the entryIdentifier of the pressed entry
