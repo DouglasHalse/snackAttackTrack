@@ -1,25 +1,18 @@
 from database import getAllSnacks, getSnack
-from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
-from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 
 
-class BoxLayoutButton(ButtonBehavior, BoxLayout):
-    pass
-
-
-class EditSnacksScreenContent(GridLayout):
+class EditSnacksScreen(GridLayoutScreen):
     ADD_SNACK_ENTRY_IDENTIFIER = -1
 
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
+        self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
 
-        self.addSnacksFromDatabase()
+    def on_back_button_pressed(self, *args):
+        self.manager.transitionToScreen("adminScreen", transitionDirection="right")
 
-    def addSnacksFromDatabase(self):
+    def on_pre_enter(self, *args):
         snacks = getAllSnacks()
 
         for snack in snacks:
@@ -37,27 +30,21 @@ class EditSnacksScreenContent(GridLayout):
             entryContents=["[i]Add a snack +[/i]"],
             entryIdentifier=self.ADD_SNACK_ENTRY_IDENTIFIER,
         )
+        return super().on_pre_enter(*args)
+
+    def on_leave(self, *args):
+        self.ids.snacksTable.clearEntries()
 
     def onAddSnackEntryPressed(self):
-        self.screenManager.transitionToScreen("addSnackScreen")
+        self.manager.transitionToScreen("addSnackScreen")
 
     def onEditSnackEntryPressed(self, snackId):
         snackToEdit = getSnack(snackId)
-        self.screenManager.setSnackToEdit(snackToEdit=snackToEdit)
-        self.screenManager.transitionToScreen("editSnackScreen")
+        self.manager.setSnackToEdit(snackToEdit=snackToEdit)
+        self.manager.transitionToScreen("editSnackScreen")
 
     def onEntryPressed(self, identifier):
         if identifier == self.ADD_SNACK_ENTRY_IDENTIFIER:
             self.onAddSnackEntryPressed()
         else:
             self.onEditSnackEntryPressed(identifier)
-
-
-class EditSnacksScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="adminScreen", **kwargs)
-        self.headerSuffix = "Edit snacks screen"
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(EditSnacksScreenContent(screenManager=self.manager))
