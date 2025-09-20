@@ -40,7 +40,7 @@ class EditSnacksScreen(GridLayoutScreen):
 
     def onEditSnackEntryPressed(self, snackId):
         snackToEdit = getSnack(snackId)
-        self.manager.setSnackToEdit(snackToEdit=snackToEdit)
+        self.manager.get_screen("editSnackScreen").snack_to_edit = snackToEdit
         self.manager.transitionToScreen("editSnackScreen")
 
     def onEntryPressed(self, identifier):

@@ -1,25 +1,34 @@
 from database import SnackData, removeSnack, updateSnackData
-from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
+from kivy.properties import ObjectProperty
 from kivy.uix.modalview import ModalView
 from widgets.customScreenManager import CustomScreenManager
-from widgets.headerBodyLayout import HeaderBodyScreen
+from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 
 
-class BoxLayoutButton(ButtonBehavior, BoxLayout):
-    pass
+class EditSnackScreen(GridLayoutScreen):
+    snack_to_edit = ObjectProperty(None, allownone=True)
 
-
-class EditSnackScreenContent(GridLayout):
-    def __init__(self, screenManager: CustomScreenManager, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.screenManager = screenManager
-        self.snackToEdit: SnackData = self.screenManager.getSnackToEdit()
-        self.ids["snackNameInput"].setText(self.snackToEdit.snackName)
-        self.ids["snackQuantityInput"].setText(str(self.snackToEdit.quantity))
-        self.ids["snackPriceInput"].setText(f"{self.snackToEdit.pricePerItem:.2f}")
+        self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
+
+    def on_back_button_pressed(self, *args):
+        self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
+
+    def on_leave(self, *args):
+        self.snack_to_edit = None
+        super().on_leave(*args)
+
+    def on_snack_to_edit(self, _, value):
+        if value:
+            self.ids.snackNameInput.setText(value.snackName)
+            self.ids.snackQuantityInput.setText(str(value.quantity))
+            self.ids.snackPriceInput.setText(f"{value.pricePerItem:.2f}")
+        else:
+            self.ids.snackNameInput.setText("SNACKNAME")
+            self.ids.snackQuantityInput.setText("QUANTITY")
+            self.ids.snackPriceInput.setText("PRICE")
 
     def onConfirm(self):
         newSnackName = self.ids["snackNameInput"].getText()
@@ -49,41 +58,23 @@ class EditSnackScreenContent(GridLayout):
             return
 
         newSnackData = SnackData(
-            snackId=self.snackToEdit.snackId,
+            snackId=self.snack_to_edit.snackId,
             snackName=newSnackName,
             quantity=newSnackQuantity,
             imageID="None",
             pricePerItem=newSnackPrice,
         )
-        updateSnackData(snackId=self.snackToEdit.snackId, newSnackData=newSnackData)
-        self.screenManager.transitionToScreen(
-            "editSnacksScreen", transitionDirection="right"
-        )
+        updateSnackData(snackId=self.snack_to_edit.snackId, newSnackData=newSnackData)
+        self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
 
     def onCancel(self):
-        self.screenManager.transitionToScreen(
-            "editSnacksScreen", transitionDirection="right"
-        )
+        self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
 
     def onRemove(self):
         popup = RemoveSnackConfirmationPopup(
-            screenManager=self.screenManager, snackToRemove=self.snackToEdit
+            screenManager=self.manager, snackToRemove=self.snack_to_edit
         )
         popup.open()
-
-
-class EditSnackScreen(HeaderBodyScreen):
-    def __init__(self, **kwargs):
-        super().__init__(previousScreen="editSnacksScreen", **kwargs)
-        self.headerSuffix = "Edit Snack screen"
-
-    def on_pre_enter(self, *args):
-        super().on_pre_enter(*args)
-        self.body.add_widget(EditSnackScreenContent(screenManager=self.manager))
-
-    def on_leave(self, *args):
-        super().on_leave(*args)
-        self.manager.resetSnackToEdit()
 
 
 class RemoveSnackConfirmationPopup(ModalView):
