@@ -1,4 +1,4 @@
-from database import SnackData, UserData, getPatronData
+from database import UserData, getPatronData
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import (
     Screen,
@@ -19,7 +19,6 @@ class CustomScreenManager(ScreenManager):
     def __init__(self, settingsManager: SettingsManager):
         super().__init__()
         self._currentPatron: UserData = None
-        self._snackToEdit: SnackData = None
         self.settingsManager: SettingsManager = settingsManager
         self.current: StringProperty
         self.transition: ObjectProperty
@@ -32,15 +31,6 @@ class CustomScreenManager(ScreenManager):
     def logout(self):
         self._currentPatron = None
         self.logged_in_user = None
-
-    def setSnackToEdit(self, snackToEdit: SnackData):
-        self._snackToEdit = snackToEdit
-
-    def getSnackToEdit(self) -> SnackData:
-        return self._snackToEdit
-
-    def resetSnackToEdit(self):
-        self._snackToEdit = None
 
     def getCurrentPatron(self) -> UserData:
         return self._currentPatron
