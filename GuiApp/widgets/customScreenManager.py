@@ -1,4 +1,6 @@
 from database import UserData, getPatronData
+from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.screenmanager import (
     Screen,
@@ -8,7 +10,7 @@ from kivy.uix.screenmanager import (
 )
 from RFIDReader import RFIDReader
 from widgets.GridLayoutScreen import GridLayoutScreen
-from widgets.settingsManager import SettingsManager
+from widgets.settingsManager import SettingName, SettingsManager
 
 # pylint: disable=too-many-instance-attributes
 
@@ -23,14 +25,46 @@ class CustomScreenManager(ScreenManager):
         self.current: StringProperty
         self.transition: ObjectProperty
         self.RFIDReader = RFIDReader()
+        Window.bind(on_touch_down=self.on_activity)
+        self.log_out_timer = None
+
+    def on_activity(self, _, __):
+        if self._currentPatron:
+            if self.settingsManager.get_setting_value(
+                settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
+            ):
+                timeToAutoLogout = self.settingsManager.get_setting_value(
+                    settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME
+                )
+                if self.log_out_timer:
+                    self.log_out_timer.cancel()
+                self.log_out_timer = Clock.schedule_once(
+                    lambda dt: self.auto_logout(), timeToAutoLogout
+                )
 
     def login(self, patronId):
         self._currentPatron = getPatronData(patronID=patronId)
         self.logged_in_user = self._currentPatron
+        if self.settingsManager.get_setting_value(
+            settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
+        ):
+            timeToAutoLogout = self.settingsManager.get_setting_value(
+                settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME
+            )
+            self.log_out_timer = Clock.schedule_once(
+                lambda dt: self.auto_logout(), timeToAutoLogout
+            )
+
+    def auto_logout(self):
+        self.logout()
+        self.transitionToScreen("splashScreen", transitionDirection="right")
 
     def logout(self):
         self._currentPatron = None
         self.logged_in_user = None
+        if self.log_out_timer:
+            self.log_out_timer.cancel()
+            self.log_out_timer = None
 
     def getCurrentPatron(self) -> UserData:
         return self._currentPatron
