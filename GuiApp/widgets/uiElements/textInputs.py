@@ -114,6 +114,11 @@ class TextInputPopup(ModalView):
 
         self.ids["textInput"].insertText(finalSymbolToAdd)
 
+        if keyboard.have_capslock:
+            self.isCapslockActive = False
+            keyboard.have_capslock = False
+            keyboard.active_keys.clear()
+
     def on_dismiss(self):
         self.originalTextInputWidget.text = self.ids["textInput"].getText()
         self.originalTextInputWidget.focus = False
