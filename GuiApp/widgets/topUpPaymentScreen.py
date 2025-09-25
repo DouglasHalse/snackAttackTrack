@@ -54,10 +54,10 @@ class TopUpPaymentScreen(GridLayoutScreen):
             creditsAfter=self.userData.totalCredits + self.amount_to_be_payed,
         ).open()
 
-        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+        self.manager.transition_back_from_top_up()
 
     def onCancel(self, *largs):
-        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+        self.manager.transition_back_from_top_up()
 
     def createQrCode(self, amount: float, name: str, swishNumber: str):
         qrCode = makeQRCode(

@@ -82,6 +82,9 @@ class WheelOfSnacksScreen(GridLayoutScreen):
     def on_spin_started(self, *args):
         pass
 
+    def on_going_to_top_up_screen(self, *args):
+        self.manager.top_up_requestee = "wheelOfSnacksScreen"
+
     def onSpinButtonPressed(self, *largs):
 
         snacks = getAllSnacks()
@@ -89,7 +92,11 @@ class WheelOfSnacksScreen(GridLayoutScreen):
 
         currentPatron = self.manager.getCurrentPatron()
         if currentPatron.totalCredits < cost_to_spin:
-            popup = InsufficientFundsPopup(screenManager=self.manager)
+            credits_needed = cost_to_spin - currentPatron.totalCredits
+            popup = InsufficientFundsPopup(
+                screen_manager=self.manager, credits_needed=credits_needed
+            )
+            popup.bind(on_top_up_pressed=self.on_going_to_top_up_screen)
             popup.open()
             return
 
