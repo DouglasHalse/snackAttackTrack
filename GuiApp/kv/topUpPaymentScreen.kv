@@ -62,19 +62,20 @@
                 rows: 1
                 size_hint: (1, None)
                 height: self.minimum_height
-                GreenButton:
-                    width: self.parent.width / 2.5
-                    height: self.width / 3
-                    text_size: self.height / 2
-                    text: "Confirm"
-                    on_press: root.onConfirm()
-                Widget: # Horizontal Spacer
-                    size_hint: (1, None)
-                    height: 10
                 OrangeButton:
                     width: self.parent.width / 2.5
                     height: self.width / 3
                     text_size: self.height / 2
                     text: "Cancel"
                     on_press: root.onCancel()
+                Widget: # Horizontal Spacer
+                    size_hint: (1, None)
+                    height: 10
+                GreenButton:
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    text: "Confirm"
+                    on_press: root.onConfirm()
+                
                 

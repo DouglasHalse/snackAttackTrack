@@ -56,12 +56,12 @@
             size_hint: (1, None)
             height: self.minimum_height
             Widget: # Horizontal Spacer
-            GreenButton:
-                text: "Confirm"
+            RedButton:
+                text: "Remove"
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.onConfirm()
+                on_press: root.onRemove()
             Widget: # Horizontal Spacer
             OrangeButton:
                 text: "Cancel"
@@ -70,12 +70,12 @@
                 text_size: self.height / 2
                 on_press: root.onCancel()
             Widget: # Horizontal Spacer
-            RedButton:
-                text: "Remove"
+            GreenButton:
+                text: "Confirm"
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.onRemove()
+                on_press: root.onConfirm()
             Widget: # Horizontal Spacer
         Widget: # Vertical Spacer
 
@@ -105,19 +105,19 @@
             size_hint: (1, None)
             height: self.minimum_height
             Widget: # Horizontal Spacer
-            OrangeButton:
-                text: "Cancel"
-                width: self.parent.width / 3
-                height: self.width / 3
-                text_size: self.height / 2
-                on_press: root.onCancel()
-            Widget: # Horizontal Spacer
             RedButton:
                 text: "Remove"
                 width: self.parent.width / 3
                 height: self.width / 3
                 text_size: self.height / 2
                 on_press: root.onRemove()
+            Widget: # Horizontal Spacer
+            OrangeButton:
+                text: "Cancel"
+                width: self.parent.width / 3
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.onCancel()
             Widget: # Horizontal Spacer
             
             
