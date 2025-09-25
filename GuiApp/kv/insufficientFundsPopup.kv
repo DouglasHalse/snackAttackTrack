@@ -33,14 +33,14 @@
             size_hint: (1, None)
             height: self.minimum_height
             orientation: 'rl-tb'
-            SmallGreenButton:
+            GreenButton:
                 text: "Top-up now"
                 width: self.parent.width / 2.5
                 height: self.width / 3
                 text_size: self.height / 2
                 on_press: root.on_top_up()
             Widget: # Horizontal Spacer
-            SmallOrangeButton:
+            OrangeButton:
                 text: "Close"
                 width: self.parent.width / 2.5
                 height: self.width / 3
