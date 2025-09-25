@@ -77,18 +77,19 @@
                 rows: 1
                 size_hint: (0.5, None)
                 height: self.minimum_height
-                GreenButton:
-                    text: "Buy"
-                    width: self.parent.width / 2.5
-                    height: self.width / 3
-                    text_size: self.height / 2
-                    on_press: root.onBuy()
-                Widget: # Horizontal Spacer
                 OrangeButton:
                     text: "Cancel"
                     width: self.parent.width / 2.5
                     height: self.width / 3
                     text_size: self.height / 2
                     on_press: root.onCancel()
+                Widget: # Horizontal Spacer
+                GreenButton:
+                    text: "Buy"
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    on_press: root.onBuy()
+                
                     
 

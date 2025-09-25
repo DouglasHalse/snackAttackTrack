@@ -20,7 +20,6 @@
         GridLayout:
             cols:1
             size_hint: (0.5, 1)
-            spacing: 20
             Widget: # Vertical Spacer
             RoundedTwoColorGridLayout:
                 cols: 1
@@ -51,19 +50,19 @@
                 size_hint: (1, None)
                 height: self.minimum_height
                 Widget: # Horizontal Spacer
-                GreenButton:
-                    text: "Confirm"
-                    width: self.parent.width / 2.5
-                    height: self.width / 3
-                    text_size: self.height / 2
-                    on_press: root.onConfirm()
-                Widget: # Horizontal Spacer
                 OrangeButton:
                     text: "Cancel"
                     width: self.parent.width / 2.5
                     height: self.width / 3
                     text_size: self.height / 2
                     on_press: root.onCancel()
+                Widget: # Horizontal Spacer
+                GreenButton:
+                    text: "Confirm"
+                    width: self.parent.width / 2.5
+                    height: self.width / 3
+                    text_size: self.height / 2
+                    on_press: root.onConfirm()
                 Widget: # Horizontal Spacer
             Widget: # Vertical Spacer
         GridLayout:
