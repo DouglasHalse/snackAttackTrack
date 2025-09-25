@@ -121,16 +121,20 @@
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
                 height: 100
-            LargeGreenButton:
+            GreenButton:
                 text: "Continue"
-                anchor_x: "left"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.onContinue()
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
                 height: 100
-            LargeOrangeButton:
+            OrangeButton:
                 text: "Cancel"
-                anchor_x: "right"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
                 on_press: root.onCancel()
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
