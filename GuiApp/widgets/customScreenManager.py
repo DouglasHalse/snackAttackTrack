@@ -17,6 +17,7 @@ from widgets.settingsManager import SettingName, SettingsManager
 
 class CustomScreenManager(ScreenManager):
     logged_in_user = ObjectProperty(None, allownone=True)
+    top_up_requestee = StringProperty(None, allownone=True)
 
     def __init__(self, settingsManager: SettingsManager):
         super().__init__()
@@ -62,6 +63,12 @@ class CustomScreenManager(ScreenManager):
     def logout(self):
         self._currentPatron = None
         self.logged_in_user = None
+
+        # If the user was topping up from the buy screen, clear the stashed snacks
+        if self.top_up_requestee == "buyScreen":
+            self.get_screen("buyScreen").snackStash = {}
+
+        self.top_up_requestee = None
         if self.log_out_timer:
             self.log_out_timer.cancel()
             self.log_out_timer = None
@@ -76,6 +83,13 @@ class CustomScreenManager(ScreenManager):
     def transitionToScreen(self, screenName, transitionDirection: str = "left"):
         self.transition = SlideTransition(direction=transitionDirection)
         self.current = screenName
+
+    def transition_back_from_top_up(self):
+        if self.top_up_requestee:
+            self.transitionToScreen(self.top_up_requestee, transitionDirection="right")
+            self.top_up_requestee = None
+        else:
+            self.transitionToScreen("mainUserPage", transitionDirection="right")
 
     def add_widget(self, widget, *args, **kwargs):
         """

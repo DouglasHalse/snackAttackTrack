@@ -28,10 +28,37 @@ class BuyScreen(GridLayoutScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.snackDict = {}
+        self.snackStash = {}
         self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
 
     def on_back_button_pressed(self, *args):
         self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+
+    def on_going_to_top_up_screen(self, *args):
+        snacksInShoppingCart = self.getSnacksInShoppingCart()
+        for snack in snacksInShoppingCart:
+            self.snackStash[snack.snackId] = snack.quantity
+
+        self.manager.top_up_requestee = "buyScreen"
+
+    def pop_snack_stash(self):
+        for snackId, quantity in self.snackStash.items():
+            if snackId in self.snackDict:
+                if quantity <= self.snackDict[snackId][ItemLocation.INVENTORY]:
+                    self.snackDict[snackId][ItemLocation.INVENTORY] -= quantity
+                    self.snackDict[snackId][ItemLocation.SHOPPINGCART] += quantity
+                    self.updateSnackInLists(snackId=snackId)
+                else:
+                    self.snackDict[snackId][
+                        ItemLocation.SHOPPINGCART
+                    ] += self.snackDict[snackId][ItemLocation.INVENTORY]
+                    self.snackDict[snackId][ItemLocation.INVENTORY] = 0
+                    self.updateSnackInLists(snackId=snackId)
+        self.snackStash = {}
+
+    def on_pre_leave(self, *args):
+        self.snackStash = {}
+        return super().on_pre_leave(*args)
 
     def on_pre_enter(self, *args):
         self.initInventory()
@@ -96,6 +123,7 @@ class BuyScreen(GridLayoutScreen):
             )
 
     def initInventory(self):
+        self.snackDict = {}
         snacks = getAllSnacks()
 
         if self.manager.settingsManager.get_setting_value(
@@ -131,6 +159,9 @@ class BuyScreen(GridLayoutScreen):
                 ],
                 entryIdentifier=snackId,
             )
+
+        if self.snackStash:
+            self.pop_snack_stash()
 
     def updateTotalPrice(self):
         totalPrice = 0.0
@@ -184,7 +215,11 @@ class BuyScreen(GridLayoutScreen):
         currentPatron = self.manager.getCurrentPatron()
 
         if totalPrice > currentPatron.totalCredits:
-            popup = InsufficientFundsPopup(screenManager=self.manager)
+            creditsNeeded = totalPrice - currentPatron.totalCredits
+            popup = InsufficientFundsPopup(
+                screen_manager=self.manager, credits_needed=creditsNeeded
+            )
+            popup.bind(on_top_up_pressed=self.on_going_to_top_up_screen)
             popup.open()
             return
 

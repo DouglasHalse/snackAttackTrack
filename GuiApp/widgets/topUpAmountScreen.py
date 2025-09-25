@@ -18,7 +18,7 @@ class TopUpAmountScreen(GridLayoutScreen):
         return super().on_pre_enter(*args)
 
     def on_back(self, _):
-        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+        self.manager.transition_back_from_top_up()
 
     def on_focus(self, instance, value):
         if value:
@@ -28,6 +28,9 @@ class TopUpAmountScreen(GridLayoutScreen):
                 hintText="Enter amount",
                 inputFilter="currency",
             ).open()
+
+    def set_amount_to_add(self, amount: float):
+        self.ids["creditsToAdd"].text = f"{amount:.2f}"
 
     def updateCreditsAfterwards(self, instance, text):
         currentCredits = float(self.ids["creditsCurrent"].text)
@@ -59,4 +62,4 @@ class TopUpAmountScreen(GridLayoutScreen):
         self.manager.transitionToScreen("topUpPaymentScreen")
 
     def onCancel(self, *largs):
-        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+        self.manager.transition_back_from_top_up()

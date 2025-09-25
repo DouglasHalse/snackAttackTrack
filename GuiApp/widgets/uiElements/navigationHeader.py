@@ -10,7 +10,7 @@ class BoxLayoutButton(ButtonBehavior, BoxLayout):
 
 
 class NavigationHeader(GridLayout):
-    __events__ = ("on_back_button_pressed",)
+    __events__ = ("on_back_button_pressed", "on_logout_button_pressed")
     use_settings_button = BooleanProperty(False)
     page_name = StringProperty(None, allownone=True)
 
@@ -36,6 +36,7 @@ class NavigationHeader(GridLayout):
         self.ids.backButton.bind(
             on_release=lambda instance: self.dispatch("on_back_button_pressed")
         )
+        self.ids.logoutButton.bind(on_release=self.logout_button_pressed)
 
     def on_use_settings_button(self, _, value):
         if value:
@@ -50,11 +51,15 @@ class NavigationHeader(GridLayout):
     def on_back_button_pressed(self, *largs):
         pass
 
+    def on_logout_button_pressed(self, *largs):
+        pass
+
     def go_to_settings_screen(self, *largs):
         app = App.get_running_app()
         app.screenManager.transitionToScreen("adminScreen")
 
-    def on_logout_button_pressed(self, *largs):
+    def logout_button_pressed(self, *largs):
+        self.dispatch("on_logout_button_pressed")
         app = App.get_running_app()
         app.screenManager.logout()
         app.screenManager.transitionToScreen(
