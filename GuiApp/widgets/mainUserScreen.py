@@ -17,7 +17,7 @@ class TopUpOption(ImageAndTextButton):
     pass
 
 
-class HistoryOption(ImageAndTextButton):
+class ProfileOption(ImageAndTextButton):
     pass
 
 
@@ -26,7 +26,7 @@ class MainUserScreen(GridLayoutScreen):
         super().__init__(**kwargs)
         self.ids.topUpOption.bind(on_release=self.onTopUpButtonPressed)
         self.ids.buyOption.bind(on_release=self.onBuyButtonPressed)
-        self.ids.historyOption.bind(on_release=self.onHistoryButtonPressed)
+        self.ids.profileOption.bind(on_release=self.onProfileButtonPressed)
         self.ids.gambleOption.bind(on_release=self.onGambleButtonPressed)
         self.ids.header.bind(on_back_button_pressed=self.onBackButtonPressed)
 
@@ -36,8 +36,8 @@ class MainUserScreen(GridLayoutScreen):
     def onTopUpButtonPressed(self, _):
         self.manager.transitionToScreen("topUpAmountScreen")
 
-    def onHistoryButtonPressed(self, _):
-        self.manager.transitionToScreen("historyScreen")
+    def onProfileButtonPressed(self, _):
+        self.manager.transitionToScreen("profileScreen")
 
     def onGambleButtonPressed(self, _):
         numberOfSnacks = len(getAllSnacks())

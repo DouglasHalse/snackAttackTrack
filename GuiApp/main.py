@@ -28,10 +28,12 @@ from widgets.historyScreen import HistoryScreen
 from widgets.linkCardScreen import LinkCardScreen
 from widgets.loginScreen import LoginScreen
 from widgets.mainUserScreen import MainUserScreen
+from widgets.ProfileScreen import ProfileScreen
 from widgets.settingsManager import SettingDataType, SettingName, SettingsManager
 from widgets.splashScreen import SplashScreenWidget
 from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
+from widgets.UserStatisticsScreen import UserStatisticsScreen
 from widgets.wheelOfSnacksScreen import WheelOfSnacksScreen
 
 # pylint: enable=unused-import
@@ -188,6 +190,8 @@ class snackAttackTrackApp(App):
         )
         self.screenManager.add_widget(LinkCardScreen(name="linkCardScreen"))
         self.screenManager.add_widget(WheelOfSnacksScreen(name="wheelOfSnacksScreen"))
+        self.screenManager.add_widget(ProfileScreen(name="profileScreen"))
+        self.screenManager.add_widget(UserStatisticsScreen(name="userStatisticsScreen"))
 
         if self.use_inspector:
             inspector.create_inspector(Window, self.screenManager)
