@@ -1,4 +1,4 @@
-from database import addSnack
+from database import add_added_snack, addSnack
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
@@ -73,11 +73,11 @@ class AddSnackScreen(GridLayoutScreen):
             return
 
         try:
-            totalPrice = float(self.ids["snackPriceInput"].getText())
+            price = float(self.ids["snackPriceInput"].getText())
         except ValueError:
             ErrorMessagePopup(errorMessage="Price must be a number").open()
             return
-        if totalPrice == 0 or totalPrice < 0:
+        if price == 0 or price < 0:
             ErrorMessagePopup(errorMessage="Price cannot be 0 or negative").open()
             return
 
@@ -85,15 +85,21 @@ class AddSnackScreen(GridLayoutScreen):
             settingName=SettingName.PURCHASE_FEE
         )
 
-        totalPrice *= 1 + purchaseFee
+        priceWithFee = price * (1 + purchaseFee)
 
-        pricePerItem = round(float(totalPrice) / float(quantity), 2)
+        pricePerItem = round(float(priceWithFee) / float(quantity), 2)
 
         addSnack(
             itemName=snackName,
             quantity=quantity,
             imageID="None",
             pricePerItem=pricePerItem,
+        )
+        add_added_snack(
+            snack_name=snackName,
+            quantity=quantity,
+            value=price,
+            cost_per_item=pricePerItem,
         )
         self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
 

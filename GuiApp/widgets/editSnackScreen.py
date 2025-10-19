@@ -1,9 +1,8 @@
 from database import SnackData, removeSnack, updateSnackData
 from kivy.properties import ObjectProperty
-from kivy.uix.modalview import ModalView
-from widgets.customScreenManager import CustomScreenManager
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.popups.removeConfirmationPopup import RemoveConfirmationPopup
 
 
 class EditSnackScreen(GridLayoutScreen):
@@ -71,29 +70,14 @@ class EditSnackScreen(GridLayoutScreen):
         self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
 
     def onRemove(self):
-        popup = RemoveSnackConfirmationPopup(
-            screenManager=self.manager, snackToRemove=self.snack_to_edit
+        def on_removed_callback(*args):
+            removeSnack(self.snack_to_edit.snackId)
+            self.manager.transitionToScreen(
+                "editSnacksScreen", transitionDirection="right"
+            )
+
+        popup = RemoveConfirmationPopup(
+            question_text=f"Are you sure you want to remove {self.snack_to_edit.snackName}?",
         )
+        popup.bind(on_removed=on_removed_callback)
         popup.open()
-
-
-class RemoveSnackConfirmationPopup(ModalView):
-    def __init__(
-        self, screenManager: CustomScreenManager, snackToRemove: SnackData, **kwargs
-    ):
-        super().__init__(**kwargs)
-        self.screenManager = screenManager
-        self.snackToRemove = snackToRemove
-        self.ids[
-            "areYouSureLabel"
-        ].text = f"Are you sure you want to \nremove {self.snackToRemove.snackName}?"
-
-    def onCancel(self):
-        self.dismiss()
-
-    def onRemove(self):
-        removeSnack(self.snackToRemove.snackId)
-        self.dismiss()
-        self.screenManager.transitionToScreen(
-            "editSnacksScreen", transitionDirection="right"
-        )
