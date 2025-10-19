@@ -9,10 +9,9 @@ from database import (
     updatePatronData,
 )
 from kivy.properties import ObjectProperty
-from kivy.uix.modalview import ModalView
-from widgets.customScreenManager import CustomScreenManager
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.popups.removeConfirmationPopup import RemoveConfirmationPopup
 
 
 class EditUserScreen(GridLayoutScreen):
@@ -124,29 +123,14 @@ class EditUserScreen(GridLayoutScreen):
         self.manager.transitionToScreen("editUsersScreen", transitionDirection="right")
 
     def onRemove(self):
-        popup = RemoveUserConfirmationPopup(
-            screenManager=self.manager, patronToRemove=self.user_to_edit
+        def on_removed_callback(*args):
+            removePatron(self.user_to_edit.patronId)
+            self.manager.transitionToScreen(
+                "editUsersScreen", transitionDirection="right"
+            )
+
+        popup = RemoveConfirmationPopup(
+            question_text=f"Are you sure you want to remove {self.user_to_edit.firstName}?"
         )
+        popup.bind(on_removed=on_removed_callback)
         popup.open()
-
-
-class RemoveUserConfirmationPopup(ModalView):
-    def __init__(
-        self, screenManager: CustomScreenManager, patronToRemove: UserData, **kwargs
-    ):
-        super().__init__(**kwargs)
-        self.screenManager = screenManager
-        self.patronToRemove = patronToRemove
-        self.ids.areYouSureLabel.text = (
-            f"Are you sure you want to \nremove {self.patronToRemove.firstName}?"
-        )
-
-    def onCancel(self):
-        self.dismiss()
-
-    def onRemove(self):
-        removePatron(self.patronToRemove.patronId)
-        self.dismiss()
-        self.screenManager.transitionToScreen(
-            "editUsersScreen", transitionDirection="right"
-        )

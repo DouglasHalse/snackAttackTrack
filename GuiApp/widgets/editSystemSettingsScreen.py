@@ -1,9 +1,11 @@
+from database import clear_added_snacks, clear_transactions
 from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.popups.removeConfirmationPopup import RemoveConfirmationPopup
 from widgets.settingsManager import (
     SettingName,
     SettingsManager,
@@ -44,6 +46,30 @@ class BoolSettingRow(GridLayout):
             self.ids["toggleButtonImage"].source = "Images/toggle-on.png"
         else:
             self.ids["toggleButtonImage"].source = "Images/toggle-off.png"
+
+
+class ButtonOptionRow(GridLayout):
+    __events__ = ("on_option_button_released",)
+
+    def __init__(
+        self,
+        optionName: str,
+        buttonText: str,
+        settingManager: SettingsManager,
+        **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.settingManager: SettingsManager = settingManager
+        self.ids.optionName.text = optionName
+        self.ids.button.text = buttonText
+
+        self.optionName = optionName
+
+    def on_option_button_released(self, *largs):
+        pass
+
+    def on_release(self, *largs):
+        self.dispatch("on_option_button_released")
 
 
 class FloatSettingRow(GridLayout):
@@ -262,10 +288,38 @@ class EditSystemSettingsScreen(GridLayoutScreen):
         gamblingSection.ids["sectionContent"].add_widget(enableGambling)
         gamblingSection.ids["sectionContent"].add_widget(excitingGambling)
 
+        # History settings
+        historySection = SettingsSection(sectionName="History")
+
+        clearHistoryOption = ButtonOptionRow(
+            optionName="Clear history",
+            buttonText="Clear",
+            settingManager=self.manager.settingsManager,
+        )
+        clearHistoryOption.bind(
+            on_option_button_released=lambda x: self.clear_history()
+        )
+
+        historySection.ids["sectionContent"].add_widget(clearHistoryOption)
+
         # Add sections to the layout
         self.ids["settingsLayout"].add_widget(navigationSection)
         self.ids["settingsLayout"].add_widget(financialSection)
         self.ids["settingsLayout"].add_widget(buyScreenSection)
         self.ids["settingsLayout"].add_widget(gamblingSection)
+        self.ids["settingsLayout"].add_widget(historySection)
 
     # pylint: enable=too-many-locals
+
+    def clear_history(self):
+        def on_removed_callback(*args):
+            clear_added_snacks()
+            clear_transactions()
+            print("Clearing history...")
+
+        popup = RemoveConfirmationPopup(
+            question_text="Are you sure you want to clear all history? This action cannot be undone.",
+            custom_remove_button_text="Clear",
+        )
+        popup.bind(on_removed=on_removed_callback)
+        popup.open()

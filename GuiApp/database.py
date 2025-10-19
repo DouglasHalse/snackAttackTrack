@@ -70,6 +70,7 @@ def createAllTables():
     cursor = connection.cursor()
 
     create_queries = [
+        # Table of all the users
         """
         CREATE TABLE IF NOT EXISTS Patrons (
             PatronID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,6 +80,7 @@ def createAllTables():
             TotalCredits REAL NOT NULL DEFAULT 0
         );
         """,
+        # Table of all the snacks currently available for purchase
         """
         CREATE TABLE IF NOT EXISTS Snacks (
             ItemID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,6 +90,7 @@ def createAllTables():
             PricePerItem REAL NOT NULL
         );
         """,
+        # Table of all the transactions that have occurred
         """
         CREATE TABLE IF NOT EXISTS Transactions (
             TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -99,6 +102,7 @@ def createAllTables():
             FOREIGN KEY(PatronID) REFERENCES Patrons(PatronID)
         );
         """,
+        # Table of all the items associated with a transaction
         """
         CREATE TABLE IF NOT EXISTS TransactionItems (
             TransactionItemId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -109,12 +113,75 @@ def createAllTables():
             FOREIGN KEY(TransactionID) REFERENCES Transactions(TransactionID)
         );
         """,
+        # Table of all added snacks to restock inventory
+        """
+        CREATE TABLE IF NOT EXISTS AddedSnacks (
+            AddedID INTEGER PRIMARY KEY AUTOINCREMENT,
+            SnackName TEXT NOT NULL,
+            AddedDate TEXT NOT NULL,
+            Quantity INTEGER NOT NULL,
+            Value REAL NOT NULL,
+            CostPerItem REAL NOT NULL
+        );
+        """,
     ]
 
     for query in create_queries:
         cursor.execute(query)
 
     connection.commit()
+
+
+def clear_added_snacks():
+    """Remove all rows from AddedSnacks."""
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM AddedSnacks")
+    conn.commit()
+
+
+def clear_transactions():
+    """
+    Remove all transactions. This also clears TransactionItems first to avoid
+    foreign-key issues (and to ensure a full history clear).
+    """
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM TransactionItems")
+    cursor.execute("DELETE FROM Transactions")
+    conn.commit()
+
+
+def add_added_snack(
+    snack_name: str,
+    quantity: int,
+    value: float,
+    cost_per_item: float,
+):
+    assert isinstance(quantity, int)
+    assert isinstance(value, float)
+    assert isinstance(cost_per_item, float)
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    added_date = datetime.now()
+    added_date_str = added_date.strftime("%Y-%m-%d %H:%M:%S.%f")
+    cursor.execute(
+        """
+        INSERT INTO AddedSnacks (SnackName, AddedDate, Quantity, Value, CostPerItem)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            snack_name,
+            added_date_str,
+            quantity,
+            float(value),
+            float(cost_per_item),
+        ),
+    )
+    conn.commit()
+    return cursor.lastrowid
 
 
 def addGambleTransaction(
