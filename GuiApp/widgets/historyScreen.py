@@ -17,7 +17,7 @@ class HistoryScreen(GridLayoutScreen):
         self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
 
     def on_back_button_pressed(self, *args):
-        self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
+        self.manager.transitionToScreen("profileScreen", transitionDirection="right")
 
     def on_pre_enter(self, *args):
         currentPatron = self.manager.getCurrentPatron()

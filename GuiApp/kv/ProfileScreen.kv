@@ -1,0 +1,34 @@
+#:kivy 2.1.0     
+
+
+<HistoryOption>:
+    image_path: 'Images/time-past.png'
+    text: 'History'
+
+<StatisticsOption>:
+    image_path: 'Images/chart-histogram.png'
+    text: 'Statistics'
+
+
+<ProfileScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Profile"
+    GridLayout:
+        id: optionsGrid
+        rows: 1
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        padding: 30
+        spacing: 30
+        HistoryOption:
+            id: historyOption
+        StatisticsOption:
+            id: statisticsOption
