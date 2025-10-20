@@ -4,6 +4,10 @@
     image_path: 'Images/settings-sliders.png'
     text: 'System settings'
 
+<StoreStatsOption>:
+    image_path: 'Images/chart-histogram.png'
+    text: 'Store statistics'
+
 <EditSnacksOption>:
     image_path: 'Images/candy-bar.png'
     text: 'Edit snacks'
@@ -26,18 +30,19 @@
             Rectangle:
                 pos: self.pos
                 size: self.size
-        rows: 1
+        rows: 2
+        cols: 2
         padding: 30
         spacing: 30
         SystemSettingsOption:
             id: systemSettingsOption
             on_release: root.onSystemSettingsButtonPressed
-        GridLayout:
-            cols: 1
-            spacing: 30
-            EditSnacksOption:
-                id: editSnacksOption
-                on_release: root.onEditSnacksButtonPressed
-            EditUsersOption:
-                id: editUsersOption
-                on_release: root.onEditUsersButtonPressed
+        EditSnacksOption:
+            id: editSnacksOption
+            on_release: root.onEditSnacksButtonPressed
+        StoreStatsOption:
+            id: storeStatsOption
+            on_release: root.onStoreStatsButtonPressed
+        EditUsersOption:
+            id: editUsersOption
+            on_release: root.onEditUsersButtonPressed
