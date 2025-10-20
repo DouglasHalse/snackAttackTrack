@@ -6,6 +6,10 @@ class SystemSettingsOption(ImageAndTextButton):
     pass
 
 
+class StoreStatsOption(ImageAndTextButton):
+    pass
+
+
 class EditSnacksOption(ImageAndTextButton):
     pass
 
@@ -23,9 +27,13 @@ class AdminScreen(GridLayoutScreen):
         self.ids.editSnacksOption.bind(on_release=self.onEditSnacksButtonPressed)
         self.ids.editUsersOption.bind(on_release=self.onEditUsersButtonPressed)
         self.ids.header.bind(on_back_button_pressed=self.onBackButtonPressed)
+        self.ids.storeStatsOption.bind(on_release=self.onStoreStatsButtonPressed)
 
     def onSystemSettingsButtonPressed(self, _):
         self.manager.transitionToScreen("editSystemSettingsScreen")
+
+    def onStoreStatsButtonPressed(self, _):
+        self.manager.transitionToScreen("storeStatsScreen")
 
     def onEditSnacksButtonPressed(self, _):
         self.manager.transitionToScreen("editSnacksScreen")

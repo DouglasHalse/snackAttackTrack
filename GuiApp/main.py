@@ -7,6 +7,7 @@ import widgets.uiElements.buttons
 import widgets.uiElements.layouts
 import widgets.uiElements.navigationHeader
 import widgets.uiElements.ParticleEmitter
+import widgets.uiElements.StatsWidgets
 import widgets.uiElements.textInputs
 import widgets.uiElements.WheelOfSnacksWidget
 from database import closeDatabase, createAllTables
@@ -31,6 +32,7 @@ from widgets.mainUserScreen import MainUserScreen
 from widgets.ProfileScreen import ProfileScreen
 from widgets.settingsManager import SettingDataType, SettingName, SettingsManager
 from widgets.splashScreen import SplashScreenWidget
+from widgets.StoreStatisticsScreen import StoreStatisticsScreen
 from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
 from widgets.UserStatisticsScreen import UserStatisticsScreen
@@ -192,6 +194,7 @@ class snackAttackTrackApp(App):
         self.screenManager.add_widget(WheelOfSnacksScreen(name="wheelOfSnacksScreen"))
         self.screenManager.add_widget(ProfileScreen(name="profileScreen"))
         self.screenManager.add_widget(UserStatisticsScreen(name="userStatisticsScreen"))
+        self.screenManager.add_widget(StoreStatisticsScreen(name="storeStatsScreen"))
 
         if self.use_inspector:
             inspector.create_inspector(Window, self.screenManager)

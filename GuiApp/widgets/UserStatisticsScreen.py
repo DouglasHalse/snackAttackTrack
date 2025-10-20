@@ -1,13 +1,6 @@
 from database import TransactionType, getMostPurchasedSnacksByPatron, getTransactions
 from kivy.app import App
-from kivy.properties import StringProperty
-from kivy.uix.gridlayout import GridLayout
 from widgets.GridLayoutScreen import GridLayoutScreen
-
-
-class SingleStatWidget(GridLayout):
-    stat_name = StringProperty("")
-    stat_value = StringProperty("")
 
 
 class UserStatisticsScreen(GridLayoutScreen):

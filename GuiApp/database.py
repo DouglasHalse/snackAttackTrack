@@ -184,6 +184,28 @@ def add_added_snack(
     return cursor.lastrowid
 
 
+def get_value_of_added_snacks() -> float:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(Value) FROM AddedSnacks")
+    sqlResult = cursor.fetchone()
+    total_value = sqlResult[0]
+    if total_value is None:
+        return 0.0
+    return float(total_value)
+
+
+def get_total_snacks_added() -> int:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(Quantity) FROM AddedSnacks")
+    sqlResult = cursor.fetchone()
+    total_snacks = sqlResult[0]
+    if total_snacks is None:
+        return 0
+    return int(total_snacks)
+
+
 def addGambleTransaction(
     patronID: int,
     amountBeforeTransaction: float,

@@ -1,0 +1,50 @@
+#:kivy 2.1.0     
+
+<StoreStatisticsScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Store Statistics"
+    GridLayout:
+        cols: 2
+        rows: 1
+        padding: (self.width / 28, self.height / 8)
+        spacing: 30
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        GridLayout:
+            size_hint_x: 0.6
+            rows: 2
+            cols: 2
+            spacing: 30
+            DoubleStatWidget:
+                id: added_stats
+                stat_name: "Added"
+                stat_value_1: "-1 Snacks"
+                stat_value_2: "-1 Credits"
+            DoubleStatWidget:
+                id: inventory_stats
+                stat_name: "Inventory"
+                stat_value_1: "-1 Snacks"
+                stat_value_2: "-1 Credits"
+            DoubleStatWidget:
+                id: lost_stats
+                stat_name: "Lost"
+                stat_value_1: "-1 Snacks"
+                stat_value_2: "-1 Credits"
+            DoubleStatWidget:
+                id: sold_stats
+                stat_name: "Sold"
+                stat_value_1: "-1 Snacks"
+                stat_value_2: "-1 Credits"
+        SingleStatWidget:
+            size_hint_x: 0.4
+            id: profit_stat
+            stat_name: "Total profit"
+            stat_value: "-1 Credits"

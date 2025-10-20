@@ -1,38 +1,5 @@
 #:kivy 2.1.0     
 
-<SingleStatWidget>:
-    rows: 2
-    cols: 1
-    padding: self.height / 20
-    canvas:
-        Color:
-            rgba: app.colors["secondary_background"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
-            radius: [(20, 20),(20, 20),(20, 20),(20, 20)]
-    canvas.before:
-        Color:
-            rgba: 0, 0, 0, 0.10
-        BoxShadow:
-            pos: self.pos
-            size: self.size
-            offset: 10, -10
-            blur_radius: 15
-            spread_radius: -5, -5
-            border_radius: 20, 20, 20, 20
-    Label:
-        text: root.stat_name
-        font_size: self.height / 3
-        align: "left"
-        valign: "middle"
-        bold: True
-    Label:
-        text: root.stat_value
-        font_size: self.height / 3
-        align: "left"
-        valign: "middle"
-
 <UserStatisticsScreen>:
     rows: 2
     cols: 1
