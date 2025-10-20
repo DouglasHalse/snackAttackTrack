@@ -1,0 +1,57 @@
+#:kivy 2.1.0
+
+<RemovalReasonPopup>:
+    size_hint: (0.8,0.7)
+    canvas:
+        Color:
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        cols: 1
+        padding: 30
+        spacing: 30
+        Label:
+            text_size: self.size
+            font_size: self.width / 16
+            halign: 'center'
+            valign: 'middle'
+            text: "Why is this snack being removed?"
+            bold: True
+        GridLayout:
+            rows: 1
+            size_hint: (1, None)
+            height: self.minimum_height
+            RedButton:
+                text: "Stolen"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.stolen_button_pressed()
+            Widget: # Horizontal Spacer
+            RedButton:
+                text: "Expired"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.expired_button_pressed()
+            Widget: # Horizontal Spacer
+            RedButton:
+                text: "Damaged"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.damaged_button_pressed()
+        GridLayout:
+            rows: 1
+            orientation: 'rl-tb'
+            size_hint: (1, None)
+            height: self.minimum_height
+            OrangeButton:
+                text: "Cancel"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.cancel_button_pressed()
+                
