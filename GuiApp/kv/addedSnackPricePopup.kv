@@ -1,0 +1,59 @@
+#:kivy 2.1.0
+
+<AddedSnackPricePopup>:
+    size_hint: (0.8,0.7)
+    canvas:
+        Color:
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        cols: 1
+        padding: 30
+        spacing: 30
+        Label:
+            text_size: self.size
+            font_size: self.width / 16
+            halign: 'center'
+            valign: 'middle'
+            text: "Enter the price for the added snack(s):"
+            bold: True
+        GridLayout:
+            rows: 1
+            Widget: # Horizontal Spacer
+                size_hint_x: 0.2
+            GridLayout:
+                cols: 1
+                Widget: # Vertical Spacer
+                LargeTextInputWithHeader:
+                    size_hint_x: 0.6
+                    id: priceInput
+                    size_factor: self.parent.width / 20
+                    header_text: "Snack Price"
+                    hint_text: "Enter snack price"
+                    input_filter: "currency"
+                Widget: # Vertical Spacer
+            Widget: # Horizontal Spacer
+                size_hint_x: 0.2
+        GridLayout:
+            rows: 1
+            orientation: 'rl-tb'
+            size_hint: (1, None)
+            height: self.minimum_height
+            Widget: # Horizontal Spacer
+            OrangeButton:
+                text: "Cancel"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.cancel_button_pressed()
+            Widget: # Horizontal Spacer
+            GreenButton:
+                text: "Confirm"
+                width: self.parent.width / 4
+                height: self.width / 3
+                text_size: self.height / 2
+                on_press: root.confirm_button_pressed()
+            Widget: # Horizontal Spacer
+                

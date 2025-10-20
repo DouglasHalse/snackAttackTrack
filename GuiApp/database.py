@@ -10,6 +10,12 @@ class TransactionType(Enum):
     GAMBLE = "GAMBLE"
 
 
+class LostSnackReason(Enum):
+    STOLEN = 1
+    EXPIRED = 2
+    DAMAGED = 3
+
+
 def transactionTypeToPresentableString(transactionType: TransactionType) -> str:
     if transactionType == TransactionType.PURCHASE:
         return "Purchase"
@@ -71,6 +77,10 @@ def createAllTables():
 
     create_queries = [
         # Table of all the users
+        # FirstName is the user's first name
+        # LastName is the user's last name
+        # EmployeeID is the user's employee ID
+        # TotalCredits is the user's total credits
         """
         CREATE TABLE IF NOT EXISTS Patrons (
             PatronID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,6 +91,10 @@ def createAllTables():
         );
         """,
         # Table of all the snacks currently available for purchase
+        # ItemName is name of the snack
+        # Quantity is the number of snacks available for purchase
+        # ImageID is the ID of the snack's image (unused)
+        # PricePerItem is the price of a single snack
         """
         CREATE TABLE IF NOT EXISTS Snacks (
             ItemID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -91,6 +105,11 @@ def createAllTables():
         );
         """,
         # Table of all the transactions that have occurred
+        # TransactionType is one of TransactionType enum
+        # PatronID references Patrons.PatronID
+        # TransactionDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
+        # AmountBeforeTransaction is the amount of credits the patron had before the transaction
+        # AmountAfterTransaction is the amount of credits the patron had after the transaction
         """
         CREATE TABLE IF NOT EXISTS Transactions (
             TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -103,6 +122,10 @@ def createAllTables():
         );
         """,
         # Table of all the items associated with a transaction
+        # TransactionID references Transactions.TransactionID
+        # ItemName references Snacks.ItemName
+        # Quantity is the number of items of this type in the transaction
+        # PricePerItem is the price of a single item of this type
         """
         CREATE TABLE IF NOT EXISTS TransactionItems (
             TransactionItemId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -114,14 +137,33 @@ def createAllTables():
         );
         """,
         # Table of all added snacks to restock inventory
+        # SnackName references Snacks.ItemName
+        # AddedDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
+        # Quantity is the number of snacks added
+        # Value is the total value of the added snacks
         """
         CREATE TABLE IF NOT EXISTS AddedSnacks (
             AddedID INTEGER PRIMARY KEY AUTOINCREMENT,
             SnackName TEXT NOT NULL,
             AddedDate TEXT NOT NULL,
             Quantity INTEGER NOT NULL,
-            Value REAL NOT NULL,
-            CostPerItem REAL NOT NULL
+            Value REAL NOT NULL
+        );
+        """,
+        # Table of all snacks cosidered stolen or lost
+        # SnackName references Snacks.ItemName
+        # Reason references LostSnackReason enum
+        # LostDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
+        # Quantity is the number of snacks lost
+        # Value is the total value of the lost snacks
+        """
+        CREATE TABLE IF NOT EXISTS LostSnacks (
+            LostID INTEGER PRIMARY KEY AUTOINCREMENT,
+            SnackName TEXT NOT NULL,
+            Reason INTEGER NOT NULL,
+            LostDate TEXT NOT NULL,
+            Quantity INTEGER NOT NULL,
+            Value REAL NOT NULL
         );
         """,
     ]
@@ -130,6 +172,14 @@ def createAllTables():
         cursor.execute(query)
 
     connection.commit()
+
+
+def clear_lost_snacks():
+    """Remove all rows from LostSnacks."""
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM LostSnacks")
+    conn.commit()
 
 
 def clear_added_snacks():
@@ -152,15 +202,46 @@ def clear_transactions():
     conn.commit()
 
 
+def add_lost_snack(
+    snack_name: str,
+    reason: LostSnackReason,
+    quantity: int,
+    total_value: float,
+):
+    assert isinstance(quantity, int)
+    assert isinstance(total_value, float)
+    assert isinstance(reason, LostSnackReason)
+    assert reason in LostSnackReason
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    lost_date = datetime.now()
+    lost_date_str = lost_date.strftime("%Y-%m-%d %H:%M:%S.%f")
+    cursor.execute(
+        """
+        INSERT INTO LostSnacks (SnackName, Reason, LostDate, Quantity, Value)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            snack_name,
+            reason.value,
+            lost_date_str,
+            quantity,
+            float(total_value),
+        ),
+    )
+    conn.commit()
+    return cursor.lastrowid
+
+
 def add_added_snack(
     snack_name: str,
     quantity: int,
     value: float,
-    cost_per_item: float,
 ):
     assert isinstance(quantity, int)
     assert isinstance(value, float)
-    assert isinstance(cost_per_item, float)
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -169,15 +250,14 @@ def add_added_snack(
     added_date_str = added_date.strftime("%Y-%m-%d %H:%M:%S.%f")
     cursor.execute(
         """
-        INSERT INTO AddedSnacks (SnackName, AddedDate, Quantity, Value, CostPerItem)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO AddedSnacks (SnackName, AddedDate, Quantity, Value)
+        VALUES (?, ?, ?, ?)
         """,
         (
             snack_name,
             added_date_str,
             quantity,
             float(value),
-            float(cost_per_item),
         ),
     )
     conn.commit()
@@ -199,6 +279,28 @@ def get_total_snacks_added() -> int:
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("SELECT SUM(Quantity) FROM AddedSnacks")
+    sqlResult = cursor.fetchone()
+    total_snacks = sqlResult[0]
+    if total_snacks is None:
+        return 0
+    return int(total_snacks)
+
+
+def get_value_of_lost_snacks() -> float:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(Value) FROM LostSnacks")
+    sqlResult = cursor.fetchone()
+    total_value = sqlResult[0]
+    if total_value is None:
+        return 0.0
+    return float(total_value)
+
+
+def get_total_snacks_lost() -> int:
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(Quantity) FROM LostSnacks")
     sqlResult = cursor.fetchone()
     total_snacks = sqlResult[0]
     if total_snacks is None:

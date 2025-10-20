@@ -1,7 +1,16 @@
-from database import SnackData, removeSnack, updateSnackData
+from database import (
+    LostSnackReason,
+    SnackData,
+    add_added_snack,
+    add_lost_snack,
+    removeSnack,
+    updateSnackData,
+)
 from kivy.properties import ObjectProperty
 from widgets.GridLayoutScreen import GridLayoutScreen
+from widgets.popups.addedSnackPricePopup import AddedSnackPricePopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.popups.removalReasonPopup import RemovalReasonPopup
 from widgets.popups.removeConfirmationPopup import RemoveConfirmationPopup
 
 
@@ -56,6 +65,43 @@ class EditSnackScreen(GridLayoutScreen):
             ErrorMessagePopup(errorMessage="Price cannot be negative").open()
             return
 
+        if newSnackQuantity < self.snack_to_edit.quantity:
+            popup = RemovalReasonPopup()
+
+            def on_reason_selected(_, reason: LostSnackReason):
+                quantity_removed = self.snack_to_edit.quantity - newSnackQuantity
+                value_lost = self.snack_to_edit.pricePerItem * quantity_removed
+                add_lost_snack(
+                    snack_name=newSnackName,
+                    quantity=quantity_removed,
+                    reason=reason,
+                    total_value=value_lost,
+                )
+                self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
+
+            popup.bind(on_selection=on_reason_selected)
+            popup.open()
+        elif newSnackQuantity > self.snack_to_edit.quantity:
+
+            added_snack_popup = AddedSnackPricePopup()
+
+            def on_price_confirmed(_, total_added_value: float):
+                quantity_added = newSnackQuantity - self.snack_to_edit.quantity
+                add_added_snack(
+                    snack_name=newSnackName,
+                    quantity=quantity_added,
+                    value=total_added_value,
+                )
+                self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
+
+            added_snack_popup.bind(on_selection=on_price_confirmed)
+            added_snack_popup.open()
+        else:
+            self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
+
+    def finishEditingSnack(
+        self, newSnackName: str, newSnackQuantity: int, newSnackPrice: float
+    ):
         newSnackData = SnackData(
             snackId=self.snack_to_edit.snackId,
             snackName=newSnackName,
@@ -71,13 +117,27 @@ class EditSnackScreen(GridLayoutScreen):
 
     def onRemove(self):
         def on_removed_callback(*args):
-            removeSnack(self.snack_to_edit.snackId)
-            self.manager.transitionToScreen(
-                "editSnacksScreen", transitionDirection="right"
-            )
+            removalReasonPopup = RemovalReasonPopup()
 
-        popup = RemoveConfirmationPopup(
+            def on_reason_selected(_, reason: LostSnackReason):
+                quantity_removed = self.snack_to_edit.quantity
+                value_lost = self.snack_to_edit.pricePerItem * quantity_removed
+                add_lost_snack(
+                    snack_name=self.snack_to_edit.snackName,
+                    quantity=quantity_removed,
+                    reason=reason,
+                    total_value=value_lost,
+                )
+                removeSnack(self.snack_to_edit.snackId)
+                self.manager.transitionToScreen(
+                    "editSnacksScreen", transitionDirection="right"
+                )
+
+            removalReasonPopup.bind(on_selection=on_reason_selected)
+            removalReasonPopup.open()
+
+        RemovalConfirmationPopup = RemoveConfirmationPopup(
             question_text=f"Are you sure you want to remove {self.snack_to_edit.snackName}?",
         )
-        popup.bind(on_removed=on_removed_callback)
-        popup.open()
+        RemovalConfirmationPopup.bind(on_removed=on_removed_callback)
+        RemovalConfirmationPopup.open()
