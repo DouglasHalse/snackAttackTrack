@@ -478,7 +478,7 @@ def removeTransactionItems(transactionID: int):
     conn.commit()
 
 
-def getTransactions(patronID: int):
+def getTransactions(patronID: int) -> list[HistoryData]:
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM Transactions WHERE PatronID = {patronID}")

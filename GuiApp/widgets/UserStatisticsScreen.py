@@ -38,6 +38,10 @@ class UserStatisticsScreen(GridLayoutScreen):
                 total_snacks_purchased += len(transaction.transactionItems)
             if transaction.transactionType == TransactionType.GAMBLE:
                 total_snacks_won += 1
+                total_credits_spent += (
+                    transaction.amountBeforeTransaction
+                    - transaction.amountAfterTransaction
+                )
 
         most_purchased_snacks = getMostPurchasedSnacksByPatron(logged_in_user.patronId)
         if most_purchased_snacks:
