@@ -8,7 +8,6 @@
         use_settings_button: False
         page_name: "Store Statistics"
     GridLayout:
-        cols: 2
         rows: 1
         padding: (self.width / 28, self.height / 8)
         spacing: 30
@@ -19,9 +18,8 @@
                 pos: self.pos
                 size: self.size
         GridLayout:
-            size_hint_x: 0.6
             rows: 2
-            cols: 2
+            cols: 3
             spacing: 30
             DoubleStatWidget:
                 id: added_stats
@@ -33,6 +31,12 @@
                 stat_name: "Inventory"
                 stat_value_1: "-1 Snacks"
                 stat_value_2: "-1 Credits"
+            DoubleHeaderValueStatWidget:
+                id: gambling_stats
+                stat_name_1: "Gambling wagers"
+                stat_value_1: "-1 Credits"
+                stat_name_2: "Gambling returns"
+                stat_value_2: "-1 Credits"
             DoubleStatWidget:
                 id: lost_stats
                 stat_name: "Lost/Stolen"
@@ -43,12 +47,7 @@
                 stat_name: "Sold"
                 stat_value_1: "-1 Snacks"
                 stat_value_2: "-1 Credits"
-        TripleHeaderValueStatWidget:
-            size_hint_x: 0.4
-            id: profit_stats
-            stat_name_1: "Store revenue"
-            stat_value_1: "-1 Credits"
-            stat_name_2: "Gambling revenue"
-            stat_value_2: "-1 Credits"
-            stat_name_3: "Total profits"
-            stat_value_3: "-1 Credits"
+            SingleStatWidget:
+                id: profit_stat
+                stat_name: "Total profit"
+                stat_value: "-1 Credits"
