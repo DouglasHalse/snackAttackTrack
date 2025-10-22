@@ -13,6 +13,13 @@ class DoubleStatWidget(GridLayout):
     stat_value_2 = StringProperty("")
 
 
+class DoubleHeaderValueStatWidget(GridLayout):
+    stat_name_1 = StringProperty("")
+    stat_name_2 = StringProperty("")
+    stat_value_1 = StringProperty("")
+    stat_value_2 = StringProperty("")
+
+
 class TripleHeaderValueStatWidget(GridLayout):
     stat_name_1 = StringProperty("")
     stat_name_2 = StringProperty("")

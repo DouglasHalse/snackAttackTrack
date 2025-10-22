@@ -45,6 +45,7 @@ class StoreStatisticsScreen(GridLayoutScreen):
         number_of_sold_snacks = 0
         store_revenue = 0.0
         gambling_revenue = 0.0
+        gambling_returns = 0.0
         users = getAllPatrons()
         for user in users:
             transactions = getTransactions(user.patronId)
@@ -57,6 +58,8 @@ class StoreStatisticsScreen(GridLayoutScreen):
                         - transaction.amountAfterTransaction
                     )
                 elif transaction.transactionType == TransactionType.GAMBLE:
+                    for transactionItem in transaction.transactionItems:
+                        gambling_returns += transactionItem.pricePerItem
                     gambling_revenue += (
                         transaction.amountBeforeTransaction
                         - transaction.amountAfterTransaction
@@ -68,9 +71,10 @@ class StoreStatisticsScreen(GridLayoutScreen):
         self.ids.lost_stats.stat_value_1 = f"{get_total_snacks_lost()} Snacks"
         self.ids.lost_stats.stat_value_2 = f"{get_value_of_lost_snacks():.2f} Credits"
 
-        self.ids.profit_stats.stat_value_1 = f"{store_revenue:.2f} Credits"
-        self.ids.profit_stats.stat_value_2 = f"{gambling_revenue:.2f} Credits"
-        self.ids.profit_stats.stat_value_3 = (
+        self.ids.gambling_stats.stat_value_1 = f"{gambling_revenue:.2f} Credits"
+        self.ids.gambling_stats.stat_value_2 = f"{gambling_returns:.2f} Credits"
+
+        self.ids.profit_stat.stat_value = (
             f"{(store_revenue + gambling_revenue)-value_of_snacks_added:.2f} Credits"
         )
 
