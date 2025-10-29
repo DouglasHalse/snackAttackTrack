@@ -45,11 +45,6 @@ class TextInputWithHeader(GridLayout):
             ).open()
 
 
-class LargeTextInputWithHeader(TextInputWithHeader):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-
 class TextInputPopup(ModalView):
     def __init__(
         self,

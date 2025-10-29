@@ -9,7 +9,7 @@
         page_name: "Add Snack"
     GridLayout:
         rows: 1
-        padding: 30
+        padding: [30, 10]
         spacing: 30
         canvas:
             Color:
@@ -27,23 +27,29 @@
                 spacing: self.width / 50
                 size_hint_y: None
                 height: self.minimum_height
-                LargeTextInputWithHeader:
+                TextInputWithHeader:
                     id: snackNameInput
-                    size_factor: self.parent.width / 15
+                    size_factor: self.parent.width / 17
                     header_text: "Snack Name"
                     hint_text: "Enter snack name"
-                LargeTextInputWithHeader:
+                TextInputWithHeader:
                     id: snackQuantityInput
-                    size_factor: self.parent.width / 15
+                    size_factor: self.parent.width / 17
                     header_text: "Quantity"
                     hint_text: "Enter quantity"
                     input_filter: "int"
-                LargeTextInputWithHeader:
+                TextInputWithHeader:
                     id: snackPriceInput
-                    size_factor: self.parent.width / 15
+                    size_factor: self.parent.width / 17
                     header_text: "Price"
                     hint_text: "Enter price"
                     input_filter: "currency"
+                TextInputWithHeader:
+                    id: snackFeeInput
+                    size_factor: self.parent.width / 17
+                    header_text: "Fee percentage"
+                    hint_text: "Enter fee"
+                    input_filter: "float"
             Widget: # Vertical Spacer
             GridLayout:
                 rows: 1
