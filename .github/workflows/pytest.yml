@@ -1,0 +1,76 @@
+
+
+name: Pytest
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      
+      - name: Show python & pip info
+        run: |
+          python -V
+          pip -V
+          pip list --format=columns
+
+      - name: List repo files
+        run: |
+          echo "Top-level:"
+          ls -la
+          echo "Repo recursive:"
+          ls -laR
+
+      - name: Show pytest & plugin versions
+        run: |
+          python - <<'PY'
+          import sys
+          try:
+              import pytest, importlib, pkgutil
+              print("pytest:", pytest.__version__)
+          except Exception as e:
+              print("Could not import pytest:", e)
+          try:
+              import pytest_asyncio
+              print("pytest-asyncio:", pytest_asyncio.__version__)
+          except Exception as e:
+              print("Could not import pytest-asyncio:", e)
+          try:
+              import pytest_cov
+              print("pytest-cov:", pytest_cov.__version__)
+          except Exception as e:
+              print("Could not import pytest-cov:", e)
+          print("sys.path:", sys.path)
+          PY
+
+      - name: Install system dependencies (Xvfb & GL/SDL deps)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb x11-utils
+          sudo apt-get install -y libsdl2-2.0-0 libsdl2-dev libgles2-mesa-dev libgl1-mesa-dev libgl1-mesa-dri mesa-utils \
+            gstreamer1.0-plugins-base
+
+      - name: Run pytest under Xvfb
+        run: |
+          # start Xvfb automatically around the command
+          xvfb-run -a -s "-screen 0 1280x720x24" python -m pytest -vv -s
