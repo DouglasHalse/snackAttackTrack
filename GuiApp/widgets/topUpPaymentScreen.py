@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from database import UserData, addCredits, addTopUpTransaction
+from database import UserData
 from qrcode import make as makeQRCode
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
@@ -37,13 +37,15 @@ class TopUpPaymentScreen(GridLayoutScreen):
         return super().on_pre_enter(*args)
 
     def onConfirm(self, *largs):
-        addTopUpTransaction(
+        self.manager.database.addTopUpTransaction(
             patronID=self.userData.patronId,
             amountBeforeTransaction=self.userData.totalCredits,
             amountAfterTransaction=self.userData.totalCredits + self.amount_to_be_payed,
             transactionDate=datetime.now(),
         )
-        addCredits(self.userData.patronId, self.amount_to_be_payed)
+        self.manager.database.addCredits(
+            self.userData.patronId, self.amount_to_be_payed
+        )
 
         # Update current patron with new data
         self.manager.refreshCurrentPatron()

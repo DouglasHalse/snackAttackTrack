@@ -1,4 +1,3 @@
-from database import clear_added_snacks, clear_lost_snacks, clear_transactions
 from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
@@ -313,9 +312,9 @@ class EditSystemSettingsScreen(GridLayoutScreen):
 
     def clear_history(self):
         def on_removed_callback(*args):
-            clear_added_snacks()
-            clear_transactions()
-            clear_lost_snacks()
+            self.manager.database.clear_added_snacks()
+            self.manager.database.clear_transactions()
+            self.manager.database.clear_lost_snacks()
             print("Clearing history...")
 
         popup = RemoveConfirmationPopup(

@@ -1,4 +1,3 @@
-from database import addPatron, getPatronData, getPatronIdByCardId
 from kivy.uix.screenmanager import Screen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 
@@ -23,16 +22,16 @@ class CreateUserScreen(Screen):
             ErrorMessagePopup(errorMessage="Last Name cannot be empty").open()
             return
 
-        existingPatronId = getPatronIdByCardId(cardId)
+        existingPatronId = self.manager.database.getPatronIdByCardId(cardId)
         if existingPatronId and cardId != "":
-            patronWithTheId = getPatronData(existingPatronId)
+            patronWithTheId = self.manager.database.getPatronData(existingPatronId)
             ErrorMessagePopup(
                 errorMessage=f"Card ID is already used by {patronWithTheId.firstName}"
             ).open()
             self.ids.cardIdInput.setText("")
             return
 
-        addPatron(firstName, lastName, cardId)
+        self.manager.database.addPatron(firstName, lastName, cardId)
 
         self.manager.transitionToScreen("loginScreen", transitionDirection="right")
 

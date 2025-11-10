@@ -1,12 +1,5 @@
 from datetime import datetime
 
-from database import (
-    addGambleTransaction,
-    getAllSnacks,
-    removeSnack,
-    subtractPatronCredits,
-    subtractSnackQuantity,
-)
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
 from widgets.popups.WinPopup import WinPopup
@@ -24,7 +17,7 @@ class WheelOfSnacksScreen(GridLayoutScreen):
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
-        snacks = getAllSnacks()
+        snacks = self.manager.database.getAllSnacks()
         # Order snacks by pricePerItem
         snacks = sorted(snacks, key=lambda x: x.pricePerItem, reverse=True)
 
@@ -66,7 +59,7 @@ class WheelOfSnacksScreen(GridLayoutScreen):
         self.ids.spin_button.disabled = False
         self.enable_navigation_header_buttons(True)
 
-        new_snacks = getAllSnacks()
+        new_snacks = self.manager.database.getAllSnacks()
         new_snacks = sorted(new_snacks, key=lambda x: x.pricePerItem, reverse=True)
 
         # If there is only one snack left, go back to the main user page
@@ -87,7 +80,7 @@ class WheelOfSnacksScreen(GridLayoutScreen):
 
     def onSpinButtonPressed(self, *largs):
 
-        snacks = getAllSnacks()
+        snacks = self.manager.database.getAllSnacks()
         cost_to_spin = round(sum(s.pricePerItem for s in snacks) / len(snacks), 2)
 
         currentPatron = self.manager.getCurrentPatron()
@@ -111,18 +104,20 @@ class WheelOfSnacksScreen(GridLayoutScreen):
         self.ids.spin_button.disabled = True
         won_snack = self.ids.wheel_widget.spin(exciting)
 
-        subtractPatronCredits(
+        self.manager.database.subtractPatronCredits(
             patronID=currentPatron.patronId, creditsToSubtract=cost_to_spin
         )
 
         if won_snack.quantity == 1:
-            removeSnack(snackId=won_snack.snackId)
+            self.manager.database.removeSnack(snackId=won_snack.snackId)
         else:
-            subtractSnackQuantity(snackId=won_snack.snackId, quantity=1)
+            self.manager.database.subtractSnackQuantity(
+                snackId=won_snack.snackId, quantity=1
+            )
 
         won_snack.quantity = 1  # Assuming one snack is won per spin
 
-        addGambleTransaction(
+        self.manager.database.addGambleTransaction(
             patronID=currentPatron.patronId,
             amountBeforeTransaction=currentPatron.totalCredits,
             amountAfterTransaction=currentPatron.totalCredits - cost_to_spin,

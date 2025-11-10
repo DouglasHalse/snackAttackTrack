@@ -1,4 +1,4 @@
-from database import UserData, getPatronData
+from database import UserData
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, StringProperty
@@ -19,12 +19,13 @@ class CustomScreenManager(ScreenManager):
     logged_in_user = ObjectProperty(None, allownone=True)
     top_up_requestee = StringProperty(None, allownone=True)
 
-    def __init__(self, settingsManager: SettingsManager):
+    def __init__(self, settingsManager: SettingsManager, database, **kwargs):
         super().__init__()
         self._currentPatron: UserData = None
         self.settingsManager: SettingsManager = settingsManager
         self.current: StringProperty
         self.transition: ObjectProperty
+        self.database = database
         self.RFIDReader = RFIDReader()
         Window.bind(on_touch_down=self.on_activity)
         self.log_out_timer = None
@@ -44,7 +45,7 @@ class CustomScreenManager(ScreenManager):
                 )
 
     def login(self, patronId):
-        self._currentPatron = getPatronData(patronID=patronId)
+        self._currentPatron = self.database.getPatronData(patronID=patronId)
         self.logged_in_user = self._currentPatron
         if self.settingsManager.get_setting_value(
             settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
@@ -77,7 +78,9 @@ class CustomScreenManager(ScreenManager):
         return self._currentPatron
 
     def refreshCurrentPatron(self):
-        self._currentPatron = getPatronData(patronID=self._currentPatron.patronId)
+        self._currentPatron = self.database.getPatronData(
+            patronID=self._currentPatron.patronId
+        )
         self.logged_in_user = self._currentPatron
 
     def transitionToScreen(self, screenName, transitionDirection: str = "left"):

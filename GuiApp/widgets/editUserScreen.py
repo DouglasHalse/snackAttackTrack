@@ -1,13 +1,6 @@
 from datetime import datetime
 
-from database import (
-    UserData,
-    addEditTransaction,
-    getPatronData,
-    getPatronIdByCardId,
-    removePatron,
-    updatePatronData,
-)
+from database import UserData
 from kivy.properties import ObjectProperty
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
@@ -83,13 +76,13 @@ class EditUserScreen(GridLayoutScreen):
             ErrorMessagePopup(errorMessage="Credits cannot be negative").open()
             return
 
-        existingPatronId = getPatronIdByCardId(newcardId)
+        existingPatronId = self.manager.database.getPatronIdByCardId(newcardId)
         if (
             existingPatronId
             and existingPatronId != self.user_to_edit.patronId
             and newcardId != ""
         ):
-            patron_with_id = getPatronData(existingPatronId)
+            patron_with_id = self.manager.database.getPatronData(existingPatronId)
             ErrorMessagePopup(
                 errorMessage=f"Card ID is already used by {patron_with_id.firstName}"
             ).open()
@@ -105,14 +98,16 @@ class EditUserScreen(GridLayoutScreen):
         )
 
         if self.user_to_edit.totalCredits != newCredits:
-            addEditTransaction(
+            self.manager.database.addEditTransaction(
                 patronID=self.user_to_edit.patronId,
                 amountBeforeTransaction=self.user_to_edit.totalCredits,
                 amountAfterTransaction=newCredits,
                 transactionDate=datetime.now(),
             )
 
-        updatePatronData(patronId=self.user_to_edit.patronId, newUserData=newUserData)
+        self.manager.database.updatePatronData(
+            patronId=self.user_to_edit.patronId, newUserData=newUserData
+        )
 
         # Update current patron with new data
         self.manager.refreshCurrentPatron()
@@ -124,7 +119,7 @@ class EditUserScreen(GridLayoutScreen):
 
     def onRemove(self):
         def on_removed_callback(*args):
-            removePatron(self.user_to_edit.patronId)
+            self.manager.database.removePatron(self.user_to_edit.patronId)
             self.manager.transitionToScreen(
                 "editUsersScreen", transitionDirection="right"
             )

@@ -1,7 +1,7 @@
 import pytest
 
-from database import SnackData
-from snackReorderer import SnackReorderer
+from GuiApp.database import SnackData
+from GuiApp.snackReorderer import SnackReorderer
 
 # Fixtures are counted as redefine-outer-name
 # pylint: disable=redefined-outer-name

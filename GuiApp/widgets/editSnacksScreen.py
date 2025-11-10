@@ -1,4 +1,3 @@
-from database import getAllSnacks, getSnack
 from widgets.GridLayoutScreen import GridLayoutScreen
 
 
@@ -13,7 +12,7 @@ class EditSnacksScreen(GridLayoutScreen):
         self.manager.transitionToScreen("adminScreen", transitionDirection="right")
 
     def on_pre_enter(self, *args):
-        snacks = getAllSnacks()
+        snacks = self.manager.database.getAllSnacks()
 
         for snack in snacks:
             self.ids.snacksTable.addEntry(
@@ -39,7 +38,7 @@ class EditSnacksScreen(GridLayoutScreen):
         self.manager.transitionToScreen("addSnackScreen")
 
     def onEditSnackEntryPressed(self, snackId):
-        snackToEdit = getSnack(snackId)
+        snackToEdit = self.manager.database.getSnack(snackId)
         self.manager.get_screen("editSnackScreen").snack_to_edit = snackToEdit
         self.manager.transitionToScreen("editSnackScreen")
 

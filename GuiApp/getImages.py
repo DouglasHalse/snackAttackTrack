@@ -1,7 +1,6 @@
 import asyncio
 import os
 
-from database import addPatron, addSnack, getAllPatrons, getAllSnacks
 from kivy.core.window import Window
 from main import snackAttackTrackApp
 

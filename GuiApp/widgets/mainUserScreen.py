@@ -1,4 +1,3 @@
-from database import getAllSnacks
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
@@ -40,7 +39,7 @@ class MainUserScreen(GridLayoutScreen):
         self.manager.transitionToScreen("profileScreen")
 
     def onGambleButtonPressed(self, _):
-        numberOfSnacks = len(getAllSnacks())
+        numberOfSnacks = len(self.manager.database.getAllSnacks())
         if numberOfSnacks < 2:
             ErrorMessagePopup(errorMessage="Need at least 2 snacks to gamble").open()
             return

@@ -1,9 +1,4 @@
-from database import (
-    TransactionType,
-    getTransaction,
-    getTransactions,
-    transactionTypeToPresentableString,
-)
+from database import TransactionType, transactionTypeToPresentableString
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.editSummaryPopup import EditSummaryPopup
 from widgets.popups.gambleSummaryPopup import GambleSummaryPopup
@@ -21,7 +16,7 @@ class HistoryScreen(GridLayoutScreen):
 
     def on_pre_enter(self, *args):
         currentPatron = self.manager.getCurrentPatron()
-        transactions = getTransactions(currentPatron.patronId)
+        transactions = self.manager.database.getTransactions(currentPatron.patronId)
 
         # Redorder transactions so that the most recent transactions are at the top
         transactions = sorted(
@@ -44,7 +39,7 @@ class HistoryScreen(GridLayoutScreen):
         self.ids.historyTable.clearEntries()
 
     def onHistoryEntryPressed(self, transactionId):
-        transaction = getTransaction(transactionId)
+        transaction = self.manager.database.getTransaction(transactionId)
         if transaction.transactionType == TransactionType.PURCHASE:
             PurchaseSummaryPopup(historyData=transaction).open()
         elif transaction.transactionType == TransactionType.EDIT:

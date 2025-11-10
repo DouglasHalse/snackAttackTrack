@@ -5,8 +5,7 @@
     ],
 
     "python.testing.pytestArgs": [
-        "GuiApp/tests",
-        "-rP" // Show output for passed tests
+        "."
     ],
 
     "python.testing.unittestEnabled": false,
@@ -20,5 +19,15 @@
         },
     },
     
-    "isort.args":["--profile", "black"],
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        ".",
+        "-p",
+        "test_*.py"
+    ],
 }

@@ -1,4 +1,3 @@
-from database import getAllPatrons, getPatronData
 from widgets.GridLayoutScreen import GridLayoutScreen
 
 
@@ -12,7 +11,7 @@ class EditUsersScreen(GridLayoutScreen):
 
     def on_pre_enter(self, *args):
         super().on_pre_enter(*args)
-        users = getAllPatrons()
+        users = self.manager.database.getAllPatrons()
         for user in users:
             self.ids.usersTable.addEntry(
                 entryContents=[
@@ -28,6 +27,6 @@ class EditUsersScreen(GridLayoutScreen):
         self.ids.usersTable.clearEntries()
 
     def onUserEntryPressed(self, identifier):
-        userToEdit = getPatronData(patronID=identifier)
+        userToEdit = self.manager.database.getPatronData(patronID=identifier)
         self.manager.get_screen("editUserScreen").user_to_edit = userToEdit
         self.manager.transitionToScreen("editUserScreen")
