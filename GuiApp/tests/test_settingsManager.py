@@ -1,6 +1,8 @@
 import json
+
 import pytest
-from GuiApp.widgets.settingsManager import SettingsManager, SettingName, SettingDataType
+
+from GuiApp.widgets.settingsManager import SettingDataType, SettingName, SettingsManager
 
 # Fixtures are counted as redefine-outer-name
 # pylint: disable=redefined-outer-name

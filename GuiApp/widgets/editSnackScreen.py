@@ -1,11 +1,4 @@
-from database import (
-    LostSnackReason,
-    SnackData,
-    add_added_snack,
-    add_lost_snack,
-    removeSnack,
-    updateSnackData,
-)
+from database import LostSnackReason, SnackData
 from kivy.properties import ObjectProperty
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.addedSnackPricePopup import AddedSnackPricePopup
@@ -71,7 +64,7 @@ class EditSnackScreen(GridLayoutScreen):
             def on_reason_selected(_, reason: LostSnackReason):
                 quantity_removed = self.snack_to_edit.quantity - newSnackQuantity
                 value_lost = self.snack_to_edit.pricePerItem * quantity_removed
-                add_lost_snack(
+                self.manager.database.add_lost_snack(
                     snack_name=newSnackName,
                     quantity=quantity_removed,
                     reason=reason,
@@ -87,7 +80,7 @@ class EditSnackScreen(GridLayoutScreen):
 
             def on_price_confirmed(_, total_added_value: float):
                 quantity_added = newSnackQuantity - self.snack_to_edit.quantity
-                add_added_snack(
+                self.manager.database.add_added_snack(
                     snack_name=newSnackName,
                     quantity=quantity_added,
                     value=total_added_value,
@@ -109,7 +102,9 @@ class EditSnackScreen(GridLayoutScreen):
             imageID="None",
             pricePerItem=newSnackPrice,
         )
-        updateSnackData(snackId=self.snack_to_edit.snackId, newSnackData=newSnackData)
+        self.manager.database.updateSnackData(
+            snackId=self.snack_to_edit.snackId, newSnackData=newSnackData
+        )
         self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
 
     def onCancel(self):
@@ -122,13 +117,13 @@ class EditSnackScreen(GridLayoutScreen):
             def on_reason_selected(_, reason: LostSnackReason):
                 quantity_removed = self.snack_to_edit.quantity
                 value_lost = self.snack_to_edit.pricePerItem * quantity_removed
-                add_lost_snack(
+                self.manager.database.add_lost_snack(
                     snack_name=self.snack_to_edit.snackName,
                     quantity=quantity_removed,
                     reason=reason,
                     total_value=value_lost,
                 )
-                removeSnack(self.snack_to_edit.snackId)
+                self.manager.database.removeSnack(self.snack_to_edit.snackId)
                 self.manager.transitionToScreen(
                     "editSnacksScreen", transitionDirection="right"
                 )

@@ -1,4 +1,4 @@
-from database import UserData, getAllPatrons, getPatronIdByCardId
+from database import UserData
 from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
@@ -60,7 +60,7 @@ class LoginScreen(Screen):
         return super().on_leave(*args)
 
     def cardRead(self, cardId, *args):
-        patronId = getPatronIdByCardId(cardId=cardId)
+        patronId = self.manager.database.getPatronIdByCardId(cardId=cardId)
         if patronId is None:
             CreateUserOrLinkCardPopup(
                 screenManager=self.manager, readCard=cardId
@@ -86,7 +86,7 @@ class LoginScreen(Screen):
         return super().on_touch_down(touch)
 
     def AddUsersToLoginScreen(self):
-        userDataList = getAllPatrons()
+        userDataList = self.manager.database.getAllPatrons()
         if userDataList:
             for userData in userDataList:
                 self.ids["LoginScreenUserGridLayout"].add_widget(

@@ -6,3 +6,5 @@ pylint
 pre-commit
 matplotlib
 numpy
+pytest-cov
+pytest-asyncio

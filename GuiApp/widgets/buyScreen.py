@@ -1,16 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
-from database import (
-    SnackData,
-    addPurchaseTransaction,
-    getAllSnacks,
-    getMostPurchasedSnacksByPatron,
-    getSnack,
-    removeSnack,
-    subtractPatronCredits,
-    subtractSnackQuantity,
-)
+from database import SnackData
 from snackReorderer import SnackReorderer
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
@@ -78,7 +69,7 @@ class BuyScreen(GridLayoutScreen):
         self.updateTotalPrice()
 
     def updateSnackInLists(self, snackId: int):
-        snackData = getSnack(snackId)
+        snackData = self.manager.database.getSnack(snackId)
 
         if self.snackDict[snackId][ItemLocation.INVENTORY] == 0:
             self.ids.inventoryTable.removeEntry(entryIdentifier=snackId)
@@ -124,12 +115,12 @@ class BuyScreen(GridLayoutScreen):
 
     def initInventory(self):
         self.snackDict = {}
-        snacks = getAllSnacks()
+        snacks = self.manager.database.getAllSnacks()
 
         if self.manager.settingsManager.get_setting_value(
             settingName=SettingName.ORDER_INVENTORY_BY_MOST_PURCHASED
         ):
-            mostPurchasedSnacks = getMostPurchasedSnacksByPatron(
+            mostPurchasedSnacks = self.manager.database.getMostPurchasedSnacksByPatron(
                 patronId=self.manager.getCurrentPatron().patronId
             )
 
@@ -148,7 +139,7 @@ class BuyScreen(GridLayoutScreen):
 
         for snackDictEntry in self.snackDict.items():
             snackId = snackDictEntry[0]
-            snack = getSnack(snackId)
+            snack = self.manager.database.getSnack(snackId)
             snacksInInventory = snackDictEntry[1][ItemLocation.INVENTORY]
 
             self.ids.inventoryTable.addEntry(
@@ -167,7 +158,7 @@ class BuyScreen(GridLayoutScreen):
         totalPrice = 0.0
         for snackDictEntry in self.snackDict.items():
             snackId = snackDictEntry[0]
-            snack = getSnack(snackId)
+            snack = self.manager.database.getSnack(snackId)
             snackPrice = snack.pricePerItem
             snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
             totalPrice += snackPrice * snackInShoppingCart
@@ -186,7 +177,7 @@ class BuyScreen(GridLayoutScreen):
             snackInShoppingCart = snackDictEntry[1][ItemLocation.SHOPPINGCART]
             if snackInShoppingCart > 0:
                 snackId = snackDictEntry[0]
-                snack = getSnack(snackId)
+                snack = self.manager.database.getSnack(snackId)
                 snackBought = SnackData(
                     snackId=snackId,
                     snackName=snack.snackName,
@@ -232,13 +223,15 @@ class BuyScreen(GridLayoutScreen):
 
         # Update snack database
         for snack in snacksInShoppingCart:
-            if snack.quantity == getSnack(snack.snackId).quantity:
-                removeSnack(snackId=snack.snackId)
+            if snack.quantity == self.manager.database.getSnack(snack.snackId).quantity:
+                self.manager.database.removeSnack(snackId=snack.snackId)
             else:
-                subtractSnackQuantity(snackId=snack.snackId, quantity=snack.quantity)
+                self.manager.database.subtractSnackQuantity(
+                    snackId=snack.snackId, quantity=snack.quantity
+                )
 
         # Update transaction database
-        addPurchaseTransaction(
+        self.manager.database.addPurchaseTransaction(
             patronID=currentPatron.patronId,
             amountBeforeTransaction=creditsBeforePurchase,
             amountAfterTransaction=creditsAfterPurchase,
@@ -247,7 +240,7 @@ class BuyScreen(GridLayoutScreen):
         )
 
         # Update patron credits
-        subtractPatronCredits(
+        self.manager.database.subtractPatronCredits(
             patronID=currentPatron.patronId, creditsToSubtract=totalPrice
         )
 

@@ -10,11 +10,12 @@ import widgets.uiElements.ParticleEmitter
 import widgets.uiElements.StatsWidgets
 import widgets.uiElements.textInputs
 import widgets.uiElements.WheelOfSnacksWidget
-from database import closeDatabase, createAllTables
+from database import DatabaseConnector
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.modules import inspector
+from kivy.resources import resource_add_path
 from widgets.addSnackScreen import AddSnackScreen
 from widgets.adminScreen import AdminScreen
 from widgets.buyScreen import BuyScreen
@@ -41,11 +42,23 @@ from widgets.wheelOfSnacksScreen import WheelOfSnacksScreen
 # pylint: enable=unused-import
 
 
+resource_add_path("GuiApp")
+
+
 class snackAttackTrackApp(App):
-    def __init__(self, use_inspector=True):
+    def __init__(
+        self,
+        use_inspector=True,
+        settings_path="settings.json",
+        database_path="database.db",
+    ):
         self.title = "Snack Attack Track"
-        self.settingsManager = self.create_settings_manager()
-        self.screenManager = CustomScreenManager(settingsManager=self.settingsManager)
+        self.settingsManager = self.create_settings_manager(settings_path)
+        self.database = DatabaseConnector(database_path=database_path)
+        self.screenManager = CustomScreenManager(
+            settingsManager=self.settingsManager, database=self.database
+        )
+
         self.use_inspector = use_inspector
         Window.bind(on_key_down=self._on_keyboard_down)
         self.colors = {
@@ -77,8 +90,8 @@ class snackAttackTrackApp(App):
             return True
         return False
 
-    def create_settings_manager(self) -> SettingsManager:
-        sm = SettingsManager("settings.json")
+    def create_settings_manager(self, settings_path: str) -> SettingsManager:
+        sm = SettingsManager(settings_path)
 
         sm.add_setting_if_undefined(
             settingName=SettingName.SPILL_FACTOR,
@@ -172,7 +185,6 @@ class snackAttackTrackApp(App):
 
     def build(self):
         Builder.load_file("kv/main.kv")
-        createAllTables()
         self.screenManager.add_widget(SplashScreenWidget(name="splashScreen"))
         self.screenManager.add_widget(LoginScreen(name="loginScreen"))
         self.screenManager.add_widget(MainUserScreen(name="mainUserPage"))
@@ -201,7 +213,7 @@ class snackAttackTrackApp(App):
         return self.screenManager
 
     def on_stop(self):
-        closeDatabase()
+        self.screenManager.database.close()
         return super().on_stop()
 
 

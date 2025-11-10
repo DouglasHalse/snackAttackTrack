@@ -1,4 +1,3 @@
-from database import getPatronIdByCardId
 from kivy.uix.screenmanager import Screen
 from widgets.popups.createUserOrLinkCardPopup import CreateUserOrLinkCardPopup
 
@@ -16,7 +15,7 @@ class SplashScreenWidget(Screen):
         return super().on_pre_leave(*args)
 
     def card_read_callback(self, cardId, *args):
-        user_id = getPatronIdByCardId(cardId=cardId)
+        user_id = self.manager.database.getPatronIdByCardId(cardId=cardId)
         if user_id is None:
             CreateUserOrLinkCardPopup(
                 screenManager=self.manager, readCard=cardId

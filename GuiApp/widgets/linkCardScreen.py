@@ -1,4 +1,3 @@
-from database import getAllPatrons, getPatronData
 from kivy.uix.screenmanager import Screen
 from widgets.popups.linkCardConfirmationPopup import LinkCardConfirmationPopup
 
@@ -17,7 +16,7 @@ class LinkCardScreen(Screen):
         return super().on_leave(*args)
 
     def addUsersFromDatabase(self):
-        patrons = getAllPatrons()
+        patrons = self.manager.database.getAllPatrons()
         for patron in patrons:
             self.ids.usersTable.addEntry(
                 entryContents=[
@@ -35,7 +34,7 @@ class LinkCardScreen(Screen):
         self.manager.transitionToScreen("splashScreen", transitionDirection="right")
 
     def onUserEntryPressed(self, identifier):
-        selectedPatron = getPatronData(patronID=identifier)
+        selectedPatron = self.manager.database.getPatronData(patronID=identifier)
         if selectedPatron.employeeID == "":
             LinkCardConfirmationPopup(
                 screenManager=self.manager,

@@ -1,6 +1,5 @@
 from kivy.uix.modalview import ModalView
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
-from database import updatePatronData, getPatronData, getPatronIdByCardId
 
 
 class LinkCardConfirmationPopup(ModalView):
@@ -10,7 +9,7 @@ class LinkCardConfirmationPopup(ModalView):
     def __init__(self, screenManager, patronId, newCardId, changeType: int, **kwargs):
         super().__init__(**kwargs)
         self.screenManager = screenManager
-        self.selectedPatron = getPatronData(patronID=patronId)
+        self.selectedPatron = self.manager.database.getPatronData(patronID=patronId)
         self.newCardId = newCardId
         self.changeType = changeType
         if changeType == self.NEW_CARD:
@@ -25,14 +24,14 @@ class LinkCardConfirmationPopup(ModalView):
     def onConfirm(self):
         self.dismiss()
 
-        if not getPatronIdByCardId(cardId=self.newCardId) is None:
+        if not self.manager.database.getPatronIdByCardId(cardId=self.newCardId) is None:
             ErrorMessagePopup(
                 errorMessage="Card ID already linked to another user."
             ).open()
             return
 
         self.selectedPatron.employeeID = self.newCardId
-        updatePatronData(
+        self.manager.database.updatePatronData(
             patronId=self.selectedPatron.patronId, newUserData=self.selectedPatron
         )
         self.screenManager.transitionToScreen(

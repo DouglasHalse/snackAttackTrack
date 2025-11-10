@@ -1,4 +1,3 @@
-from database import add_added_snack, addSnack
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
@@ -101,13 +100,13 @@ class AddSnackScreen(GridLayoutScreen):
 
         pricePerItem = round(float(priceWithFee) / float(quantity), 2)
 
-        addSnack(
+        self.manager.database.addSnack(
             itemName=snackName,
             quantity=quantity,
             imageID="None",
             pricePerItem=pricePerItem,
         )
-        add_added_snack(
+        self.manager.database.add_added_snack(
             snack_name=snackName,
             quantity=quantity,
             value=totalPrice,

@@ -1,4 +1,4 @@
-from database import TransactionType, getMostPurchasedSnacksByPatron, getTransactions
+from database import TransactionType
 from kivy.app import App
 from widgets.GridLayoutScreen import GridLayoutScreen
 
@@ -23,7 +23,7 @@ class UserStatisticsScreen(GridLayoutScreen):
         if logged_in_user is None:
             return
 
-        transactions = getTransactions(logged_in_user.patronId)
+        transactions = self.manager.database.getTransactions(logged_in_user.patronId)
 
         total_credits_spent = 0.0
         total_snacks_purchased = 0
@@ -43,7 +43,9 @@ class UserStatisticsScreen(GridLayoutScreen):
                     - transaction.amountAfterTransaction
                 )
 
-        most_purchased_snacks = getMostPurchasedSnacksByPatron(logged_in_user.patronId)
+        most_purchased_snacks = self.manager.database.getMostPurchasedSnacksByPatron(
+            logged_in_user.patronId
+        )
         if most_purchased_snacks:
             favorite_snack = most_purchased_snacks[0]
 
