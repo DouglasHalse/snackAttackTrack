@@ -53,9 +53,8 @@ class RFIDReader:
         self.last_read_id = None
         self.callback = None
 
-    def triggerFakeRead(self):
+    def triggerFakeRead(self, card_id="12345678"):
         """Trigger a fake RFID read."""
-        card_id = "12345678"
         if card_id is None:
             print("Will not trigger read, card_id is None")
             return

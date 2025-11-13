@@ -29,6 +29,7 @@ class LoginScreenUserWidget(BoxLayoutButton):
 class LoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.create_or_link_card_popup = None
 
     def on_pre_enter(self, *args):
         self.AddUsersToLoginScreen()
@@ -51,6 +52,8 @@ class LoginScreen(Screen):
         return super().on_enter(*args)
 
     def on_pre_leave(self, *args):
+        if self.create_or_link_card_popup is not None:
+            self.create_or_link_card_popup = None
         self.manager.RFIDReader.stop()
         return super().on_pre_leave(*args)
 
@@ -62,9 +65,10 @@ class LoginScreen(Screen):
     def cardRead(self, cardId, *args):
         patronId = self.manager.database.getPatronIdByCardId(cardId=cardId)
         if patronId is None:
-            CreateUserOrLinkCardPopup(
+            self.create_or_link_card_popup = CreateUserOrLinkCardPopup(
                 screenManager=self.manager, readCard=cardId
-            ).open()
+            )
+            self.create_or_link_card_popup.open()
             return
 
         self.manager.login(patronId)
