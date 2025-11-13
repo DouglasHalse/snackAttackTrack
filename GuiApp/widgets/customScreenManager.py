@@ -31,7 +31,6 @@ class CustomScreenManager(ScreenManager):
         self.log_out_timer = None
 
     def on_activity(self, _, __):
-        print("Activity detected")
         if self._currentPatron:
             if self.settingsManager.get_setting_value(
                 settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
