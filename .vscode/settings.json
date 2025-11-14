@@ -1,7 +1,8 @@
 {
     "conventionalCommits.scopes": [
         "dev env",
-        "app"
+        "app",
+        "test"
     ],
 
     "python.testing.pytestArgs": [
