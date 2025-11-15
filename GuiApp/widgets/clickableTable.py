@@ -143,7 +143,8 @@ class ClickableTable(GridLayout):
     ):
         super().__init__(**kwargs)
         self.columnProportions = []
-        Clock.schedule_once(lambda dt: self._setup_columns(), -1)
+        self.is_kv_posted = False
+        self.entries_to_add_after_kv_post = []
 
     def _setup_columns(self):
         if self.columnExamples:
@@ -170,6 +171,16 @@ class ClickableTable(GridLayout):
                 )
             )
 
+    def on_kv_post(self, base_widget):
+        self.is_kv_posted = True
+
+        self._setup_columns()
+
+        for entryContents, entryIdentifier in self.entries_to_add_after_kv_post:
+            self.addEntry(entryContents, entryIdentifier)
+        self.entries_to_add_after_kv_post = []
+        return super().on_kv_post(base_widget)
+
     def addEntry(self, entryContents: list[str], entryIdentifier):
         """
         Add an entry to the table
@@ -182,16 +193,17 @@ class ClickableTable(GridLayout):
         This function schedules the addition of the entry to the table data
         to ensure that it is added after the table has been initialized
         """
-        Clock.schedule_once(
-            lambda dt: self.ids["rw"].data.append(
-                {
-                    "clickableTable": self,
-                    "entryContents": entryContents,
-                    "columnProportions": self.columnProportions,
-                    "entryIdentifier": entryIdentifier,
-                }
-            ),
-            0,
+        if not self.is_kv_posted:
+            self.entries_to_add_after_kv_post.append((entryContents, entryIdentifier))
+            return
+
+        self.ids["rw"].data.append(
+            {
+                "clickableTable": self,
+                "entryContents": entryContents,
+                "columnProportions": self.columnProportions,
+                "entryIdentifier": entryIdentifier,
+            }
         )
 
     def hasEntry(self, entryIdentifier):
@@ -201,6 +213,11 @@ class ClickableTable(GridLayout):
         entryIdentifier: any
             The identifier of the entry to check
         """
+
+        if not self.is_kv_posted:
+            return any(
+                entryIdentifier == eid for _, eid in self.entries_to_add_after_kv_post
+            )
 
         for entry in self.ids["rw"].data:
             if entry["entryIdentifier"] == entryIdentifier:
@@ -214,6 +231,13 @@ class ClickableTable(GridLayout):
         entryIdentifier: any
             The identifier of the entry to remove
         """
+        if not self.is_kv_posted:
+            for i, (_, eid) in enumerate(self.entries_to_add_after_kv_post):
+                if eid == entryIdentifier:
+                    del self.entries_to_add_after_kv_post[i]
+                    return
+            raise ValueError(f"Entry with identifier {entryIdentifier} not found")
+
         for entry in self.ids["rw"].data:
             if entry["entryIdentifier"] == entryIdentifier:
                 self.ids["rw"].data.remove(entry)
@@ -230,6 +254,16 @@ class ClickableTable(GridLayout):
             The new contents of the row
         """
 
+        if not self.is_kv_posted:
+            for i, (_, eid) in enumerate(self.entries_to_add_after_kv_post):
+                if eid == entryIdentifier:
+                    self.entries_to_add_after_kv_post[i] = (
+                        newEntryContents,
+                        entryIdentifier,
+                    )
+                    return
+            raise ValueError(f"Entry with identifier {entryIdentifier} not found")
+
         for entry in self.ids["rw"].data:
             if entry["entryIdentifier"] == entryIdentifier:
                 entry["entryContents"] = newEntryContents
@@ -241,6 +275,10 @@ class ClickableTable(GridLayout):
         """
         Clear all entries from the table
         """
+        if not self.is_kv_posted:
+            self.entries_to_add_after_kv_post = []
+            return
+
         self.ids["rw"].data = []
 
         # Scroll back to the top when cleared
