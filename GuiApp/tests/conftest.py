@@ -71,3 +71,12 @@ async def app_with_users(app):
         first_name="User3FirstName", last_name="User3LastName", employee_id=555555555
     )
     return app
+
+
+@pytest_asyncio.fixture
+async def app_with_users_and_snacks(app_with_users):
+    app_with_users.screenManager.database.addSnack("Snack1", 42, "TestImage1", 10)
+    app_with_users.screenManager.database.addSnack("Snack2", 5, "TestImage2", 12)
+    app_with_users.screenManager.database.addSnack("Snack3", 16, "TestImage3", 15)
+
+    return app_with_users

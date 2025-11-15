@@ -11,6 +11,7 @@ class WheelOfSnacksScreen(GridLayoutScreen):
         super().__init__(**kwargs)
         self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
         self.winPopup = None
+        self.insufficient_funds_popup = None
 
     def on_back_button_pressed(self, *args):
         self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
@@ -30,6 +31,9 @@ class WheelOfSnacksScreen(GridLayoutScreen):
 
     def on_leave(self, *args):
         self.ids.wheel_widget.enable = False
+        if self.insufficient_funds_popup is not None:
+            self.insufficient_funds_popup.dismiss()
+            self.insufficient_funds_popup = None
 
     def enable_navigation_header_buttons(self, enable: bool):
         self.ids.header.ids.logoutButton.disabled = not enable
@@ -86,11 +90,13 @@ class WheelOfSnacksScreen(GridLayoutScreen):
         currentPatron = self.manager.getCurrentPatron()
         if currentPatron.totalCredits < cost_to_spin:
             credits_needed = cost_to_spin - currentPatron.totalCredits
-            popup = InsufficientFundsPopup(
+            self.insufficient_funds_popup = InsufficientFundsPopup(
                 screen_manager=self.manager, credits_needed=credits_needed
             )
-            popup.bind(on_top_up_pressed=self.on_going_to_top_up_screen)
-            popup.open()
+            self.insufficient_funds_popup.bind(
+                on_top_up_pressed=self.on_going_to_top_up_screen
+            )
+            self.insufficient_funds_popup.open()
             return
 
         #

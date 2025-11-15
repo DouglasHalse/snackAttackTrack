@@ -21,6 +21,7 @@ class BuyScreen(GridLayoutScreen):
         self.snackDict = {}
         self.snackStash = {}
         self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
+        self.insufficient_funds_popup = None
 
     def on_back_button_pressed(self, *args):
         self.manager.transitionToScreen("mainUserPage", transitionDirection="right")
@@ -49,6 +50,9 @@ class BuyScreen(GridLayoutScreen):
 
     def on_pre_leave(self, *args):
         self.snackStash = {}
+        if self.insufficient_funds_popup:
+            self.insufficient_funds_popup.dismiss()
+            self.insufficient_funds_popup = None
         return super().on_pre_leave(*args)
 
     def on_pre_enter(self, *args):
@@ -207,11 +211,13 @@ class BuyScreen(GridLayoutScreen):
 
         if totalPrice > currentPatron.totalCredits:
             creditsNeeded = totalPrice - currentPatron.totalCredits
-            popup = InsufficientFundsPopup(
+            self.insufficient_funds_popup = InsufficientFundsPopup(
                 screen_manager=self.manager, credits_needed=creditsNeeded
             )
-            popup.bind(on_top_up_pressed=self.on_going_to_top_up_screen)
-            popup.open()
+            self.insufficient_funds_popup.bind(
+                on_top_up_pressed=self.on_going_to_top_up_screen
+            )
+            self.insufficient_funds_popup.open()
             return
 
         #
