@@ -34,9 +34,18 @@ class TopUpPaymentScreen(GridLayoutScreen):
         )
         self.ids["qrCodeImage"].source = "qr.png"
         self.ids["qrCodeImage"].reload()
+        self.ids["amountLabel"].text = (
+            f"Amount to pay: {self.amount_to_be_payed:.2f} SEK"
+        )
+        self.ids["loadingLabel"].text = ""
+        self.ids["confirmButton"].disabled = False
         return super().on_pre_enter(*args)
 
     def onConfirm(self, *largs):
+        # Show loading state
+        self.ids["loadingLabel"].text = "Processing payment..."
+        self.ids["confirmButton"].disabled = True
+
         self.manager.database.addTopUpTransaction(
             patronID=self.userData.patronId,
             amountBeforeTransaction=self.userData.totalCredits,

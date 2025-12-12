@@ -64,3 +64,6 @@
                 height: self.parent.height
                 layout: "keyboards/swedishKeyboardLayout.json"
                 on_key_up: root.virtualKeyboardInputUp
+                # Theme colors (VKeyboard uses different color format than buttons)
+                background_color: app.colors["secondary_background"]
+                key_background_color: app.colors["button"]

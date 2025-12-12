@@ -50,6 +50,20 @@
                     header_text: "Login card"
                     hint_text: "Tap card to register (optional)"
                     disable_input: True
+                TextInputWithHeader:
+                    id: pinInput
+                    size_factor: self.parent.width / 25
+                    header_text: "4-Digit PIN (Required)"
+                    hint_text: "Enter 4-digit PIN"
+                    password: True
+                    input_filter: "int"
+                TextInputWithHeader:
+                    id: confirmPinInput
+                    size_factor: self.parent.width / 25
+                    header_text: "Confirm PIN"
+                    hint_text: "Re-enter PIN"
+                    password: True
+                    input_filter: "int"
             Widget: # Horizontal Spacer
                 size_hint_x: 0.1
         Widget: # Vertical Spacer

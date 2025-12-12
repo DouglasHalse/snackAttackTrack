@@ -92,6 +92,8 @@ async def test_create_user(app):
     assert app.screenManager.current == "createUserScreen"
     app.screenManager.current_screen.ids.firstNameInput.setText("User1FirstName")
     app.screenManager.current_screen.ids.lastNameInput.setText("User1LastName")
+    app.screenManager.current_screen.ids.pinInput.setText("1234")
+    app.screenManager.current_screen.ids.confirmPinInput.setText("1234")
     app.screenManager.current_screen.registerUser()
 
     assert app.screenManager.current == "loginScreen"
@@ -115,6 +117,8 @@ async def test_create_user_with_card_id(app):
     assert app.screenManager.current == "createUserScreen"
     app.screenManager.current_screen.ids.firstNameInput.setText("User2FirstName")
     app.screenManager.current_screen.ids.lastNameInput.setText("User2LastName")
+    app.screenManager.current_screen.ids.pinInput.setText("1234")
+    app.screenManager.current_screen.ids.confirmPinInput.setText("1234")
     app.screenManager.current_screen.cardRead(123456789)
     app.screenManager.current_screen.registerUser()
 
@@ -149,6 +153,8 @@ async def test_create_user_with_used_card(app_with_users):
     app_with_users.screenManager.current_screen.ids.lastNameInput.setText(
         "User3LastName"
     )
+    app_with_users.screenManager.current_screen.ids.pinInput.setText("1234")
+    app_with_users.screenManager.current_screen.ids.confirmPinInput.setText("1234")
     app_with_users.screenManager.current_screen.cardRead(123456789)
     app_with_users.screenManager.current_screen.registerUser()
 
@@ -177,6 +183,8 @@ async def test_create_user_with_new_card_from_splash_screen(app):
     assert app.screenManager.current_screen.ids.cardIdInput.getText() == "5555555"
     app.screenManager.current_screen.ids.firstNameInput.setText("User4FirstName")
     app.screenManager.current_screen.ids.lastNameInput.setText("User4LastName")
+    app.screenManager.current_screen.ids.pinInput.setText("1234")
+    app.screenManager.current_screen.ids.confirmPinInput.setText("1234")
     app.screenManager.current_screen.registerUser()
 
     assert app.screenManager.current == "loginScreen"
@@ -207,6 +215,8 @@ async def test_create_user_with_new_card_from_login_screen(app):
     assert app.screenManager.current_screen.ids.cardIdInput.getText() == "4444444"
     app.screenManager.current_screen.ids.firstNameInput.setText("User5FirstName")
     app.screenManager.current_screen.ids.lastNameInput.setText("User5LastName")
+    app.screenManager.current_screen.ids.pinInput.setText("1234")
+    app.screenManager.current_screen.ids.confirmPinInput.setText("1234")
     app.screenManager.current_screen.registerUser()
 
     assert (

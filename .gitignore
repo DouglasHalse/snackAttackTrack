@@ -16,8 +16,14 @@ venv/
 database.db
 settings.json
 
-# Generated qr code
+# Generated files
 qr.png
+*.png
+!GuiApp/Images/*.png
+
+# Test outputs
+test_output.txt
+*Screen*.png
 
 # Negations last
 !.vscode/settings.json

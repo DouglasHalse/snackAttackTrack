@@ -9,8 +9,9 @@
         page_name: "Top-up Payment"
     GridLayout:
         rows: 1
-        padding: 30
-        spacing: 30
+        cols: 2
+        padding: 40
+        spacing: 40
         canvas:
             Color:
                 rgba: app.colors["background"]
@@ -19,65 +20,217 @@
                 size: self.size
         GridLayout:
             cols: 1
+            spacing: 20
+            size_hint_x: 0.5
+            Widget:
+                size_hint_y: 0.1
+            Label:
+                id: amountLabel
+                text: ""
+                bold: True
+                font_size: 32
+                color: 1, 1, 1, 1
+                size_hint_y: None
+                height: 60
+                halign: "center"
+                valign: "middle"
+            Widget:
+                size_hint_y: 0.05
             Image:
                 id: qrCodeImage
                 source: ""
                 allow_stretch: True
                 keep_ratio: True
+                size_hint_y: 0.75
+            Widget:
+                size_hint_y: 0.1
         GridLayout:
             cols: 1
-            spacing: 10
+            spacing: 20
+            size_hint_x: 0.5
+            Widget:
+                size_hint_y: 0.05
             RoundedTwoColorGridLayout:
                 cols: 1
-                spacing: 10
-                padding: [0, 20]
-                GridLayout:
-                    cols: 1
-                    Label:
-                        bold: True
-                        text: "Step 1:"
-                        font_size: self.width/12
-                    Label:
-                        text: "Scan QR code with swish"
-                        font_size: self.width/12
-                GridLayout:
-                    cols: 1
-                    Label:
-                        bold: True
-                        text: "Step 2:"
-                        font_size: self.width/12
-                    Label:
-                        text: "Send payment"
-                        font_size: self.width/12
-                GridLayout:
-                    cols: 1
-                    Label:
-                        bold: True
-                        text: "Step 3:"
-                        font_size: self.width/12
-                    Label:
-                        text: "Click confirm below"
-                        font_size: self.width/12
+                spacing: 5
+                padding: [20, 15]
+                size_hint_y: None
+                height: 110
+                radius: [15,]
+                canvas.before:
+                    Color:
+                        rgba: 1, 0.15, 0.15, 0.35
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [15,]
+                    Color:
+                        rgba: 0.8, 0, 0, 0.6
+                    Line:
+                        rounded_rectangle: [self.x, self.y, self.width, self.height, 15]
+                        width: 2
+                Label:
+                    bold: True
+                    text: "⚠️ WARNING ⚠️"
+                    font_size: 22
+                    color: 1, 0, 0, 1
+                    size_hint_y: None
+                    height: 30
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                Label:
+                    text: "Only click CONFIRM after sending Swish payment!"
+                    font_size: 16
+                    color: 1, 0, 0, 1
+                    size_hint_y: None
+                    height: 30
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                Label:
+                    text: "Fraud will result in account suspension."
+                    font_size: 14
+                    color: 0.8, 0, 0, 1
+                    size_hint_y: None
+                    height: 25
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+            Widget:
+                size_hint_y: None
+                height: 15
+            RoundedTwoColorGridLayout:
+                cols: 1
+                size_hint_y: None
+                height: 90
+                padding: [15, 12]
+                spacing: 5
+                radius: [10,]
+                canvas.before:
+                    Color:
+                        rgba: 0.3, 0.6, 0.9, 0.25
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10,]
+                Label:
+                    bold: True
+                    text: "🔍 Step 1:"
+                    font_size: 20
+                    size_hint_y: None
+                    height: 32
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                Label:
+                    text: "Scan QR code with Swish"
+                    font_size: 18
+                    size_hint_y: None
+                    height: 32
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+            Widget:
+                size_hint_y: None
+                height: 15
+            RoundedTwoColorGridLayout:
+                cols: 1
+                size_hint_y: None
+                height: 90
+                padding: [15, 12]
+                spacing: 5
+                radius: [10,]
+                canvas.before:
+                    Color:
+                        rgba: 0.2, 0.7, 0.4, 0.25
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10,]
+                Label:
+                    bold: True
+                    text: "💸 Step 2:"
+                    font_size: 20
+                    size_hint_y: None
+                    height: 32
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                Label:
+                    text: "Send payment"
+                    font_size: 18
+                    size_hint_y: None
+                    height: 32
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+            Widget:
+                size_hint_y: None
+                height: 15
+            RoundedTwoColorGridLayout:
+                cols: 1
+                size_hint_y: None
+                height: 90
+                padding: [15, 12]
+                spacing: 5
+                radius: [10,]
+                canvas.before:
+                    Color:
+                        rgba: 0.9, 0.5, 0.1, 0.25
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10,]
+                Label:
+                    bold: True
+                    text: "✅ Step 3:"
+                    font_size: 20
+                    size_hint_y: None
+                    height: 32
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+                Label:
+                    text: "Click confirm ONLY after payment is sent"
+                    font_size: 16
+                    color: 1, 0.3, 0, 1
+                    size_hint_y: None
+                    height: 32
+                    halign: "center"
+                    valign: "middle"
+                    text_size: self.size
+            Widget:
+                size_hint_y: 1
             GridLayout:
                 rows: 1
                 size_hint: (1, None)
-                height: self.minimum_height
+                height: 100
+                spacing: 25
                 OrangeButton:
                     id: cancelButton
-                    width: self.parent.width / 2.5
-                    height: self.width / 3
-                    text_size: self.height / 2
+                    width: self.parent.width / 2.2
+                    height: 100
+                    text_size: 32
                     text: "Cancel"
                     on_press: root.onCancel()
-                Widget: # Horizontal Spacer
-                    size_hint: (1, None)
-                    height: 10
                 GreenButton:
                     id: confirmButton
-                    width: self.parent.width / 2.5
-                    height: self.width / 3
-                    text_size: self.height / 2
+                    width: self.parent.width / 2.2
+                    height: 100
+                    text_size: 32
                     text: "Confirm"
                     on_press: root.onConfirm()
+            Label:
+                id: loadingLabel
+                text: ""
+                font_size: 18
+                color: 1, 1, 1, 1
+                size_hint_y: None
+                height: 35
+                halign: "center"
+                valign: "middle"
+            Widget:
+                size_hint_y: 0.05
                 
                 

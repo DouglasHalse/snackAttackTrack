@@ -30,15 +30,35 @@ class MainUserScreen(GridLayoutScreen):
         self.ids.header.bind(on_back_button_pressed=self.onBackButtonPressed)
 
     def onBuyButtonPressed(self, _):
+        if self.manager.is_guest_mode():
+            ErrorMessagePopup(
+                errorMessage="Please create an account to purchase items"
+            ).open()
+            return
         self.manager.transitionToScreen("buyScreen")
 
     def onTopUpButtonPressed(self, _):
+        if self.manager.is_guest_mode():
+            ErrorMessagePopup(
+                errorMessage="Please create an account to top up credits"
+            ).open()
+            return
         self.manager.transitionToScreen("topUpAmountScreen")
 
     def onProfileButtonPressed(self, _):
+        if self.manager.is_guest_mode():
+            ErrorMessagePopup(
+                errorMessage="Please create an account to view profile"
+            ).open()
+            return
         self.manager.transitionToScreen("profileScreen")
 
     def onGambleButtonPressed(self, _):
+        if self.manager.is_guest_mode():
+            ErrorMessagePopup(
+                errorMessage="Please create an account to use the wheel of snacks"
+            ).open()
+            return
         numberOfSnacks = len(self.manager.database.getAllSnacks())
         if numberOfSnacks < 2:
             ErrorMessagePopup(errorMessage="Need at least 2 snacks to gamble").open()
