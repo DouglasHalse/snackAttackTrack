@@ -58,15 +58,26 @@
         
         GridLayout:
             rows: 1
+            cols: 2
             size_hint_y: 0.2
-            Widget: # Vertical Spacer
+            spacing: 30
+            Widget: # Horizontal Spacer
             ClickableRoundedTwoColorGridLayout:
                 rows: 1
                 on_press: root.createNewUserButtonClicked()
                 Label:
-                    id: manageDeviceCancelLabel
+                    id: createUserLabel
                     text: 'Create new user'
                     bold: True
                     color: 'black'
                     font_size: self.width/10
-            Widget: # Vertical Spacer
+            ClickableRoundedTwoColorGridLayout:
+                rows: 1
+                on_press: root.guestModeButtonClicked()
+                Label:
+                    id: guestModeLabel
+                    text: 'Guest Mode'
+                    bold: True
+                    color: 'black'
+                    font_size: self.width/10
+            Widget: # Horizontal Spacer

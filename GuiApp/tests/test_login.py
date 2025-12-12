@@ -1,6 +1,7 @@
 import asyncio
 
 import pytest
+from kivy.core.window import Window
 
 
 @pytest.mark.asyncio
@@ -16,9 +17,34 @@ async def test_login_by_selecting_user(app_with_users):
     assert len(usersOnScreen) > 0
 
     for userButton in usersOnScreen:
-        if userButton.ids.userNameLabel.text == "User2FirstName":
-            userButton.ids.clickableLayout.dispatch("on_press")
+        if "User2FirstName" in userButton.ids.userNameLabel.text:
+            userButton.Clicked()
             break
+
+    # Wait for PIN entry popup to appear
+    await asyncio.sleep(0.5)
+
+    # Find the PinEntryPopup in Window children (recursively)
+    def find_popup(widget):
+        if widget.__class__.__name__ == "PinEntryPopup":
+            return widget
+        if hasattr(widget, "children"):
+            for child in widget.children:
+                result = find_popup(child)
+                if result:
+                    return result
+        return None
+
+    pin_popup = find_popup(Window)
+
+    if pin_popup:
+        # Simulate entering PIN "1234" by calling on_number_pressed
+        pin_popup.on_number_pressed(1)
+        pin_popup.on_number_pressed(2)
+        pin_popup.on_number_pressed(3)
+        pin_popup.on_number_pressed(4)
+        # Auto-verify is called after 4 digits, wait for it to process
+        await asyncio.sleep(0.5)
 
     assert app_with_users.screenManager.current == "mainUserPage"
     assert (

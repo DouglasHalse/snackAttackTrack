@@ -5,6 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 from widgets.customScreenManager import CustomScreenManager
 from widgets.popups.createUserOrLinkCardPopup import CreateUserOrLinkCardPopup
+from widgets.popups.pinEntryPopup import PinEntryPopup
 from widgets.settingsManager import SettingName
 
 
@@ -19,11 +20,29 @@ class LoginScreenUserWidget(BoxLayoutButton):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.userData = userData
-        self.ids["userNameLabel"].text = self.userData.firstName
+        self.ids["userNameLabel"].text = (
+            f"{self.userData.firstName}\n{self.userData.lastName}"
+        )
 
     def Clicked(self, *largs):
-        self.screenManager.login(self.userData.patronId)
-        self.screenManager.transitionToScreen("mainUserPage")
+        # Check if user has a PIN set
+        patron_data = self.screenManager.database.getPatronData(self.userData.patronId)
+        if patron_data.pin:
+            # Show PIN entry popup
+            def on_pin_success():
+                self.screenManager.login(self.userData.patronId)
+                self.screenManager.transitionToScreen("mainUserPage")
+
+            pin_popup = PinEntryPopup(
+                patron_id=self.userData.patronId,
+                screen_manager=self.screenManager,
+                on_success_callback=on_pin_success,
+            )
+            pin_popup.open()
+        else:
+            # No PIN set, allow direct login (backward compatibility)
+            self.screenManager.login(self.userData.patronId)
+            self.screenManager.transitionToScreen("mainUserPage")
 
 
 class LoginScreen(Screen):
@@ -71,6 +90,7 @@ class LoginScreen(Screen):
             self.create_or_link_card_popup.open()
             return
 
+        # Card login - no PIN required
         self.manager.login(patronId)
         self.manager.transitionToScreen("mainUserPage")
 
@@ -99,3 +119,7 @@ class LoginScreen(Screen):
 
     def createNewUserButtonClicked(self, *largs):
         self.manager.transitionToScreen("createUserScreen")
+
+    def guestModeButtonClicked(self, *largs):
+        self.manager.login_as_guest()
+        self.manager.transitionToScreen("mainUserPage")
