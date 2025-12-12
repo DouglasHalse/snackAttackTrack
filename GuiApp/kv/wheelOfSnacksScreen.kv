@@ -26,8 +26,9 @@
                     id: win_table
                     headerHeight: self.width / (8)
                     entryHeight: self.width / (10)
-                    columns: ["Snack name", "Value"]
-                    columnExamples: ["Long name", "14.99%"]
+                    columns: ["", "Snack name", "Value"]
+                    columnExamples: ["\u2611", "Long name", "14.99%"]
+                    onEntryPressed: root.toggle_snack_selection
                 Widget:
                     size_hint_x: 0.1
             Widget:
