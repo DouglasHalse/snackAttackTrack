@@ -9,6 +9,10 @@
     image_path: 'Images/chart-histogram.png'
     text: 'Statistics'
 
+<ChangePinOption>:
+    image_path: 'Images/wrench-alt.png'
+    text: 'Change PIN'
+
 
 <ProfileScreen>:
     rows: 2
@@ -19,6 +23,7 @@
         page_name: "Profile"
     GridLayout:
         id: optionsGrid
+        cols: 3
         rows: 1
         canvas:
             Color:
@@ -32,3 +37,5 @@
             id: historyOption
         StatisticsOption:
             id: statisticsOption
+        ChangePinOption:
+            id: changePinOption

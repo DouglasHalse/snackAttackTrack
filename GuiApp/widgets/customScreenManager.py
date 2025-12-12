@@ -53,9 +53,31 @@ class CustomScreenManager(ScreenManager):
             timeToAutoLogout = self.settingsManager.get_setting_value(
                 settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME
             )
+            if self.log_out_timer:
+                self.log_out_timer.cancel()
             self.log_out_timer = Clock.schedule_once(
                 lambda dt: self.auto_logout(), timeToAutoLogout
             )
+
+    def login_as_guest(self):
+        """Login in guest mode with a temporary guest user"""
+        # Create a temporary guest user data object
+        from database import UserData
+
+        self._currentPatron = UserData(
+            patronId=-1,
+            firstName="Guest",
+            lastName="User",
+            totalCredits=0.0,
+            employeeID=0,
+            pin=None,
+        )
+        self.logged_in_user = self._currentPatron
+        # No auto-logout timer for guest mode
+
+    def is_guest_mode(self):
+        """Check if current user is in guest mode"""
+        return self._currentPatron is not None and self._currentPatron.patronId == -1
 
     def auto_logout(self):
         self.logout()
@@ -76,6 +98,11 @@ class CustomScreenManager(ScreenManager):
 
     def getCurrentPatron(self) -> UserData:
         return self._currentPatron
+
+    def setCurrentPatron(self, userData: UserData):
+        """Set current patron - useful for testing"""
+        self._currentPatron = userData
+        self.logged_in_user = userData
 
     def refreshCurrentPatron(self):
         self._currentPatron = self.database.getPatronData(

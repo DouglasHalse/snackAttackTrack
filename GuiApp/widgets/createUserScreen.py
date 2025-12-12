@@ -13,6 +13,8 @@ class CreateUserScreen(Screen):
         firstName = self.ids.firstNameInput.getText()
         lastName = self.ids.lastNameInput.getText()
         cardId = self.ids.cardIdInput.getText()
+        pin = self.ids.pinInput.getText()
+        confirmPin = self.ids.confirmPinInput.getText()
 
         if firstName == "":
             ErrorMessagePopup(errorMessage="First Name cannot be empty").open()
@@ -20,6 +22,22 @@ class CreateUserScreen(Screen):
 
         if lastName == "":
             ErrorMessagePopup(errorMessage="Last Name cannot be empty").open()
+            return
+
+        if pin == "":
+            ErrorMessagePopup(errorMessage="PIN is required for security").open()
+            return
+
+        if len(pin) != 4:
+            ErrorMessagePopup(errorMessage="PIN must be exactly 4 digits").open()
+            return
+
+        if not pin.isdigit():
+            ErrorMessagePopup(errorMessage="PIN must contain only numbers").open()
+            return
+
+        if pin != confirmPin:
+            ErrorMessagePopup(errorMessage="PINs do not match").open()
             return
 
         existingPatronId = self.manager.database.getPatronIdByCardId(cardId)
@@ -31,7 +49,7 @@ class CreateUserScreen(Screen):
             self.ids.cardIdInput.setText("")
             return
 
-        self.manager.database.addPatron(firstName, lastName, cardId)
+        self.manager.database.addPatron(firstName, lastName, cardId, pin)
 
         self.manager.transitionToScreen("loginScreen", transitionDirection="right")
 
@@ -54,4 +72,6 @@ class CreateUserScreen(Screen):
         self.ids.firstNameInput.clearText()
         self.ids.lastNameInput.clearText()
         self.ids.cardIdInput.clearText()
+        self.ids.pinInput.clearText()
+        self.ids.confirmPinInput.clearText()
         return super().on_leave(*args)

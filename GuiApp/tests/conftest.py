@@ -1,8 +1,12 @@
 import asyncio
 import os
+import sys
 
 import pytest_asyncio
 from kivy.core.window import Window
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from GuiApp.main import snackAttackTrackApp
 
@@ -62,13 +66,22 @@ async def app():
 @pytest_asyncio.fixture
 async def app_with_users(app):
     app.screenManager.database.addPatron(
-        first_name="User1FirstName", last_name="User1LastName", employee_id=987654321
+        first_name="User1FirstName",
+        last_name="User1LastName",
+        employee_id=987654321,
+        pin="1234",
     )
     app.screenManager.database.addPatron(
-        first_name="User2FirstName", last_name="User2LastName", employee_id=123456789
+        first_name="User2FirstName",
+        last_name="User2LastName",
+        employee_id=123456789,
+        pin="1234",
     )
     app.screenManager.database.addPatron(
-        first_name="User3FirstName", last_name="User3LastName", employee_id=555555555
+        first_name="User3FirstName",
+        last_name="User3LastName",
+        employee_id=555555555,
+        pin="1234",
     )
     return app
 

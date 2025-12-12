@@ -16,6 +16,7 @@ class SettingName(Enum):
     ORDER_INVENTORY_BY_MOST_PURCHASED = "order_inventory_by_most_purchased"
     ENABLE_GAMBLING = "enable_gambling"
     EXCITING_GAMBLING = "exciting_gambling"
+    LOW_INVENTORY_THRESHOLD = "low_inventory_threshold"
 
 
 def get_presentable_setting_name(settingName: SettingName):

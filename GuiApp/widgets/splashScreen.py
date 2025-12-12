@@ -26,6 +26,7 @@ class SplashScreenWidget(Screen):
             self.create_or_link_card_popup.open()
             return
 
+        # Card login - no PIN required
         self.manager.login(user_id)
         self.manager.transitionToScreen("mainUserPage")
 
