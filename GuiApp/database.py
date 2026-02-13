@@ -555,6 +555,10 @@ class DatabaseConnector:
     def getPatronData(self, patronID: int) -> UserData:
         self.cursor.execute(f"SELECT * FROM Patrons WHERE PatronID = {patronID}")
         sqlResult = self.cursor.fetchone()
+
+        if sqlResult is None:
+            return None
+
         patronId = sqlResult[0]
         firstName = sqlResult[1]
         lastName = sqlResult[2]
