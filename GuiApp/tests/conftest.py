@@ -5,6 +5,7 @@ import pytest_asyncio
 from kivy.core.window import Window
 
 from GuiApp.main import snackAttackTrackApp
+from GuiApp.widgets.editSnacksScreen import EditSnacksScreen
 
 # Fixtures are counted as redefine-outer-name
 # pylint: disable=redefined-outer-name
@@ -35,7 +36,7 @@ async def tear_down(event_loop):
 
 
 @pytest_asyncio.fixture
-async def app():
+async def app_with_nothing():
     print("Starting app fixture")
 
     if os.path.exists("PytestDatabase.db"):
@@ -60,23 +61,51 @@ async def app():
 
 
 @pytest_asyncio.fixture
-async def app_with_users(app):
-    app.screenManager.database.addPatron(
+async def app_with_only_users(app_with_nothing):
+    app_with_nothing.screenManager.database.addPatron(
         first_name="User1FirstName", last_name="User1LastName", employee_id=987654321
     )
-    app.screenManager.database.addPatron(
+    app_with_nothing.screenManager.database.addPatron(
         first_name="User2FirstName", last_name="User2LastName", employee_id=123456789
     )
-    app.screenManager.database.addPatron(
+    app_with_nothing.screenManager.database.addPatron(
         first_name="User3FirstName", last_name="User3LastName", employee_id=555555555
     )
-    return app
+    return app_with_nothing
 
 
 @pytest_asyncio.fixture
-async def app_with_users_and_snacks(app_with_users):
-    app_with_users.screenManager.database.addSnack("Snack1", 42, "TestImage1", 10)
-    app_with_users.screenManager.database.addSnack("Snack2", 5, "TestImage2", 12)
-    app_with_users.screenManager.database.addSnack("Snack3", 16, "TestImage3", 15)
+async def app(app_with_only_users):
+    app_with_only_users.screenManager.database.addSnack("Snack1", 42, "TestImage1", 10)
+    app_with_only_users.screenManager.database.addSnack("Snack2", 5, "TestImage2", 12)
+    app_with_only_users.screenManager.database.addSnack("Snack3", 16, "TestImage3", 15)
 
-    return app_with_users
+    return app_with_only_users
+
+
+@pytest_asyncio.fixture
+async def app_on_add_snack_screen(app):
+
+    assert app.screenManager.current == "splashScreen"
+
+    assert app.screenManager.database.getPatronIdByCardId(555555555) is not None
+
+    app.screenManager.RFIDReader.triggerFakeRead(card_id=555555555)
+
+    assert app.screenManager.current == "mainUserPage"
+
+    app.screenManager.current_screen.ids.header.settings_button.dispatch("on_release")
+
+    assert app.screenManager.current == "adminScreen"
+
+    app.screenManager.current_screen.ids.editSnacksOption.dispatch("on_release")
+
+    assert app.screenManager.current == "editSnacksScreen"
+
+    app.screenManager.current_screen.onEntryPressed(
+        identifier=EditSnacksScreen.ADD_SNACK_ENTRY_IDENTIFIER
+    )
+
+    assert app.screenManager.current == "addSnackScreen"
+
+    return app

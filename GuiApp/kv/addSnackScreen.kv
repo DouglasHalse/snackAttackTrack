@@ -57,6 +57,7 @@
                 height: self.minimum_height
                 Widget: # Horizontal Spacer
                 OrangeButton:
+                    id: cancelButton
                     text: "Cancel"
                     width: self.parent.width / 2.5
                     height: self.width / 3
@@ -64,6 +65,7 @@
                     on_press: root.onCancel()
                 Widget: # Horizontal Spacer
                 GreenButton:
+                    id: confirmButton
                     text: "Confirm"
                     width: self.parent.width / 2.5
                     height: self.width / 3
