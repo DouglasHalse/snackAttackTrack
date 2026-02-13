@@ -13,6 +13,7 @@ class EditUserScreen(GridLayoutScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
+        self.remove_confirmation_popup = None
 
     def on_back_button_pressed(self, *args):
         self.manager.transitionToScreen("editUsersScreen", transitionDirection="right")
@@ -124,8 +125,8 @@ class EditUserScreen(GridLayoutScreen):
                 "editUsersScreen", transitionDirection="right"
             )
 
-        popup = RemoveConfirmationPopup(
+        self.remove_confirmation_popup = RemoveConfirmationPopup(
             question_text=f"Are you sure you want to remove {self.user_to_edit.firstName}?"
         )
-        popup.bind(on_removed=on_removed_callback)
-        popup.open()
+        self.remove_confirmation_popup.bind(on_removed=on_removed_callback)
+        self.remove_confirmation_popup.open()
