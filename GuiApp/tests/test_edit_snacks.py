@@ -4,9 +4,8 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_navigate_to_edit_snacks_screen(app_with_users_and_snacks):
+async def test_navigate_to_edit_snacks_screen(app):
     """Test navigating to edit snacks screen from admin screen"""
-    app = app_with_users_and_snacks
 
     # Navigate to admin screen
     app.screenManager.current = "adminScreen"
@@ -21,9 +20,8 @@ async def test_navigate_to_edit_snacks_screen(app_with_users_and_snacks):
 
 
 @pytest.mark.asyncio
-async def test_edit_snacks_screen_displays_snacks(app_with_users_and_snacks):
+async def test_edit_snacks_screen_displays_snacks(app):
     """Test that edit snacks screen displays available snacks"""
-    app = app_with_users_and_snacks
 
     # Navigate to edit snacks screen
     app.screenManager.current = "editSnacksScreen"
@@ -38,9 +36,8 @@ async def test_edit_snacks_screen_displays_snacks(app_with_users_and_snacks):
 
 
 @pytest.mark.asyncio
-async def test_edit_snacks_back_navigation(app_with_users_and_snacks):
+async def test_edit_snacks_back_navigation(app):
     """Test navigating back from edit snacks screen"""
-    app = app_with_users_and_snacks
 
     # Navigate to edit snacks screen
     app.screenManager.current = "editSnacksScreen"
@@ -56,22 +53,20 @@ async def test_edit_snacks_back_navigation(app_with_users_and_snacks):
 
 
 @pytest.mark.asyncio
-async def test_edit_snacks_screen_with_no_snacks(app_with_users):
+async def test_edit_snacks_screen_with_no_snacks(app_with_only_users):
     """Test edit snacks screen when there are no snacks"""
-    app = app_with_users
 
     # Navigate to edit snacks screen (no snacks exist)
-    app.screenManager.current = "editSnacksScreen"
+    app_with_only_users.screenManager.current = "editSnacksScreen"
     await asyncio.sleep(0.2)
 
     # Verify we're on edit snacks screen
-    assert app.screenManager.current == "editSnacksScreen"
+    assert app_with_only_users.screenManager.current == "editSnacksScreen"
 
 
 @pytest.mark.asyncio
-async def test_edit_snacks_screen_refresh(app_with_users_and_snacks):
+async def test_edit_snacks_screen_refresh(app):
     """Test that edit snacks screen refreshes when re-entered"""
-    app = app_with_users_and_snacks
 
     # Navigate to edit snacks screen
     app.screenManager.current = "editSnacksScreen"
