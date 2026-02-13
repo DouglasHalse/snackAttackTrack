@@ -6,445 +6,462 @@ from GuiApp.widgets.settingsManager import SettingName
 
 
 @pytest.mark.asyncio
-async def test_return_from_top_up_with_back_button(app_with_users):
+async def test_return_from_top_up_with_back_button(app_with_only_users):
 
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
     )
 
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
-
-    await asyncio.sleep(0.5)
-
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
-
-    app_with_users.screenManager.current_screen.ids.header.ids.backButton.dispatch(
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
         "on_release"
     )
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    await asyncio.sleep(0.5)
+
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
+
+    app_with_only_users.screenManager.current_screen.ids.header.ids.backButton.dispatch(
+        "on_release"
+    )
+
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
 
 @pytest.mark.asyncio
-async def test_return_from_top_up_with_cancel_button(app_with_users):
+async def test_return_from_top_up_with_cancel_button(app_with_only_users):
 
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
     )
 
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
+        "on_release"
+    )
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
-    app_with_users.screenManager.current_screen.ids.cancelButton.dispatch("on_press")
+    app_with_only_users.screenManager.current_screen.ids.cancelButton.dispatch(
+        "on_press"
+    )
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
 
 @pytest.mark.asyncio
-async def test_no_amount_selected(app_with_users):
+async def test_no_amount_selected(app_with_only_users):
 
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
     )
 
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
+        "on_release"
+    )
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
-    app_with_users.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
+        "on_press"
+    )
 
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
 
 @pytest.mark.asyncio
-async def test_less_than_one_amount_selected(app_with_users):
+async def test_less_than_one_amount_selected(app_with_only_users):
 
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
     )
 
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
+        "on_release"
+    )
 
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
-    app_with_users.screenManager.current_screen.ids.creditsToAdd.focus = True
+    app_with_only_users.screenManager.current_screen.ids.creditsToAdd.focus = True
 
-    assert app_with_users.screenManager.current_screen.credit_input_popup is not None
+    assert (
+        app_with_only_users.screenManager.current_screen.credit_input_popup is not None
+    )
 
     await asyncio.sleep(1.5)
 
-    app_with_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
+    app_with_only_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
         "on_key_up", "0", *[]
     )
 
-    app_with_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
+    app_with_only_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
         "on_key_up", ".", *[]
     )
 
-    app_with_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
+    app_with_only_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
         "on_key_up", "9", *[]
     )
 
-    app_with_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
+    app_with_only_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
         "on_key_up", "9", *[]
     )
 
     await asyncio.sleep(0.5)
 
     assert (
-        app_with_users.screenManager.current_screen.credit_input_popup.ids.textInput.getText()
+        app_with_only_users.screenManager.current_screen.credit_input_popup.ids.textInput.getText()
         == "0.99"
     )
 
-    app_with_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
+    app_with_only_users.screenManager.current_screen.credit_input_popup.ids.virtualKeyboard.dispatch(
         "on_key_up", "enter", *[]
     )
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users.screenManager.current_screen.ids.creditsToAdd.text == "0.99"
-
     assert (
-        app_with_users.screenManager.current_screen.ids.creditsAfterwards.text == "0.99"
+        app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text == "0.99"
     )
 
-    app_with_users.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    assert (
+        app_with_only_users.screenManager.current_screen.ids.creditsAfterwards.text
+        == "0.99"
+    )
+
+    app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
+        "on_press"
+    )
 
     await asyncio.sleep(0.5)
 
     # Does not proceed to payment screen
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
 
 @pytest.mark.asyncio
-async def test_negative_amount_selected(app_with_users):
+async def test_negative_amount_selected(app_with_only_users):
 
-    assert app_with_users.screenManager.current == "splashScreen"
-
-    assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
-    )
-
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
-
-    assert app_with_users.screenManager.current == "mainUserPage"
-
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
-
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
-
-    app_with_users.screenManager.current_screen.ids.creditsToAdd.text = "-10.00"
-
-    app_with_users.screenManager.current_screen.ids.continueButton.dispatch("on_press")
-
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
-
-
-@pytest.mark.asyncio
-async def test_return_from_payment_with_back_button(app_with_users):
-
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
     )
 
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
-
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
-
-    app_with_users.screenManager.current_screen.ids.creditsToAdd.text = "10.00"
-
-    app_with_users.screenManager.current_screen.ids.continueButton.dispatch("on_press")
-
-    assert app_with_users.screenManager.current == "topUpPaymentScreen"
-
-    app_with_users.screenManager.current_screen.ids.header.ids.backButton.dispatch(
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
         "on_release"
     )
 
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
+
+    app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text = "-10.00"
+
+    app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
+        "on_press"
+    )
+
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
 
 @pytest.mark.asyncio
-async def test_return_from_payment_with_cancel_button(app_with_users):
+async def test_return_from_payment_with_back_button(app_with_only_users):
 
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
     )
 
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
+        "on_release"
+    )
 
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
-    app_with_users.screenManager.current_screen.ids.creditsToAdd.text = "10.00"
+    app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text = "10.00"
 
-    app_with_users.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
+        "on_press"
+    )
 
-    assert app_with_users.screenManager.current == "topUpPaymentScreen"
+    assert app_with_only_users.screenManager.current == "topUpPaymentScreen"
 
-    app_with_users.screenManager.current_screen.ids.cancelButton.dispatch("on_press")
+    app_with_only_users.screenManager.current_screen.ids.header.ids.backButton.dispatch(
+        "on_release"
+    )
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
 
 @pytest.mark.asyncio
-async def test_add_hundred_credits(app_with_users):
+async def test_return_from_payment_with_cancel_button(app_with_only_users):
 
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
     )
 
-    patron_id = app_with_users.screenManager.database.getPatronIdByCardId("123456789")
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    patron_data = app_with_users.screenManager.database.getPatronData(patron_id)
+    assert app_with_only_users.screenManager.current == "mainUserPage"
+
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
+        "on_release"
+    )
+
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
+
+    app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text = "10.00"
+
+    app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
+        "on_press"
+    )
+
+    assert app_with_only_users.screenManager.current == "topUpPaymentScreen"
+
+    app_with_only_users.screenManager.current_screen.ids.cancelButton.dispatch(
+        "on_press"
+    )
+
+    assert app_with_only_users.screenManager.current == "mainUserPage"
+
+
+@pytest.mark.asyncio
+async def test_add_hundred_credits(app_with_only_users):
+
+    assert app_with_only_users.screenManager.current == "splashScreen"
+
+    assert (
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
+    )
+
+    patron_id = app_with_only_users.screenManager.database.getPatronIdByCardId(
+        "123456789"
+    )
+
+    patron_data = app_with_only_users.screenManager.database.getPatronData(patron_id)
 
     initial_credits = patron_data.totalCredits
 
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
+        "on_release"
+    )
 
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
-    app_with_users.screenManager.current_screen.ids.creditsToAdd.text = "100.00"
+    app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text = "100.00"
 
-    app_with_users.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
+        "on_press"
+    )
 
-    assert app_with_users.screenManager.current == "topUpPaymentScreen"
+    assert app_with_only_users.screenManager.current == "topUpPaymentScreen"
 
-    app_with_users.screenManager.current_screen.ids.confirmButton.dispatch("on_press")
+    app_with_only_users.screenManager.current_screen.ids.confirmButton.dispatch(
+        "on_press"
+    )
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    patron_data = app_with_users.screenManager.database.getPatronData(patron_id)
+    patron_data = app_with_only_users.screenManager.database.getPatronData(patron_id)
 
     assert patron_data.totalCredits == initial_credits + 100.0
 
 
 @pytest.mark.asyncio
-async def test_auto_logout_while_entering_amount(app_with_users):
+async def test_auto_logout_while_entering_amount(app_with_only_users):
 
-    app_with_users.screenManager.settingsManager.set_setting_value(
+    app_with_only_users.screenManager.settingsManager.set_setting_value(
         settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE, value=True
     )
 
-    app_with_users.screenManager.settingsManager.set_setting_value(
+    app_with_only_users.screenManager.settingsManager.set_setting_value(
         settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME, value=20
     )
 
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.database.getPatronIdByCardId(123456789) is not None
+        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        is not None
     )
 
-    app_with_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users.screenManager.current == "mainUserPage"
+    assert app_with_only_users.screenManager.current == "mainUserPage"
 
-    app_with_users.screenManager.current_screen.ids.topUpOption.dispatch("on_release")
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
+        "on_release"
+    )
 
-    assert app_with_users.screenManager.current == "topUpAmountScreen"
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
-    app_with_users.screenManager.current_screen.ids.creditsToAdd.focus = True
+    app_with_only_users.screenManager.current_screen.ids.creditsToAdd.focus = True
 
     await asyncio.sleep(21)
 
-    assert app_with_users.screenManager.current == "splashScreen"
+    assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_users.screenManager.get_screen("topUpAmountScreen").credit_input_popup
+        app_with_only_users.screenManager.get_screen(
+            "topUpAmountScreen"
+        ).credit_input_popup
         is None
     )
 
 
 @pytest.mark.asyncio
 async def test_return_from_top_up_amount_with_back_button_with_buy_screen_as_referee(
-    app_with_users_and_snacks,
+    app,
 ):
 
-    assert app_with_users_and_snacks.screenManager.current == "splashScreen"
+    assert app.screenManager.current == "splashScreen"
 
-    assert (
-        app_with_users_and_snacks.screenManager.database.getPatronIdByCardId(123456789)
-        is not None
-    )
+    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
 
-    app_with_users_and_snacks.screenManager.RFIDReader.triggerFakeRead(
-        card_id=123456789
-    )
+    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users_and_snacks.screenManager.current == "mainUserPage"
+    assert app.screenManager.current == "mainUserPage"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.buyOption.dispatch(
-        "on_release"
-    )
+    app.screenManager.current_screen.ids.buyOption.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users_and_snacks.screenManager.current == "buyScreen"
+    assert app.screenManager.current == "buyScreen"
 
-    available_snacks = app_with_users_and_snacks.screenManager.database.getAllSnacks()
+    available_snacks = app.screenManager.database.getAllSnacks()
 
     first_snack_id = available_snacks[0].snackId
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
-        first_snack_id
-    )
+    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(first_snack_id)
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.buyButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.buyButton.dispatch("on_press")
 
     await asyncio.sleep(0.5)
 
-    app_with_users_and_snacks.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
+    app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
         "on_press"
     )
 
-    assert app_with_users_and_snacks.screenManager.current == "topUpAmountScreen"
+    assert app.screenManager.current == "topUpAmountScreen"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.header.ids.backButton.dispatch(
-        "on_release"
-    )
+    app.screenManager.current_screen.ids.header.ids.backButton.dispatch("on_release")
 
-    assert app_with_users_and_snacks.screenManager.current == "buyScreen"
+    assert app.screenManager.current == "buyScreen"
 
 
 @pytest.mark.asyncio
 async def test_return_from_top_up_amount_with_cancel_button_with_buy_screen_as_referee(
-    app_with_users_and_snacks,
+    app,
 ):
 
-    assert app_with_users_and_snacks.screenManager.current == "splashScreen"
+    assert app.screenManager.current == "splashScreen"
 
-    assert (
-        app_with_users_and_snacks.screenManager.database.getPatronIdByCardId(123456789)
-        is not None
-    )
+    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
 
-    app_with_users_and_snacks.screenManager.RFIDReader.triggerFakeRead(
-        card_id=123456789
-    )
+    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users_and_snacks.screenManager.current == "mainUserPage"
+    assert app.screenManager.current == "mainUserPage"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.buyOption.dispatch(
-        "on_release"
-    )
+    app.screenManager.current_screen.ids.buyOption.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users_and_snacks.screenManager.current == "buyScreen"
+    assert app.screenManager.current == "buyScreen"
 
-    available_snacks = app_with_users_and_snacks.screenManager.database.getAllSnacks()
+    available_snacks = app.screenManager.database.getAllSnacks()
 
     first_snack_id = available_snacks[0].snackId
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
-        first_snack_id
-    )
+    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(first_snack_id)
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.buyButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.buyButton.dispatch("on_press")
 
     await asyncio.sleep(0.5)
 
-    app_with_users_and_snacks.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
+    app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
         "on_press"
     )
 
-    assert app_with_users_and_snacks.screenManager.current == "topUpAmountScreen"
+    assert app.screenManager.current == "topUpAmountScreen"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.cancelButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.cancelButton.dispatch("on_press")
 
-    assert app_with_users_and_snacks.screenManager.current == "buyScreen"
+    assert app.screenManager.current == "buyScreen"
 
 
 @pytest.mark.asyncio
 async def test_top_up_with_buy_screen_as_referee(
-    app_with_users_and_snacks,
+    app,
 ):
 
-    assert app_with_users_and_snacks.screenManager.current == "splashScreen"
+    assert app.screenManager.current == "splashScreen"
 
-    assert (
-        app_with_users_and_snacks.screenManager.database.getPatronIdByCardId(123456789)
-        is not None
-    )
+    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
 
-    app_with_users_and_snacks.screenManager.RFIDReader.triggerFakeRead(
-        card_id=123456789
-    )
+    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    user_id = app_with_users_and_snacks.screenManager.database.getPatronIdByCardId(
-        123456789
-    )
+    user_id = app.screenManager.database.getPatronIdByCardId(123456789)
 
-    patron_data = app_with_users_and_snacks.screenManager.database.getPatronData(
-        user_id
-    )
+    patron_data = app.screenManager.database.getPatronData(user_id)
 
     initial_credits = patron_data.totalCredits
 
-    assert app_with_users_and_snacks.screenManager.current == "mainUserPage"
+    assert app.screenManager.current == "mainUserPage"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.buyOption.dispatch(
-        "on_release"
-    )
+    app.screenManager.current_screen.ids.buyOption.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users_and_snacks.screenManager.current == "buyScreen"
+    assert app.screenManager.current == "buyScreen"
 
-    available_snacks = app_with_users_and_snacks.screenManager.database.getAllSnacks()
+    available_snacks = app.screenManager.database.getAllSnacks()
 
     first_snack = available_snacks[0]
 
@@ -452,50 +469,41 @@ async def test_top_up_with_buy_screen_as_referee(
 
     # Add two of first snack to shopping cart
     assert first_snack.quantity >= 2
-    app_with_users_and_snacks.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
+    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
         first_snack.snackId
     )
-    app_with_users_and_snacks.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
+    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
         first_snack.snackId
     )
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.buyButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.buyButton.dispatch("on_press")
 
     await asyncio.sleep(0.5)
 
-    app_with_users_and_snacks.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
+    app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
         "on_press"
     )
 
-    assert app_with_users_and_snacks.screenManager.current == "topUpAmountScreen"
+    assert app.screenManager.current == "topUpAmountScreen"
 
-    assert (
-        app_with_users_and_snacks.screenManager.current_screen.ids.creditsToAdd.text
-        == str(f"{missing_credits:.2f}")
+    assert app.screenManager.current_screen.ids.creditsToAdd.text == str(
+        f"{missing_credits:.2f}"
     )
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.continueButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.continueButton.dispatch("on_press")
 
-    assert app_with_users_and_snacks.screenManager.current == "topUpPaymentScreen"
+    assert app.screenManager.current == "topUpPaymentScreen"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.confirmButton.dispatch("on_press")
 
-    assert app_with_users_and_snacks.screenManager.current == "buyScreen"
+    assert app.screenManager.current == "buyScreen"
 
-    patron_data = app_with_users_and_snacks.screenManager.database.getPatronData(
-        user_id
-    )
+    patron_data = app.screenManager.database.getPatronData(user_id)
 
     assert patron_data.totalCredits == initial_credits + missing_credits
 
     entries_in_shopping_cart_table = (
-        app_with_users_and_snacks.screenManager.current_screen.ids.shoppingCartTable.ids.rw.data
+        app.screenManager.current_screen.ids.shoppingCartTable.ids.rw.data
     )
 
     # Originally added snacks should still be in shopping cart
@@ -507,7 +515,7 @@ async def test_top_up_with_buy_screen_as_referee(
     assert int(entries_in_shopping_cart_table[0]["entryContents"][1]) == 2
 
     entries_in_inventory_table = (
-        app_with_users_and_snacks.screenManager.current_screen.ids.inventoryTable.ids.rw.data
+        app.screenManager.current_screen.ids.inventoryTable.ids.rw.data
     )
 
     # Inventory should be updated correctly and remember reduced quantity
@@ -521,161 +529,123 @@ async def test_top_up_with_buy_screen_as_referee(
 
 @pytest.mark.asyncio
 async def test_return_from_top_up_amount_with_back_button_with_wheel_of_snacks_screen_as_referee(
-    app_with_users_and_snacks,
+    app,
 ):
 
-    assert app_with_users_and_snacks.screenManager.current == "splashScreen"
+    assert app.screenManager.current == "splashScreen"
 
-    assert (
-        app_with_users_and_snacks.screenManager.database.getPatronIdByCardId(123456789)
-        is not None
-    )
+    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
 
-    app_with_users_and_snacks.screenManager.RFIDReader.triggerFakeRead(
-        card_id=123456789
-    )
+    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users_and_snacks.screenManager.current == "mainUserPage"
+    assert app.screenManager.current == "mainUserPage"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.gambleOption.dispatch(
-        "on_release"
-    )
+    app.screenManager.current_screen.ids.gambleOption.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users_and_snacks.screenManager.current == "wheelOfSnacksScreen"
+    assert app.screenManager.current == "wheelOfSnacksScreen"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.spin_button.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.spin_button.dispatch("on_press")
 
     await asyncio.sleep(0.5)
 
-    app_with_users_and_snacks.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
+    app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
         "on_press"
     )
 
-    assert app_with_users_and_snacks.screenManager.current == "topUpAmountScreen"
+    assert app.screenManager.current == "topUpAmountScreen"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.header.ids.backButton.dispatch(
-        "on_release"
-    )
+    app.screenManager.current_screen.ids.header.ids.backButton.dispatch("on_release")
 
-    assert app_with_users_and_snacks.screenManager.current == "wheelOfSnacksScreen"
+    assert app.screenManager.current == "wheelOfSnacksScreen"
 
 
 @pytest.mark.asyncio
 async def test_return_from_top_up_amount_with_cancel_button_with_wheel_of_snacks_screen_as_referee(
-    app_with_users_and_snacks,
+    app,
 ):
 
-    assert app_with_users_and_snacks.screenManager.current == "splashScreen"
+    assert app.screenManager.current == "splashScreen"
 
-    assert (
-        app_with_users_and_snacks.screenManager.database.getPatronIdByCardId(123456789)
-        is not None
-    )
+    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
 
-    app_with_users_and_snacks.screenManager.RFIDReader.triggerFakeRead(
-        card_id=123456789
-    )
+    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users_and_snacks.screenManager.current == "mainUserPage"
+    assert app.screenManager.current == "mainUserPage"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.gambleOption.dispatch(
-        "on_release"
-    )
+    app.screenManager.current_screen.ids.gambleOption.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users_and_snacks.screenManager.current == "wheelOfSnacksScreen"
+    assert app.screenManager.current == "wheelOfSnacksScreen"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.spin_button.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.spin_button.dispatch("on_press")
 
     await asyncio.sleep(0.5)
 
-    app_with_users_and_snacks.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
+    app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
         "on_press"
     )
 
-    assert app_with_users_and_snacks.screenManager.current == "topUpAmountScreen"
+    assert app.screenManager.current == "topUpAmountScreen"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.cancelButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.cancelButton.dispatch("on_press")
 
-    assert app_with_users_and_snacks.screenManager.current == "wheelOfSnacksScreen"
+    assert app.screenManager.current == "wheelOfSnacksScreen"
 
 
 @pytest.mark.asyncio
 async def test_top_up_with_wheel_of_snacks_screen_as_referee(
-    app_with_users_and_snacks,
+    app,
 ):
 
-    assert app_with_users_and_snacks.screenManager.current == "splashScreen"
+    assert app.screenManager.current == "splashScreen"
 
-    assert (
-        app_with_users_and_snacks.screenManager.database.getPatronIdByCardId(123456789)
-        is not None
-    )
+    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
 
-    app_with_users_and_snacks.screenManager.RFIDReader.triggerFakeRead(
-        card_id=123456789
-    )
+    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
 
-    assert app_with_users_and_snacks.screenManager.current == "mainUserPage"
+    assert app.screenManager.current == "mainUserPage"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.gambleOption.dispatch(
-        "on_release"
-    )
+    app.screenManager.current_screen.ids.gambleOption.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
-    assert app_with_users_and_snacks.screenManager.current == "wheelOfSnacksScreen"
+    assert app.screenManager.current == "wheelOfSnacksScreen"
 
-    snacks_in_inventory = (
-        app_with_users_and_snacks.screenManager.database.getAllSnacks()
-    )
+    snacks_in_inventory = app.screenManager.database.getAllSnacks()
     cost_to_gamble = sum(s.pricePerItem for s in snacks_in_inventory) / len(
         snacks_in_inventory
     )
 
     cost_to_gamble = float(f"{cost_to_gamble:.2f}")
 
-    current_patron = app_with_users_and_snacks.screenManager.getCurrentPatron()
+    current_patron = app.screenManager.getCurrentPatron()
     missing_credits = cost_to_gamble - current_patron.totalCredits
     assert missing_credits > 0  # Ensure some credits are missing
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.spin_button.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.spin_button.dispatch("on_press")
 
     await asyncio.sleep(0.5)
 
-    app_with_users_and_snacks.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
+    app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
         "on_press"
     )
 
-    assert app_with_users_and_snacks.screenManager.current == "topUpAmountScreen"
+    assert app.screenManager.current == "topUpAmountScreen"
 
-    assert (
-        app_with_users_and_snacks.screenManager.current_screen.ids.creditsToAdd.text
-        == str(f"{missing_credits:.2f}")
+    assert app.screenManager.current_screen.ids.creditsToAdd.text == str(
+        f"{missing_credits:.2f}"
     )
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.continueButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.continueButton.dispatch("on_press")
 
-    assert app_with_users_and_snacks.screenManager.current == "topUpPaymentScreen"
+    assert app.screenManager.current == "topUpPaymentScreen"
 
-    app_with_users_and_snacks.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
-    )
+    app.screenManager.current_screen.ids.confirmButton.dispatch("on_press")
 
-    assert app_with_users_and_snacks.screenManager.current == "wheelOfSnacksScreen"
+    assert app.screenManager.current == "wheelOfSnacksScreen"
 
-    current_patron = app_with_users_and_snacks.screenManager.getCurrentPatron()
+    current_patron = app.screenManager.getCurrentPatron()
     assert current_patron.totalCredits >= cost_to_gamble
