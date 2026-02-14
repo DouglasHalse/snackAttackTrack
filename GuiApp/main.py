@@ -4,6 +4,7 @@ import argparse
 # pylint: disable=unused-import
 import widgets.clickableTable
 import widgets.uiElements.buttons
+import widgets.uiElements.labels
 import widgets.uiElements.layouts
 import widgets.uiElements.navigationHeader
 import widgets.uiElements.ParticleEmitter

@@ -16,7 +16,7 @@ async def test_login_by_selecting_user(app_with_only_users):
     assert len(usersOnScreen) > 0
 
     for userButton in usersOnScreen:
-        if userButton.ids.userNameLabel.text == "User2FirstName":
+        if userButton.first_name == "User2FirstName":
             userButton.ids.clickableLayout.dispatch("on_press")
             break
 

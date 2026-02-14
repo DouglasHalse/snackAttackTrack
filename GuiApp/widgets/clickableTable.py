@@ -1,13 +1,11 @@
-from time import time
-
 import kivy.core.text
-from kivy.animation import AnimationTransition
 from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.recycleview.views import RecycleDataViewBehavior
+from widgets.uiElements.labels import AutoScrollingLabel
 
 
 def get_str_pixel_width(string: str, **kwargs) -> int:
@@ -22,57 +20,6 @@ class ClickableTableColumnLabel(Label):
     def __init__(self, columnName: str, **kwargs):
         super().__init__(**kwargs)
         self.text = columnName
-
-
-class ClickableTableColumnEntryLabel(GridLayout):
-    def __init__(self, text: str, **kwargs):
-        super().__init__(**kwargs)
-        self.ids["entryLabel"].text = text
-        self.widthOverhang = 0.0
-        self.startPosition = 0.0
-        self.animationStartDelay = 1.0
-        self.animationTime = 2.0
-        self.postAnimationTime = 1.0
-        self.timeOfStart = time() + self.animationStartDelay
-
-        # Need to run this once to get the initial width of the label
-        Clock.schedule_once(self.initLabelWidth, 0)
-
-    def initLabelWidth(self, dt):
-        # Reset the label position since it could have been changed by a previous animation
-        self.ids["entryLabel"].x = self.x
-        entryLabelWidth = self.ids["entryLabel"].texture_size[0]
-        # if text label is wider than the entrylabel, then we need to animate the text
-        if entryLabelWidth > self.width:
-            self.widthOverhang = entryLabelWidth - self.width
-            self.ids["entryLabel"].x += self.widthOverhang / 2.0
-            self.startPosition = self.ids["entryLabel"].x
-            Clock.schedule_interval(self.updateText, 0.01666)
-        else:
-            # Label scrolling might have been scheduled previously, so unschedule it
-            Clock.unschedule(self.updateText)
-            Clock.unschedule(self.resetAndStartAnimation)
-
-    def updateText(self, dt):
-        timeUsed = time() - self.timeOfStart
-
-        if timeUsed < 0:
-            return
-
-        if timeUsed < self.animationTime:
-            animationTimeProgress = timeUsed / self.animationTime
-            animationState = AnimationTransition.linear(animationTimeProgress)
-            self.ids["entryLabel"].x = (
-                self.startPosition - self.widthOverhang * animationState
-            )
-        else:
-            Clock.unschedule(self.updateText)
-            Clock.schedule_once(self.resetAndStartAnimation, self.postAnimationTime)
-
-    def resetAndStartAnimation(self, dt):
-        self.ids["entryLabel"].x = self.startPosition
-        self.timeOfStart = time() + self.animationStartDelay
-        Clock.schedule_interval(self.updateText, 0.01666)
 
 
 class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
@@ -96,7 +43,7 @@ class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
             for child, columnText, columnProportion in zip(
                 self.children, reversedContents, reversedColumnProportions
             ):
-                child.ids["entryLabel"].text = columnText
+                child.text = columnText
                 child.size_hint_x = columnProportion
                 # Schedule the label width initialization to run in the next frame
                 Clock.schedule_once(child.initLabelWidth, 0)
@@ -106,7 +53,7 @@ class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
                 self.entryContents, self.columnProportions
             ):
                 self.add_widget(
-                    ClickableTableColumnEntryLabel(
+                    AutoScrollingLabel(
                         text=columnText,
                         size_hint_x=columnProportion,
                     )

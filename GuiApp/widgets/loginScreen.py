@@ -19,7 +19,8 @@ class LoginScreenUserWidget(BoxLayoutButton):
         super().__init__(**kwargs)
         self.screenManager = screenManager
         self.userData = userData
-        self.ids["userNameLabel"].text = self.userData.firstName
+        self.first_name = userData.firstName
+        self.last_name = userData.lastName
 
     def Clicked(self, *largs):
         self.screenManager.login(self.userData.patronId)
