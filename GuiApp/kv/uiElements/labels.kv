@@ -1,0 +1,22 @@
+#:kivy 2.1.0     
+
+<AutoScrollingLabel>:
+    rows: 1
+    id: entry
+    text: "UNDEFINED"
+    color: 'white'
+    StencilView:
+        Label:
+            id: label
+            text: root.text
+            size_hint_x: None
+            size_hint_y: None
+            height: entry.height
+            width: entry.width
+            pos: entry.pos
+            markup: True
+            font_size: self.height / 2
+            bold: True
+            halign: "left"
+            valign: 'middle'
+            color: root.color

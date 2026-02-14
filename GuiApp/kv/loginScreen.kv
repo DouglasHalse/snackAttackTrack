@@ -3,20 +3,22 @@
 <LoginScreenUserWidget>:
     size_hint_x: None
     width: self.height
+    first_name: "First"
+    last_name: "Last"
     ClickableRoundedTwoColorGridLayout:
         id: clickableLayout
-        rows: 1
+        cols: 1
         on_press: root.Clicked()
-        Label:
-            id: userNameLabel
-            text: 'User'
-            text_size: self.size
-            size: self.texture_size
-            halign: 'center'
-            valign: 'center'
-            font_size: self.width/7
-            color : [0,0,0,1]
-            bold: True
+        padding: [10, 10]
+        AutoScrollingLabel:
+            id:first_name_label
+            text: root.first_name
+            color: 'black'
+        AutoScrollingLabel:
+            id:last_name_label
+            text: root.last_name
+            color: 'black'
+
 
 <LoginScreen>:
     GridLayout:
