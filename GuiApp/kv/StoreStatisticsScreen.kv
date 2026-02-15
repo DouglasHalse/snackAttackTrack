@@ -31,12 +31,10 @@
                 stat_name: "Inventory"
                 stat_value_1: "-1 Snacks"
                 stat_value_2: "-1 Credits"
-            DoubleHeaderValueStatWidget:
-                id: gambling_stats
-                stat_name_1: "Gambling wagers"
-                stat_value_1: "-1 Credits"
-                stat_name_2: "Gambling returns"
-                stat_value_2: "-1 Credits"
+            SingleStatWidget:
+                id: topup_stats
+                stat_name: "Total Top-ups"
+                stat_value: "-1 Credits"
             DoubleStatWidget:
                 id: lost_stats
                 stat_name: "Lost/Stolen"
@@ -46,6 +44,12 @@
                 id: sold_stats
                 stat_name: "Sold"
                 stat_value_1: "-1 Snacks"
+                stat_value_2: "-1 Credits"
+            DoubleHeaderValueStatWidget:
+                id: gambling_stats
+                stat_name_1: "Gambling wagers"
+                stat_value_1: "-1 Credits"
+                stat_name_2: "Gambling returns"
                 stat_value_2: "-1 Credits"
             SingleStatWidget:
                 id: profit_stat

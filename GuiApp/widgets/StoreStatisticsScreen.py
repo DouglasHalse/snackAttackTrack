@@ -35,6 +35,16 @@ class StoreStatisticsScreen(GridLayoutScreen):
             f"{value_of_snacks_in_inventory:.2f} Credits"
         )
 
+        # Calculate total accumulated top-ups
+        total_topups = 0.0
+        topup_transactions = self.manager.database.getAllTopUpTransactions()
+        for transaction in topup_transactions:
+            total_topups += (
+                transaction.amountAfterTransaction - transaction.amountBeforeTransaction
+            )
+
+        self.ids.topup_stats.stat_value = f"{total_topups:.2f} Credits"
+
         number_of_sold_snacks = 0
         store_revenue = 0.0
         gambling_revenue = 0.0
