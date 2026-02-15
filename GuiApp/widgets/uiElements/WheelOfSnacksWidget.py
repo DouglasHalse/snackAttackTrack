@@ -104,12 +104,78 @@ class WheelWidget(Widget):
         instruction_group = InstructionGroup()
 
         # Precompute positions and sizes
-        slice_width = 360 / len(snacks)
-
         cx, cy = self.center_x, self.center_y
         w, h = self.width, self.height
         half_w, half_h = w / 2, h / 2
         line_width = self.width / 100
+
+        # Create simple empty circle if no snacks
+        if len(snacks) < 2:
+            instruction_group.add(Color(8 / 255, 127 / 255, 140 / 255, 1))
+            instruction_group.add(
+                Ellipse(
+                    pos=(
+                        self.center_x - self.width / 2,
+                        self.center_y - self.height / 2,
+                    ),
+                    size=self.size,
+                )
+            )
+            # Border color
+            instruction_group.add(Color(1, 1, 1, 1))
+
+            # Create rounded outer border
+            instruction_group.add(
+                SmoothLine(
+                    circle=(
+                        self.center_x,
+                        self.center_y,
+                        self.width / 2,
+                        0,
+                        360,
+                    ),
+                    width=line_width,
+                )
+            )
+
+            # Rotate label based on current rotation
+            instruction_group.add(
+                Rotate(
+                    angle=-(self.angle % 360),
+                    axis=(0, 0, 1),
+                    origin=(self.center_x, self.center_y),
+                )
+            )
+
+            # No snacks selected text in the middle
+            labelTexture = self.get_label_texture(
+                "Select two snacks to spin", font_size
+            )
+            instruction_group.add(
+                Rectangle(
+                    texture=labelTexture,
+                    size=list(labelTexture.size),
+                    pos=(
+                        self.center_x - labelTexture.width / 2,
+                        self.center_y - labelTexture.height / 2,
+                    ),
+                )
+            )
+
+            # Restore rotation
+            instruction_group.add(
+                Rotate(
+                    angle=(self.angle % 360),
+                    axis=(0, 0, 1),
+                    origin=(self.center_x, self.center_y),
+                )
+            )
+
+            self._saved_instruction_groups[cache_key] = instruction_group
+            self.canvas.add(instruction_group)
+            return
+
+        slice_width = 360 / len(snacks)
 
         availableColors = self.get_slice_colors(len(snacks))
 
@@ -297,10 +363,16 @@ class WheelOfSnacksWidget(AnchorLayout):
             self.ids.wheel.clear_cache()
 
         self.snacks = snacks
-        self.sliceWidth = 360 / len(self.snacks)
+        self.sliceWidth = 360 / len(self.snacks) if self.snacks else 360
         self.border_angles = [
             self.sliceWidth * self.snacks.index(snack) for snack in self.snacks
         ]
+
+        # Update the wheel with new snacks immediately
+        self.schedule_wheel_update(None, None)
+
+        # Update angle to ensure cursor tilts correctly with new slice width and border angles
+        self.on_wheel_angle(None, self.wheel_angle)
 
     def map_from_to(self, x, a, b, c, d):
         y = (x - a) / (b - a) * (d - c) + c
