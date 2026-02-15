@@ -16,6 +16,10 @@
     image_path: 'Images/user.png'
     text: 'Edit users'
 
+<SalesHistoryOption>:
+    image_path: 'Images/time-past.png'
+    text: 'Sales history'
+
 <AdminScreen>:
     rows: 2
     cols: 1
@@ -30,19 +34,40 @@
             Rectangle:
                 pos: self.pos
                 size: self.size
-        rows: 2
-        cols: 2
+        rows: 1
+        cols: 1
         padding: 30
         spacing: 30
-        SystemSettingsOption:
-            id: systemSettingsOption
-            on_release: root.onSystemSettingsButtonPressed
-        EditSnacksOption:
-            id: editSnacksOption
-            on_release: root.onEditSnacksButtonPressed
-        StoreStatsOption:
-            id: storeStatsOption
-            on_release: root.onStoreStatsButtonPressed
-        EditUsersOption:
-            id: editUsersOption
-            on_release: root.onEditUsersButtonPressed
+        GridLayout:
+            rows: 2
+            cols: 3
+            spacing: 30
+            SystemSettingsOption:
+                id: systemSettingsOption
+                on_release: root.onSystemSettingsButtonPressed
+            EditSnacksOption:
+                id: editSnacksOption
+                on_release: root.onEditSnacksButtonPressed
+            StoreStatsOption:
+                id: storeStatsOption
+                on_release: root.onStoreStatsButtonPressed
+            EditUsersOption:
+                id: editUsersOption
+                on_release: root.onEditUsersButtonPressed
+            SalesHistoryOption:
+                id: salesHistoryOption
+                on_release: root.onSalesHistoryButtonPressed
+            Widget:
+                # Empty space for layout symmetry
+        AnchorLayout:
+            anchor_x: 'right'
+            anchor_y: 'bottom'
+            Button:
+                id: aboutButton
+                text: 'About'
+                size_hint: None, None
+                width: '120dp'
+                height: '50dp'
+                background_color: app.colors["button"]
+                color: 'black'
+                bold: True
