@@ -1,0 +1,93 @@
+#:kivy 2.1.0
+
+<LowInventoryAlertPopup>:
+    size_hint: (0.7, 0.8)
+    auto_dismiss: False
+    GridLayout:
+        canvas:
+            Color:
+                rgba: app.colors["secondary_background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        cols: 1
+        padding: 20
+        spacing: 15
+        
+        # Title
+        Label:
+            text: "⚠️ Low Inventory Alert"
+            font_size: self.height / 2
+            size_hint_y: 0.1
+            bold: True
+            color: 1, 0.7, 0, 1
+        
+        # Description
+        Label:
+            text: "The following snacks are running low on stock:"
+            font_size: self.height / 2.5
+            size_hint_y: 0.08
+            color: 1, 1, 1, 1
+        
+        # Scrollable list of low inventory snacks
+        ScrollView:
+            size_hint_y: 0.67
+            do_scroll_x: False
+            do_scroll_y: True
+            
+            GridLayout:
+                cols: 1
+                spacing: 5
+                size_hint_y: None
+                height: self.minimum_height
+                padding: [10, 0]
+                
+                # Header row
+                GridLayout:
+                    cols: 3
+                    size_hint_y: None
+                    height: 40
+                    spacing: 10
+                    
+                    Label:
+                        text: "Snack Name"
+                        font_size: self.height / 2.2
+                        bold: True
+                        color: app.colors["orange_button"]
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.size
+                    
+                    Label:
+                        text: "Quantity"
+                        font_size: self.height / 2.2
+                        bold: True
+                        color: app.colors["orange_button"]
+                        halign: "center"
+                        valign: "middle"
+                        text_size: self.size
+                    
+                    Label:
+                        text: "Price"
+                        font_size: self.height / 2.2
+                        bold: True
+                        color: app.colors["orange_button"]
+                        halign: "right"
+                        valign: "middle"
+                        text_size: self.size
+                
+                # Snack entries container
+                GridLayout:
+                    id: snack_container
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: 3
+        
+        # OK Button
+        Button:
+            text: "OK"
+            font_size: self.height / 2.5
+            size_hint_y: 0.1
+            background_color: app.colors["button"]
+            on_release: root.on_dismiss_pressed()
