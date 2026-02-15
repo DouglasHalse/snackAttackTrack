@@ -1,5 +1,6 @@
 import kivy.core.text
 from kivy.clock import Clock
+from kivy.properties import BooleanProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -27,13 +28,19 @@ class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
     entryContents = None
     columnProportions = None
     entryIdentifier = None
+    selected = BooleanProperty(True)
     index = None
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.opacity = 1
 
     def refresh_view_attrs(self, rv, index, data):
         self.clickableTable = data["clickableTable"]
         self.entryContents = data["entryContents"]
         self.columnProportions = data["columnProportions"]
         self.entryIdentifier = data["entryIdentifier"]
+        self.selected = data["selected"]
         self.index = index
 
         # If the entry has children, then we can reuse them
@@ -65,6 +72,9 @@ class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
         Call the onEntryPressed function of the clickableTable with the entryIdentifier of the pressed entry on the table
         """
         self.clickableTable.onEntryPressed(self.entryIdentifier)
+
+    def on_selected(self, instance, value):
+        self.opacity = 1 if value else 0.5
 
 
 class ClickableTable(GridLayout):
@@ -150,6 +160,7 @@ class ClickableTable(GridLayout):
                 "entryContents": entryContents,
                 "columnProportions": self.columnProportions,
                 "entryIdentifier": entryIdentifier,
+                "selected": True,
             }
         )
 
@@ -170,6 +181,94 @@ class ClickableTable(GridLayout):
             if entry["entryIdentifier"] == entryIdentifier:
                 return True
         return False
+
+    def getEntries(self):
+        """
+        Get a list of all entries in the table
+
+        Returns: list[entryIdentifier]
+            A list of all entryIdentifiers of the entries in the table
+        """
+        if not self.is_kv_posted:
+            return [eid for _, eid in self.entries_to_add_after_kv_post]
+
+        return [entry["entryIdentifier"] for entry in self.ids["rw"].data]
+
+    def toggleSelected(self, entryIdentifier, selected=None):
+        """
+        Toggle the selected state of an entry in the table
+
+        entryIdentifier: any
+            The identifier of the entry to toggle
+        selected: bool or None
+            The new selected state of the entry. If None, the selected state will be toggled
+        """
+        if not self.is_kv_posted:
+            for i, (entryContents, eid) in enumerate(self.entries_to_add_after_kv_post):
+                if eid == entryIdentifier:
+                    currentSelected = (
+                        self.entries_to_add_after_kv_post[i][2]
+                        if len(self.entries_to_add_after_kv_post[i]) > 2
+                        else False
+                    )
+                    newSelected = not currentSelected if selected is None else selected
+                    self.entries_to_add_after_kv_post[i] = (
+                        entryContents,
+                        eid,
+                        newSelected,
+                    )
+                    return
+            raise ValueError(f"Entry with identifier {entryIdentifier} not found")
+
+        for entry in self.ids["rw"].data:
+            if entry["entryIdentifier"] == entryIdentifier:
+                currentSelected = entry.get("selected", False)
+                entry["selected"] = (
+                    not currentSelected if selected is None else selected
+                )
+                self.ids["rw"].refresh_from_data()
+                return
+        raise ValueError(f"Entry with identifier {entryIdentifier} not found")
+
+    def getSelectedEntries(self):
+        """
+        Get a list of all selected entries in the table
+
+        Returns: list[entryIdentifier]
+            A list of all entryIdentifiers of the selected entries in the table
+        """
+        if not self.is_kv_posted:
+            return [
+                eid
+                for entryContents, eid, selected in self.entries_to_add_after_kv_post
+                if selected
+            ]
+
+        return [
+            entry["entryIdentifier"]
+            for entry in self.ids["rw"].data
+            if entry.get("selected", False)
+        ]
+
+    def getUnselectedEntries(self):
+        """
+        Get a list of all unselected entries in the table
+
+        Returns: list[entryIdentifier]
+            A list of all entryIdentifiers of the unselected entries in the table
+        """
+        if not self.is_kv_posted:
+            return [
+                eid
+                for entryContents, eid, selected in self.entries_to_add_after_kv_post
+                if not selected
+            ]
+
+        return [
+            entry["entryIdentifier"]
+            for entry in self.ids["rw"].data
+            if not entry.get("selected", False)
+        ]
 
     def removeEntry(self, entryIdentifier):
         """
