@@ -13,12 +13,25 @@ class EditSnackScreen(GridLayoutScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
+        self.added_snack_popup = None
+        self.remove_snack_confirmation_popup = None
+        self.remove_snack_reason_popup = None
 
     def on_back_button_pressed(self, *args):
         self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
 
     def on_leave(self, *args):
         self.snack_to_edit = None
+        if self.added_snack_popup:
+            self.added_snack_popup.dismiss()
+            self.added_snack_popup = None
+        if self.remove_snack_confirmation_popup:
+            self.remove_snack_confirmation_popup.dismiss()
+            self.remove_snack_confirmation_popup = None
+        if self.remove_snack_reason_popup:
+            self.remove_snack_reason_popup.dismiss()
+            self.remove_snack_reason_popup = None
+
         super().on_leave(*args)
 
     def on_snack_to_edit(self, _, value):
@@ -59,7 +72,7 @@ class EditSnackScreen(GridLayoutScreen):
             return
 
         if newSnackQuantity < self.snack_to_edit.quantity:
-            popup = RemovalReasonPopup()
+            self.remove_snack_reason_popup = RemovalReasonPopup()
 
             def on_reason_selected(_, reason: LostSnackReason):
                 quantity_removed = self.snack_to_edit.quantity - newSnackQuantity
@@ -72,11 +85,11 @@ class EditSnackScreen(GridLayoutScreen):
                 )
                 self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
 
-            popup.bind(on_selection=on_reason_selected)
-            popup.open()
+            self.remove_snack_reason_popup.bind(on_selection=on_reason_selected)
+            self.remove_snack_reason_popup.open()
         elif newSnackQuantity > self.snack_to_edit.quantity:
 
-            added_snack_popup = AddedSnackPricePopup()
+            self.added_snack_popup = AddedSnackPricePopup()
 
             def on_price_confirmed(_, total_added_value: float):
                 quantity_added = newSnackQuantity - self.snack_to_edit.quantity
@@ -87,8 +100,8 @@ class EditSnackScreen(GridLayoutScreen):
                 )
                 self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
 
-            added_snack_popup.bind(on_selection=on_price_confirmed)
-            added_snack_popup.open()
+            self.added_snack_popup.bind(on_selection=on_price_confirmed)
+            self.added_snack_popup.open()
         else:
             self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
 
@@ -112,7 +125,7 @@ class EditSnackScreen(GridLayoutScreen):
 
     def onRemove(self):
         def on_removed_callback(*args):
-            removalReasonPopup = RemovalReasonPopup()
+            self.remove_snack_reason_popup = RemovalReasonPopup()
 
             def on_reason_selected(_, reason: LostSnackReason):
                 quantity_removed = self.snack_to_edit.quantity
@@ -128,11 +141,11 @@ class EditSnackScreen(GridLayoutScreen):
                     "editSnacksScreen", transitionDirection="right"
                 )
 
-            removalReasonPopup.bind(on_selection=on_reason_selected)
-            removalReasonPopup.open()
+            self.remove_snack_reason_popup.bind(on_selection=on_reason_selected)
+            self.remove_snack_reason_popup.open()
 
-        RemovalConfirmationPopup = RemoveConfirmationPopup(
+        self.remove_snack_confirmation_popup = RemoveConfirmationPopup(
             question_text=f"Are you sure you want to remove {self.snack_to_edit.snackName}?",
         )
-        RemovalConfirmationPopup.bind(on_removed=on_removed_callback)
-        RemovalConfirmationPopup.open()
+        self.remove_snack_confirmation_popup.bind(on_removed=on_removed_callback)
+        self.remove_snack_confirmation_popup.open()
