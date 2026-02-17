@@ -109,3 +109,32 @@ async def app_on_add_snack_screen(app):
     assert app.screenManager.current == "addSnackScreen"
 
     return app
+
+
+@pytest_asyncio.fixture
+async def app_on_edit_snack_screen(app):
+
+    assert app.screenManager.current == "splashScreen"
+
+    assert app.screenManager.database.getPatronIdByCardId(555555555) is not None
+
+    app.screenManager.RFIDReader.triggerFakeRead(card_id=555555555)
+
+    assert app.screenManager.current == "mainUserPage"
+
+    app.screenManager.current_screen.ids.header.settings_button.dispatch("on_release")
+
+    assert app.screenManager.current == "adminScreen"
+
+    app.screenManager.current_screen.ids.editSnacksOption.dispatch("on_release")
+
+    assert app.screenManager.current == "editSnacksScreen"
+
+    snacks = app.screenManager.database.getAllSnacks()
+    assert len(snacks) > 0
+
+    app.screenManager.current_screen.onEntryPressed(identifier=snacks[0].snackId)
+
+    assert app.screenManager.current == "editSnackScreen"
+
+    return app
