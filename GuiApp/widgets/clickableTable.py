@@ -70,7 +70,9 @@ class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
         # to avoid the entry being visible outside of table
         # TODO: Find a better solution for this in #311
         self.opacity = 0
-        Clock.schedule_once(lambda dt: setattr(self, "opacity", 1), 0)
+        Clock.schedule_once(
+            lambda dt: setattr(self, "opacity", 1 if self.selected else 0.5), 0
+        )
 
         super().refresh_view_attrs(rv, index, data)
 
