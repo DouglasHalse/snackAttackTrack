@@ -65,6 +65,13 @@ class ClickableTableEntry(RecycleDataViewBehavior, BoxLayoutButton):
                         size_hint_x=columnProportion,
                     )
                 )
+
+        # Work around to reset the opacity of the entry when it is refreashed
+        # to avoid the entry being visible outside of table
+        # TODO: Find a better solution for this in #311
+        self.opacity = 0
+        Clock.schedule_once(lambda dt: setattr(self, "opacity", 1), 0)
+
         super().refresh_view_attrs(rv, index, data)
 
     def onPress(self, *largs):
