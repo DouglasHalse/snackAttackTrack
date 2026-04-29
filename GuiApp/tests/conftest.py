@@ -4,6 +4,7 @@ import os
 import pytest_asyncio
 from kivy.core.window import Window
 
+from app_types import Credits
 from GuiApp.main import snackAttackTrackApp
 from GuiApp.widgets.editSnacksScreen import EditSnacksScreen
 
@@ -63,22 +64,28 @@ async def app_with_nothing():
 @pytest_asyncio.fixture
 async def app_with_only_users(app_with_nothing):
     app_with_nothing.screenManager.database.addPatron(
-        first_name="User1FirstName", last_name="User1LastName", employee_id=987654321
+        first_name="User1FirstName", last_name="User1LastName", employee_id="987654321"
     )
     app_with_nothing.screenManager.database.addPatron(
-        first_name="User2FirstName", last_name="User2LastName", employee_id=123456789
+        first_name="User2FirstName", last_name="User2LastName", employee_id="123456789"
     )
     app_with_nothing.screenManager.database.addPatron(
-        first_name="User3FirstName", last_name="User3LastName", employee_id=555555555
+        first_name="User3FirstName", last_name="User3LastName", employee_id="555555555"
     )
     return app_with_nothing
 
 
 @pytest_asyncio.fixture
 async def app(app_with_only_users):
-    app_with_only_users.screenManager.database.addSnack("Snack1", 42, "TestImage1", 10)
-    app_with_only_users.screenManager.database.addSnack("Snack2", 5, "TestImage2", 12)
-    app_with_only_users.screenManager.database.addSnack("Snack3", 16, "TestImage3", 15)
+    app_with_only_users.screenManager.database.addSnack(
+        "Snack1", 42, "TestImage1", Credits("10.00")
+    )
+    app_with_only_users.screenManager.database.addSnack(
+        "Snack2", 5, "TestImage2", Credits("12.00")
+    )
+    app_with_only_users.screenManager.database.addSnack(
+        "Snack3", 16, "TestImage3", Credits("15.00")
+    )
 
     return app_with_only_users
 
@@ -88,9 +95,9 @@ async def app_on_add_snack_screen(app):
 
     assert app.screenManager.current == "splashScreen"
 
-    assert app.screenManager.database.getPatronIdByCardId(555555555) is not None
+    assert app.screenManager.database.getPatronIdByCardId("555555555") is not None
 
-    app.screenManager.RFIDReader.triggerFakeRead(card_id=555555555)
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="555555555")
 
     assert app.screenManager.current == "mainUserPage"
 
@@ -116,9 +123,9 @@ async def app_on_edit_snack_screen(app):
 
     assert app.screenManager.current == "splashScreen"
 
-    assert app.screenManager.database.getPatronIdByCardId(555555555) is not None
+    assert app.screenManager.database.getPatronIdByCardId("555555555") is not None
 
-    app.screenManager.RFIDReader.triggerFakeRead(card_id=555555555)
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="555555555")
 
     assert app.screenManager.current == "mainUserPage"
 

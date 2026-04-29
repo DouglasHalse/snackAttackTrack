@@ -54,9 +54,13 @@ class snackAttackTrackApp(App):
         database_path="database.db",
     ):
         self.title = "Snack Attack Track"
-        self.settingsManager = self.create_settings_manager(settings_path)
-        self.database = DatabaseConnector(database_path=database_path)
-        self.screenManager = CustomScreenManager(
+        self.settingsManager: SettingsManager = self.create_settings_manager(
+            settings_path
+        )
+        self.database: DatabaseConnector = DatabaseConnector(
+            database_path=database_path
+        )
+        self.screenManager: CustomScreenManager = CustomScreenManager(
             settingsManager=self.settingsManager, database=self.database
         )
 

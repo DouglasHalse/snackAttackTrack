@@ -1,4 +1,4 @@
-from database import TransactionType, transactionTypeToPresentableString
+from app_types import TransactionType, transactionTypeToPresentableString
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.editSummaryPopup import EditSummaryPopup
 from widgets.popups.gambleSummaryPopup import GambleSummaryPopup

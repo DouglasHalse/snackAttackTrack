@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from app_types import Credits
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
 from widgets.popups.WinPopup import WinPopup
@@ -69,9 +70,8 @@ class WheelOfSnacksScreen(GridLayoutScreen):
         ]
 
     def caluclate_cost_to_spin(self, selected_snacks):
-        return round(
-            sum(s.pricePerItem for s in selected_snacks) / len(selected_snacks), 2
-        )
+        total = sum(s.pricePerItem for s in selected_snacks)
+        return Credits(total / len(selected_snacks))
 
     def update_price_label(self):
         selected_snacks = self.get_selected_snacks()

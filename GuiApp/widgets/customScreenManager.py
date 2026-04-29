@@ -1,4 +1,4 @@
-from database import UserData
+from app_types import UserData
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, StringProperty

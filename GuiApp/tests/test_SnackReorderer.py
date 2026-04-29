@@ -1,5 +1,6 @@
 import pytest
 
+from app_types import Credits
 from GuiApp.database import SnackData
 from GuiApp.snackReorderer import SnackReorderer
 
@@ -15,21 +16,21 @@ def snacks():
             snackName="snack1",
             quantity=1,
             imageID="image1",
-            pricePerItem=1.0,
+            pricePerItem=Credits("1.00"),
         ),
         SnackData(
             snackId=2,
             snackName="snack2",
             quantity=2,
             imageID="image2",
-            pricePerItem=2.0,
+            pricePerItem=Credits("2.00"),
         ),
         SnackData(
             snackId=3,
             snackName="snack3",
             quantity=3,
             imageID="image3",
-            pricePerItem=3.0,
+            pricePerItem=Credits("3.00"),
         ),
     ]
 

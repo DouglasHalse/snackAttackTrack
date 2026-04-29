@@ -1,7 +1,7 @@
 import asyncio
-
 import pytest
 
+from app_types import Credits
 from GuiApp.widgets.editSnacksScreen import EditSnacksScreen
 
 
@@ -90,7 +90,7 @@ async def test_edit_snacks_screen_refresh(app):
     await asyncio.sleep(0.1)
 
     # Add a new snack
-    app.screenManager.database.addSnack("NewSnack", 10, "test.png", 15)
+    app.screenManager.database.addSnack("NewSnack", 10, "test.png", Credits("15.00"))
 
     # Navigate back to edit snacks screen
     app.screenManager.current = "editSnacksScreen"

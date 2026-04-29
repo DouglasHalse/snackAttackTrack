@@ -1,3 +1,5 @@
+from decimal import InvalidOperation
+from app_types import Credits
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.uiElements.textInputs import TextInputPopup
@@ -41,11 +43,12 @@ class TopUpAmountScreen(GridLayoutScreen):
         self.ids.creditsToAdd.text = f"{amount:.2f}"
 
     def updateCreditsAfterwards(self, instance, text):
-        currentCredits = float(self.ids.creditsCurrent.text)
+        userData = self.manager.getCurrentPatron()
+        currentCredits = userData.totalCredits
         try:
-            creditsToAdd = float(self.ids.creditsToAdd.text)
-        except ValueError:
-            creditsToAdd = 0.0
+            creditsToAdd = Credits(self.ids.creditsToAdd.text)
+        except InvalidOperation:
+            creditsToAdd = Credits("0.00")
 
         newTotal = currentCredits + creditsToAdd
         self.ids.creditsAfterwards.text = f"{newTotal:.2f}"
@@ -53,16 +56,16 @@ class TopUpAmountScreen(GridLayoutScreen):
     def onContinue(self, *largs):
 
         try:
-            creditsToAdd = float(self.ids.creditsToAdd.text)
-        except ValueError:
+            creditsToAdd = Credits(self.ids.creditsToAdd.text)
+        except InvalidOperation:
             ErrorMessagePopup(errorMessage="Credits must be a number").open()
             return
 
-        if creditsToAdd < 0.0:
+        if creditsToAdd < Credits("0.00"):
             ErrorMessagePopup(errorMessage="Cannot add negative amount").open()
             return
 
-        if creditsToAdd < 1.0:
+        if creditsToAdd < Credits("1.00"):
             ErrorMessagePopup(errorMessage="Minimum amount is 1.0 Credits").open()
             return
 

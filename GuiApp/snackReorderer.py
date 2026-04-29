@@ -1,4 +1,4 @@
-from database import SnackData
+from app_types import SnackData
 
 
 class SnackReorderer:

@@ -1,4 +1,4 @@
-from database import TransactionType
+from app_types import TransactionType, Credits
 from kivy.app import App
 from widgets.GridLayoutScreen import GridLayoutScreen
 
@@ -25,7 +25,7 @@ class UserStatisticsScreen(GridLayoutScreen):
 
         transactions = self.manager.database.getTransactions(logged_in_user.patronId)
 
-        total_credits_spent = 0.0
+        total_credits_spent = Credits("0.00")
         total_snacks_purchased = 0
         total_snacks_won = 0
         favorite_snack = "N/A"

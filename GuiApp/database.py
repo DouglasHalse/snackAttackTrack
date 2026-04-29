@@ -1,74 +1,15 @@
 import sqlite3
 from datetime import datetime
-from enum import Enum
 
-
-class TransactionType(Enum):
-    PURCHASE = "PURCHASE"
-    TOP_UP = "TOP_UP"
-    EDIT = "EDIT"
-    GAMBLE = "GAMBLE"
-
-
-class LostSnackReason(Enum):
-    STOLEN = 1
-    EXPIRED = 2
-    DAMAGED = 3
-
-
-def transactionTypeToPresentableString(transactionType: TransactionType) -> str:
-    if transactionType == TransactionType.PURCHASE:
-        return "Purchase"
-    if transactionType == TransactionType.TOP_UP:
-        return "Top-up"
-    if transactionType == TransactionType.EDIT:
-        return "Edit"
-    if transactionType == TransactionType.GAMBLE:
-        return "Gamble"
-    return "Unknown"
-
-
-class UserData:
-    def __init__(self, patronId, firstName, lastName, employeeID, totalCredits):
-        self.patronId = patronId
-        self.firstName = firstName
-        self.lastName = lastName
-        self.employeeID = employeeID
-        self.totalCredits = totalCredits
-
-
-class SnackData:
-    def __init__(
-        self,
-        snackId: int,
-        snackName: str,
-        quantity: int,
-        imageID: str,
-        pricePerItem: float,
-    ):
-        self.snackId: int = snackId
-        self.snackName: str = snackName
-        self.quantity: int = quantity
-        self.imageID: str = imageID
-        self.pricePerItem: float = pricePerItem
-
-
-class HistoryData:
-    def __init__(
-        self,
-        transactionId: int,
-        transactionType: TransactionType,
-        transactionDate: datetime,
-        amountBeforeTransaction: float,
-        amountAfterTransaction: float,
-        transactionItems: list[SnackData],
-    ):
-        self.transactionId: int = transactionId
-        self.transactionType: TransactionType = transactionType
-        self.transactionDate: datetime = transactionDate
-        self.amountBeforeTransaction: float = amountBeforeTransaction
-        self.amountAfterTransaction: float = amountAfterTransaction
-        self.transactionItems: list[SnackData] = transactionItems
+from DatabaseMigrator import DatabaseMigrator
+from app_types import (
+    Credits,
+    HistoryData,
+    LostSnackReason,
+    SnackData,
+    TransactionType,
+    UserData,
+)
 
 
 # Disable too-many-public-methods for database class
@@ -79,6 +20,11 @@ class DatabaseConnector:
     def __init__(self, database_path: str = "database.db"):
         self.connection = sqlite3.connect(database_path)
         self.cursor = self.connection.cursor()
+        if DatabaseMigrator.needs_migration(cursor=self.cursor):
+            print("Database migration needed. Migrating database...")
+            DatabaseMigrator.migrate_database(
+                connection=self.connection, cursor=self.cursor
+            )
         self.createAllTables()
 
     def close(self):
@@ -91,44 +37,44 @@ class DatabaseConnector:
             # FirstName is the user's first name
             # LastName is the user's last name
             # EmployeeID is the user's employee ID
-            # TotalCredits is the user's total credits
+            # TotalCredits is the user's total credits in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS Patrons (
                 PatronID INTEGER PRIMARY KEY AUTOINCREMENT,
                 FirstName TEXT NOT NULL,
                 LastName TEXT NOT NULL,
                 EmployeeID TEXT NOT NULL,
-                TotalCredits REAL NOT NULL DEFAULT 0
+                TotalCredits INTEGER NOT NULL DEFAULT 0
             );
             """,
             # Table of all the snacks currently available for purchase
             # ItemName is name of the snack
             # Quantity is the number of snacks available for purchase
             # ImageID is the ID of the snack's image (unused)
-            # PricePerItem is the price of a single snack
+            # PricePerItem is the price of a single snack in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS Snacks (
                 ItemID INTEGER PRIMARY KEY AUTOINCREMENT,
                 ItemName TEXT NOT NULL,
                 Quantity INTEGER NOT NULL,
                 ImageID TEXT NOT NULL,
-                PricePerItem REAL NOT NULL
+                PricePerItem INTEGER NOT NULL
             );
             """,
             # Table of all the transactions that have occurred
             # TransactionType is one of TransactionType enum
             # PatronID references Patrons.PatronID
             # TransactionDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
-            # AmountBeforeTransaction is the amount of credits the patron had before the transaction
-            # AmountAfterTransaction is the amount of credits the patron had after the transaction
+            # AmountBeforeTransaction is the amount of credits the patron had before the transaction in hundreths of a credit (integer)
+            # AmountAfterTransaction is the amount of credits the patron had after the transaction in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS Transactions (
                 TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
                 TransactionType TEXT NOT NULL,
                 PatronID INTEGER NOT NULL, 
                 TransactionDate TEXT NOT NULL, 
-                AmountBeforeTransaction REAL NOT NULL, 
-                AmountAfterTransaction REAL NOT NULL,
+                AmountBeforeTransaction INTEGER NOT NULL, 
+                AmountAfterTransaction INTEGER NOT NULL,
                 FOREIGN KEY(PatronID) REFERENCES Patrons(PatronID)
             );
             """,
@@ -136,14 +82,14 @@ class DatabaseConnector:
             # TransactionID references Transactions.TransactionID
             # ItemName references Snacks.ItemName
             # Quantity is the number of items of this type in the transaction
-            # PricePerItem is the price of a single item of this type
+            # PricePerItem is the price of a single item of this type in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS TransactionItems (
                 TransactionItemId INTEGER PRIMARY KEY AUTOINCREMENT,
                 TransactionID INTEGER NOT NULL,
                 ItemName TEXT NOT NULL,
                 Quantity INTEGER NOT NULL,
-                PricePerItem REAL NOT NULL,
+                PricePerItem INTEGER NOT NULL,
                 FOREIGN KEY(TransactionID) REFERENCES Transactions(TransactionID)
             );
             """,
@@ -151,14 +97,14 @@ class DatabaseConnector:
             # SnackName references Snacks.ItemName
             # AddedDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
             # Quantity is the number of snacks added
-            # Value is the total value of the added snacks
+            # Value is the total value of the added snacks in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS AddedSnacks (
                 AddedID INTEGER PRIMARY KEY AUTOINCREMENT,
                 SnackName TEXT NOT NULL,
                 AddedDate TEXT NOT NULL,
                 Quantity INTEGER NOT NULL,
-                Value REAL NOT NULL
+                Value INTEGER NOT NULL
             );
             """,
             # Table of all snacks cosidered stolen or lost
@@ -166,7 +112,7 @@ class DatabaseConnector:
             # Reason references LostSnackReason enum
             # LostDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
             # Quantity is the number of snacks lost
-            # Value is the total value of the lost snacks
+            # Value is the total value of the lost snacks in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS LostSnacks (
                 LostID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -174,7 +120,14 @@ class DatabaseConnector:
                 Reason INTEGER NOT NULL,
                 LostDate TEXT NOT NULL,
                 Quantity INTEGER NOT NULL,
-                Value REAL NOT NULL
+                Value INTEGER NOT NULL
+            );
+            """,
+            # Table to store settings, including the current schema version for database migration purposes
+            """
+            CREATE TABLE IF NOT EXISTS settings (
+                name TEXT PRIMARY KEY,
+                value TEXT NOT NULL
             );
             """,
         ]
@@ -183,6 +136,13 @@ class DatabaseConnector:
             self.cursor.execute(query)
 
         self.connection.commit()
+
+        if DatabaseMigrator.get_stored_database_version(self.cursor) == 1:
+            self.cursor.execute(
+                "INSERT OR IGNORE INTO settings (name, value) VALUES ('schema_version', ?)",
+                (DatabaseMigrator.CURRENT_SCHEMA_VERSION,),
+            )
+            self.connection.commit()
 
     def clear_lost_snacks(self):
         """Remove all rows from LostSnacks."""
@@ -208,10 +168,11 @@ class DatabaseConnector:
         snack_name: str,
         reason: LostSnackReason,
         quantity: int,
-        total_value: float,
+        total_value: Credits,
     ):
+        assert isinstance(snack_name, str)
         assert isinstance(quantity, int)
-        assert isinstance(total_value, float)
+        assert isinstance(total_value, Credits)
         assert isinstance(reason, LostSnackReason)
         assert reason in LostSnackReason
 
@@ -227,7 +188,7 @@ class DatabaseConnector:
                 reason.value,
                 lost_date_str,
                 quantity,
-                float(total_value),
+                total_value.to_hundredths(),
             ),
         )
         self.connection.commit()
@@ -237,10 +198,11 @@ class DatabaseConnector:
         self,
         snack_name: str,
         quantity: int,
-        value: float,
+        value: Credits,
     ):
+        assert isinstance(snack_name, str)
         assert isinstance(quantity, int)
-        assert isinstance(value, float)
+        assert isinstance(value, Credits)
 
         added_date = datetime.now()
         added_date_str = added_date.strftime("%Y-%m-%d %H:%M:%S.%f")
@@ -253,19 +215,19 @@ class DatabaseConnector:
                 snack_name,
                 added_date_str,
                 quantity,
-                float(value),
+                value.to_hundredths(),
             ),
         )
         self.connection.commit()
         return self.cursor.lastrowid
 
-    def get_value_of_added_snacks(self) -> float:
+    def get_value_of_added_snacks(self) -> Credits:
         self.cursor.execute("SELECT SUM(Value) FROM AddedSnacks")
         sqlResult = self.cursor.fetchone()
         total_value = sqlResult[0]
         if total_value is None:
-            return 0.0
-        return float(total_value)
+            return Credits("0.00")
+        return Credits.from_hundredths(int(total_value))
 
     def get_total_snacks_added(self) -> int:
         self.cursor.execute("SELECT SUM(Quantity) FROM AddedSnacks")
@@ -275,13 +237,13 @@ class DatabaseConnector:
             return 0
         return int(total_snacks)
 
-    def get_value_of_lost_snacks(self) -> float:
+    def get_value_of_lost_snacks(self) -> Credits:
         self.cursor.execute("SELECT SUM(Value) FROM LostSnacks")
         sqlResult = self.cursor.fetchone()
         total_value = sqlResult[0]
         if total_value is None:
-            return 0.0
-        return float(total_value)
+            return Credits("0.00")
+        return Credits.from_hundredths(int(total_value))
 
     def get_total_snacks_lost(self) -> int:
         self.cursor.execute("SELECT SUM(Quantity) FROM LostSnacks")
@@ -294,15 +256,14 @@ class DatabaseConnector:
     def addGambleTransaction(
         self,
         patronID: int,
-        amountBeforeTransaction: float,
-        amountAfterTransaction: float,
-        transactionDate: str,
+        amountBeforeTransaction: Credits,
+        amountAfterTransaction: Credits,
+        transactionDate: datetime,
         transactionItem: SnackData,
     ):
-        # Verify data types
         assert isinstance(patronID, int)
-        assert isinstance(amountBeforeTransaction, float)
-        assert isinstance(amountAfterTransaction, float)
+        assert isinstance(amountBeforeTransaction, Credits)
+        assert isinstance(amountAfterTransaction, Credits)
         assert isinstance(transactionDate, datetime)
         assert isinstance(transactionItem, SnackData)
 
@@ -315,8 +276,8 @@ class DatabaseConnector:
                 TransactionType.GAMBLE.value,
                 patronID,
                 transactionDate,
-                amountBeforeTransaction,
-                amountAfterTransaction,
+                amountBeforeTransaction.to_hundredths(),
+                amountAfterTransaction.to_hundredths(),
             ),
         )
         transactionID = self.cursor.lastrowid
@@ -329,7 +290,7 @@ class DatabaseConnector:
                 transactionID,
                 transactionItem.snackName,
                 transactionItem.quantity,
-                transactionItem.pricePerItem,
+                transactionItem.pricePerItem.to_hundredths(),
             ),
         )
         self.connection.commit()
@@ -337,15 +298,14 @@ class DatabaseConnector:
     def addPurchaseTransaction(
         self,
         patronID: int,
-        amountBeforeTransaction: float,
-        amountAfterTransaction: float,
-        transactionDate: str,
+        amountBeforeTransaction: Credits,
+        amountAfterTransaction: Credits,
+        transactionDate: datetime,
         transactionItems: list[SnackData],
     ):
-        # Verify data types
         assert isinstance(patronID, int)
-        assert isinstance(amountBeforeTransaction, float)
-        assert isinstance(amountAfterTransaction, float)
+        assert isinstance(amountBeforeTransaction, Credits)
+        assert isinstance(amountAfterTransaction, Credits)
         assert isinstance(transactionDate, datetime)
         assert isinstance(transactionItems, list)
 
@@ -358,8 +318,8 @@ class DatabaseConnector:
                 TransactionType.PURCHASE.value,
                 patronID,
                 transactionDate,
-                amountBeforeTransaction,
-                amountAfterTransaction,
+                amountBeforeTransaction.to_hundredths(),
+                amountAfterTransaction.to_hundredths(),
             ),
         )
         transactionID = self.cursor.lastrowid
@@ -373,7 +333,7 @@ class DatabaseConnector:
                     transactionID,
                     transactionItem.snackName,
                     transactionItem.quantity,
-                    transactionItem.pricePerItem,
+                    transactionItem.pricePerItem.to_hundredths(),
                 ),
             )
         self.connection.commit()
@@ -381,10 +341,15 @@ class DatabaseConnector:
     def addTopUpTransaction(
         self,
         patronID: int,
-        amountBeforeTransaction: float,
-        amountAfterTransaction: float,
-        transactionDate: str,
+        amountBeforeTransaction: Credits,
+        amountAfterTransaction: Credits,
+        transactionDate: datetime,
     ):
+        assert isinstance(patronID, int)
+        assert isinstance(amountBeforeTransaction, Credits)
+        assert isinstance(amountAfterTransaction, Credits)
+        assert isinstance(transactionDate, datetime)
+
         self.cursor.execute(
             """
             INSERT INTO Transactions (TransactionType, PatronID, TransactionDate, AmountBeforeTransaction, AmountAfterTransaction)
@@ -394,8 +359,8 @@ class DatabaseConnector:
                 TransactionType.TOP_UP.value,
                 patronID,
                 transactionDate,
-                amountBeforeTransaction,
-                amountAfterTransaction,
+                amountBeforeTransaction.to_hundredths(),
+                amountAfterTransaction.to_hundredths(),
             ),
         )
         self.connection.commit()
@@ -403,14 +368,13 @@ class DatabaseConnector:
     def addEditTransaction(
         self,
         patronID: int,
-        amountBeforeTransaction: float,
-        amountAfterTransaction: float,
-        transactionDate: str,
+        amountBeforeTransaction: Credits,
+        amountAfterTransaction: Credits,
+        transactionDate: datetime,
     ):
-        # Verify data types
         assert isinstance(patronID, int)
-        assert isinstance(amountBeforeTransaction, float)
-        assert isinstance(amountAfterTransaction, float)
+        assert isinstance(amountBeforeTransaction, Credits)
+        assert isinstance(amountAfterTransaction, Credits)
         assert isinstance(transactionDate, datetime)
 
         self.cursor.execute(
@@ -422,32 +386,38 @@ class DatabaseConnector:
                 TransactionType.EDIT.value,
                 patronID,
                 transactionDate,
-                amountBeforeTransaction,
-                amountAfterTransaction,
+                amountBeforeTransaction.to_hundredths(),
+                amountAfterTransaction.to_hundredths(),
             ),
         )
         self.connection.commit()
 
     def getTransactionItems(self, transactionID: int) -> list[SnackData]:
+        assert isinstance(transactionID, int)
+
         self.cursor.execute(
             f"SELECT * FROM TransactionItems WHERE TransactionID = {transactionID}"
         )
         sqlResult = self.cursor.fetchall()
-        transactionItems = []
+        transactionItems: list[SnackData] = []
         for transactionItemEntry in sqlResult:
             itemName = transactionItemEntry[2]
             quantity = transactionItemEntry[3]
-            pricePerItem = transactionItemEntry[4]
+            pricePerItem = Credits.from_hundredths(transactionItemEntry[4])
             transactionItems.append(SnackData(-1, itemName, quantity, "", pricePerItem))
         return transactionItems
 
     def removeTransactionItems(self, transactionID: int):
+        assert isinstance(transactionID, int)
+
         self.cursor.execute(
             f"DELETE FROM TransactionItems WHERE TransactionID = {transactionID}"
         )
         self.connection.commit()
 
     def getTransactions(self, patronID: int) -> list[HistoryData]:
+        assert isinstance(patronID, int)
+
         self.cursor.execute(f"SELECT * FROM Transactions WHERE PatronID = {patronID}")
         sqlResult = self.cursor.fetchall()
         transactionList = []
@@ -455,8 +425,8 @@ class DatabaseConnector:
             transactionID = transactionEntry[0]
             transactionType = TransactionType(transactionEntry[1])
             transactionDate = transactionEntry[3]
-            amountBeforeTransaction = transactionEntry[4]
-            amountAfterTransaction = transactionEntry[5]
+            amountBeforeTransaction = Credits.from_hundredths(transactionEntry[4])
+            amountAfterTransaction = Credits.from_hundredths(transactionEntry[5])
             transactionItems = self.getTransactionItems(transactionID)
             parsedDatetime = datetime.strptime(transactionDate, "%Y-%m-%d %H:%M:%S.%f")
             transactionData = HistoryData(
@@ -471,6 +441,8 @@ class DatabaseConnector:
         return transactionList
 
     def getTransaction(self, transactionID: int) -> HistoryData:
+        assert isinstance(transactionID, int)
+
         self.cursor.execute(
             f"SELECT * FROM Transactions WHERE TransactionID = {transactionID}"
         )
@@ -478,8 +450,8 @@ class DatabaseConnector:
         transactionID = sqlResult[0]
         transactionType = TransactionType(sqlResult[1])
         transactionDate = sqlResult[3]
-        amountBeforeTransaction = sqlResult[4]
-        amountAfterTransaction = sqlResult[5]
+        amountBeforeTransaction = Credits.from_hundredths(sqlResult[4])
+        amountAfterTransaction = Credits.from_hundredths(sqlResult[5])
         transactionItems = self.getTransactionItems(transactionID)
         parsedDatetime = datetime.strptime(transactionDate, "%Y-%m-%d %H:%M:%S.%f")
         return HistoryData(
@@ -492,6 +464,8 @@ class DatabaseConnector:
         )
 
     def getTransactionIds(self, patronID: int):
+        assert isinstance(patronID, int)
+
         self.cursor.execute(
             f"SELECT TransactionID FROM Transactions WHERE PatronID = {patronID}"
         )
@@ -502,9 +476,8 @@ class DatabaseConnector:
         return transactionIds
 
     def getMostPurchasedSnacksByPatron(self, patronId: int) -> list[str]:
-        """
-        Get the most purchased snacks by a patron in descending order of quantity.
-        """
+        assert isinstance(patronId, int)
+
         self.cursor.execute(
             f"""
             SELECT ItemName, SUM(Quantity) as TotalQuantity
@@ -525,10 +498,16 @@ class DatabaseConnector:
         return mostPurchasedSnacks
 
     def removeTransactions(self, patronID: int):
+        assert isinstance(patronID, int)
+
         self.cursor.execute(f"DELETE FROM Transactions WHERE PatronID = {patronID}")
         self.connection.commit()
 
-    def addPatron(self, first_name, last_name, employee_id):
+    def addPatron(self, first_name: str, last_name: str, employee_id: str):
+        assert isinstance(first_name, str)
+        assert isinstance(last_name, str)
+        assert isinstance(employee_id, str)
+
         self.cursor.execute(
             """
             INSERT INTO Patrons (FirstName, LastName, EmployeeID)
@@ -547,12 +526,14 @@ class DatabaseConnector:
             firstName = userEntry[1]
             lastName = userEntry[2]
             employeeID = userEntry[3]
-            totalCredits = userEntry[4]
+            totalCredits = Credits.from_hundredths(userEntry[4])
             userData = UserData(patronId, firstName, lastName, employeeID, totalCredits)
             userDataList.append(userData)
         return userDataList
 
     def getPatronData(self, patronID: int) -> UserData:
+        assert isinstance(patronID, int)
+
         self.cursor.execute(f"SELECT * FROM Patrons WHERE PatronID = {patronID}")
         sqlResult = self.cursor.fetchone()
 
@@ -563,22 +544,30 @@ class DatabaseConnector:
         firstName = sqlResult[1]
         lastName = sqlResult[2]
         employeeID = sqlResult[3]
-        totalCredits = sqlResult[4]
+        totalCredits = Credits.from_hundredths(sqlResult[4])
         return UserData(patronId, firstName, lastName, employeeID, totalCredits)
 
     def updatePatronData(self, patronId: int, newUserData: UserData):
+        assert isinstance(patronId, int)
+        assert isinstance(newUserData, UserData)
+
         self.cursor.execute(
-            f"UPDATE Patrons Set FirstName = '{newUserData.firstName}', LastName = '{newUserData.lastName}', EmployeeID = '{newUserData.employeeID}', TotalCredits = {newUserData.totalCredits} WHERE PatronID = {patronId}"
+            f"UPDATE Patrons Set FirstName = '{newUserData.firstName}', LastName = '{newUserData.lastName}', EmployeeID = '{newUserData.employeeID}', TotalCredits = {newUserData.totalCredits.to_hundredths()} WHERE PatronID = {patronId}"
         )
         self.connection.commit()
 
     def updateSnackData(self, snackId: int, newSnackData: SnackData):
+        assert isinstance(snackId, int)
+        assert isinstance(newSnackData, SnackData)
+
         self.cursor.execute(
-            f"UPDATE Snacks Set ItemName = '{newSnackData.snackName}', Quantity = {newSnackData.quantity}, ImageID = '{newSnackData.imageID}', PricePerItem = {newSnackData.pricePerItem} WHERE ItemID = {snackId}"
+            f"UPDATE Snacks Set ItemName = '{newSnackData.snackName}', Quantity = {newSnackData.quantity}, ImageID = '{newSnackData.imageID}', PricePerItem = {newSnackData.pricePerItem.to_hundredths()} WHERE ItemID = {snackId}"
         )
         self.connection.commit()
 
     def removePatron(self, patronId: int):
+        assert isinstance(patronId, int)
+
         self.cursor.execute(f"DELETE from Patrons WHERE PatronID = {patronId}")
         self.connection.commit()
 
@@ -588,29 +577,43 @@ class DatabaseConnector:
         self.removeTransactions(patronId)
 
     def removeSnack(self, snackId: int):
+        assert isinstance(snackId, int)
+
         self.cursor.execute(f"DELETE from Snacks WHERE ItemID = {snackId}")
         self.connection.commit()
 
-    def subtractPatronCredits(self, patronID: int, creditsToSubtract: float):
+    def subtractPatronCredits(self, patronID: int, creditsToSubtract: Credits):
+        assert isinstance(patronID, int)
+        assert isinstance(creditsToSubtract, Credits)
+
         patronData = self.getPatronData(patronID=patronID)
         oldCreditsAmount = patronData.totalCredits
         newCreditsAmount = oldCreditsAmount - creditsToSubtract
         self.cursor.execute(
-            f"UPDATE Patrons Set TotalCredits = {newCreditsAmount} WHERE PatronID = {patronID}"
+            f"UPDATE Patrons Set TotalCredits = {newCreditsAmount.to_hundredths()} WHERE PatronID = {patronID}"
         )
         self.connection.commit()
 
-    def addSnack(self, itemName, quantity, imageID, pricePerItem):
+    def addSnack(
+        self, itemName: str, quantity: int, imageID: str, pricePerItem: Credits
+    ):
+        assert isinstance(itemName, str)
+        assert isinstance(quantity, int)
+        assert isinstance(imageID, str)
+        assert isinstance(pricePerItem, Credits)
+
         self.cursor.execute(
             """
             INSERT INTO Snacks (ItemName, Quantity, ImageID, PricePerItem)
             VALUES (?, ?, ?, ?)
             """,
-            (itemName, quantity, imageID, pricePerItem),
+            (itemName, quantity, imageID, pricePerItem.to_hundredths()),
         )
         self.connection.commit()
 
     def getSnack(self, snackId: int) -> SnackData:
+        assert isinstance(snackId, int)
+
         self.cursor.execute(f"SELECT * FROM Snacks WHERE ItemID = {snackId}")
         sqlResult = self.cursor.fetchone()
         snackId = sqlResult[0]
@@ -623,10 +626,13 @@ class DatabaseConnector:
             snackName=snackName,
             quantity=quantity,
             imageID=imageId,
-            pricePerItem=pricePerItem,
+            pricePerItem=Credits.from_hundredths(pricePerItem),
         )
 
     def subtractSnackQuantity(self, snackId: int, quantity: int):
+        assert isinstance(snackId, int)
+        assert isinstance(quantity, int)
+
         snack = self.getSnack(snackId=snackId)
         oldQuantity = snack.quantity
         newQuantity = oldQuantity - quantity
@@ -650,28 +656,33 @@ class DatabaseConnector:
                 snackName=snackName,
                 quantity=quantity,
                 imageID=imageId,
-                pricePerItem=pricePerItem,
+                pricePerItem=Credits.from_hundredths(pricePerItem),
             )
             snackDataList.append(snackData)
         return snackDataList
 
-    def addCredits(self, userId: int, amount: float):
+    def addCredits(self, userId: int, amount: Credits):
+        assert isinstance(userId, int)
+        assert isinstance(amount, Credits)
+
         self.cursor.execute(
             f"SELECT TotalCredits FROM Patrons WHERE PatronID = {userId}"
         )
         sqlResult = self.cursor.fetchone()
-        currentCredits = float(sqlResult[0])
+        currentCredits = Credits.from_hundredths(sqlResult[0])
         newTotalCredits = currentCredits + amount
         self.cursor.execute(
             f"""
             UPDATE Patrons
-            SET TotalCredits = {newTotalCredits}
+            SET TotalCredits = {newTotalCredits.to_hundredths()}
             WHERE PatronID = {userId}
             """
         )
         self.connection.commit()
 
     def getPatronIdByCardId(self, cardId: str) -> int:
+        assert isinstance(cardId, str)
+
         self.cursor.execute(
             f"SELECT PatronID FROM Patrons WHERE EmployeeID = '{cardId}'"
         )

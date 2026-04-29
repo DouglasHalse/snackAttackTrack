@@ -1,7 +1,7 @@
 import math
 import random
 
-from database import SnackData
+from app_types import SnackData
 from kivy.animation import Animation
 from kivy.clock import Clock
 from kivy.core.text import Label as CoreLabel

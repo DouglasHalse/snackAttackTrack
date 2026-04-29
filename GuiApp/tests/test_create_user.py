@@ -166,7 +166,7 @@ async def test_create_user_with_used_card(app_with_only_users):
     )
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
@@ -183,7 +183,7 @@ async def test_create_user_with_used_card(app_with_only_users):
     app_with_only_users.screenManager.current_screen.ids.lastNameInput.setText(
         "User3LastName"
     )
-    app_with_only_users.screenManager.current_screen.cardRead(123456789)
+    app_with_only_users.screenManager.current_screen.cardRead("123456789")
     app_with_only_users.screenManager.current_screen.registerUser()
 
     assert app_with_only_users.screenManager.current == "createUserScreen"
@@ -201,8 +201,10 @@ async def test_create_user_with_new_card_from_splash_screen(app_with_nothing):
         app_with_nothing.screenManager.database.getAllPatrons()
     )
 
-    assert app_with_nothing.screenManager.database.getPatronIdByCardId(5555555) is None
-    app_with_nothing.screenManager.RFIDReader.triggerFakeRead(card_id=5555555)
+    assert (
+        app_with_nothing.screenManager.database.getPatronIdByCardId("5555555") is None
+    )
+    app_with_nothing.screenManager.RFIDReader.triggerFakeRead(card_id="5555555")
 
     app_with_nothing.screenManager.current_screen.create_or_link_card_popup.ids.createUserButton.dispatch(
         "on_press"
@@ -241,9 +243,11 @@ async def test_create_user_with_new_card_from_login_screen(app_with_nothing):
     app_with_nothing.screenManager.current_screen.onPressed()
 
     assert app_with_nothing.screenManager.current == "loginScreen"
-    assert app_with_nothing.screenManager.database.getPatronIdByCardId(4444444) is None
+    assert (
+        app_with_nothing.screenManager.database.getPatronIdByCardId("4444444") is None
+    )
     await asyncio.sleep(0.5)
-    app_with_nothing.screenManager.RFIDReader.triggerFakeRead(card_id=4444444)
+    app_with_nothing.screenManager.RFIDReader.triggerFakeRead(card_id="4444444")
     app_with_nothing.screenManager.current_screen.create_or_link_card_popup.ids.createUserButton.dispatch(
         "on_press"
     )

@@ -1,5 +1,7 @@
 import pytest
 
+from app_types import Credits
+
 
 @pytest.mark.asyncio
 async def test_return_from_add_snack_with_back_button(app_on_add_snack_screen):
@@ -67,7 +69,7 @@ async def test_add_snack(app_on_add_snack_screen):
     )
     assert added_snack.snackName == "Chips"
     assert added_snack.quantity == 10
-    assert added_snack.pricePerItem == round((15.00 * 1.05) / 10.0, 2)
+    assert added_snack.pricePerItem == Credits("15.00") * 1.05 / 10
     assert added_snack.imageID == "None"
 
 

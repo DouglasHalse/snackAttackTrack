@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
-from database import SnackData
+from app_types import SnackData, Credits
 from snackReorderer import SnackReorderer
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
@@ -159,7 +159,7 @@ class BuyScreen(GridLayoutScreen):
             self.pop_snack_stash()
 
     def updateTotalPrice(self):
-        totalPrice = 0.0
+        totalPrice = Credits("0.00")
         for snackDictEntry in self.snackDict.items():
             snackId = snackDictEntry[0]
             snack = self.manager.database.getSnack(snackId)
@@ -193,7 +193,7 @@ class BuyScreen(GridLayoutScreen):
         return snacksInShoppingCart
 
     def getTotalPriceOfSnacks(self, snacks: list[SnackData]) -> float:
-        totalPrice = 0.0
+        totalPrice = Credits("0.00")
         for snack in snacks:
             totalPrice += snack.pricePerItem * snack.quantity
         return totalPrice

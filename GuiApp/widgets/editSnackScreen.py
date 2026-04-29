@@ -1,5 +1,7 @@
-from database import LostSnackReason, SnackData
+from decimal import InvalidOperation
 from kivy.properties import ObjectProperty
+
+from app_types import LostSnackReason, SnackData, Credits
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.addedSnackPricePopup import AddedSnackPricePopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
@@ -63,8 +65,8 @@ class EditSnackScreen(GridLayoutScreen):
             return
 
         try:
-            newSnackPrice = float(self.ids["snackPriceInput"].getText())
-        except ValueError:
+            newSnackPrice = Credits(self.ids["snackPriceInput"].getText())
+        except InvalidOperation:
             ErrorMessagePopup(errorMessage="Price must be a number").open()
             return
         if newSnackPrice < 0:
@@ -91,7 +93,7 @@ class EditSnackScreen(GridLayoutScreen):
 
             self.added_snack_popup = AddedSnackPricePopup()
 
-            def on_price_confirmed(_, total_added_value: float):
+            def on_price_confirmed(_, total_added_value: Credits):
                 quantity_added = newSnackQuantity - self.snack_to_edit.quantity
                 self.manager.database.add_added_snack(
                     snack_name=newSnackName,
