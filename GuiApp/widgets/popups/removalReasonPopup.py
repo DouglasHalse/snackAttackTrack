@@ -1,4 +1,4 @@
-from database import LostSnackReason
+from app_types import LostSnackReason
 from kivy.uix.modalview import ModalView
 
 

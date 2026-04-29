@@ -1,6 +1,9 @@
+import decimal
+
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
+from app_types import Credits
 
 
 class AddSnackScreen(GridLayoutScreen):
@@ -51,10 +54,10 @@ class AddSnackScreen(GridLayoutScreen):
 
         self.ids.numberOfItemsLabel.text = f"{quantity} of {snackName}"
 
-        totalPriceText = self.ids.snackPriceInput.getText()
+        totalPrice = Credits("0.00")
         try:
-            totalPrice = float(totalPriceText)
-        except ValueError:
+            totalPrice = Credits(self.ids.snackPriceInput.getText())
+        except decimal.InvalidOperation:
             return
 
         totalPrice *= 1 + purchaseFee
@@ -62,7 +65,7 @@ class AddSnackScreen(GridLayoutScreen):
         if quantity == 0:
             return
 
-        pricePerItem = round(float(totalPrice) / float(quantity), 2)
+        pricePerItem = totalPrice / quantity
 
         self.ids.pricePerItemLabel.text = f"{pricePerItem:.2f} credits per item"
 
@@ -82,11 +85,11 @@ class AddSnackScreen(GridLayoutScreen):
             return
 
         try:
-            totalPrice = float(self.ids.snackPriceInput.getText())
-        except ValueError:
-            ErrorMessagePopup(errorMessage="Price must be a number").open()
+            totalPrice = Credits(self.ids.snackPriceInput.getText())
+        except decimal.InvalidOperation:
+            ErrorMessagePopup(errorMessage="Price must be a valid number").open()
             return
-        if totalPrice == 0 or totalPrice < 0:
+        if totalPrice == Credits("0.00") or totalPrice < Credits("0.00"):
             ErrorMessagePopup(errorMessage="Price cannot be 0 or negative").open()
             return
 
@@ -100,7 +103,7 @@ class AddSnackScreen(GridLayoutScreen):
 
         priceWithFee = totalPrice * (1 + purchaseFee)
 
-        pricePerItem = round(float(priceWithFee) / float(quantity), 2)
+        pricePerItem = priceWithFee / quantity
 
         self.manager.database.addSnack(
             itemName=snackName,

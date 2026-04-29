@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from database import UserData
+from app_types import UserData, Credits
 from qrcode import make as makeQRCode
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
@@ -11,7 +11,7 @@ class TopUpPaymentScreen(GridLayoutScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.userData: UserData = None
-        self.amount_to_be_payed: float = None
+        self.amount_to_be_payed: Credits = None
         self.ids.header.bind(on_back_button_pressed=self.on_back)
 
     def on_back(self, _):
@@ -19,7 +19,8 @@ class TopUpPaymentScreen(GridLayoutScreen):
             "topUpAmountScreen", transitionDirection="right"
         )
 
-    def setAmountToBePayed(self, amount: float):
+    def setAmountToBePayed(self, amount: Credits):
+        assert isinstance(amount, Credits)
         self.amount_to_be_payed = amount
 
     def on_pre_enter(self, *args):

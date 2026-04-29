@@ -1,6 +1,7 @@
 from datetime import datetime
+from decimal import InvalidOperation
 
-from database import UserData
+from app_types import UserData, Credits
 from kivy.properties import ObjectProperty
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
@@ -68,9 +69,9 @@ class EditUserScreen(GridLayoutScreen):
             return
 
         try:
-            newCredits = float(newCredits)
-        except ValueError:
-            ErrorMessagePopup(errorMessage="Credits must be a number").open()
+            newCredits = Credits(newCredits)
+        except (ValueError, InvalidOperation):
+            ErrorMessagePopup(errorMessage="Credits must be a valid number").open()
             return
 
         if newCredits < 0:

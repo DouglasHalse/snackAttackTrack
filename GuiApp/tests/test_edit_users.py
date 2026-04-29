@@ -1,6 +1,7 @@
 import asyncio
-
 import pytest
+
+from app_types import Credits
 
 
 @pytest.mark.asyncio
@@ -61,7 +62,7 @@ async def test_select_user_to_edit(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
@@ -89,7 +90,7 @@ async def test_edit_user_screen_displays_user_data(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
@@ -110,7 +111,7 @@ async def test_edit_user_back_navigation(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
@@ -134,7 +135,7 @@ async def test_edit_user_cancel(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
     original_first_name = user.firstName
@@ -168,7 +169,7 @@ async def test_edit_user_change_first_name(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
@@ -203,7 +204,7 @@ async def test_edit_user_change_last_name(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
@@ -238,7 +239,7 @@ async def test_edit_user_empty_first_name_rejected(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
@@ -272,7 +273,7 @@ async def test_edit_user_empty_last_name_rejected(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
@@ -306,14 +307,14 @@ async def test_edit_user_change_credits(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
-    app.screenManager.database.addCredits(user.patronId, 50.0)
+    app.screenManager.database.addCredits(user.patronId, Credits("50.00"))
 
     user = app.screenManager.database.getPatronData(user_id)
-    assert user.totalCredits == 50.0
+    assert user.totalCredits == Credits("50.00")
 
     # Login as this user (required for refreshCurrentPatron)
     app.screenManager.login(user_id)
@@ -337,7 +338,7 @@ async def test_edit_user_change_credits(app_with_only_users):
 
     # Verify credits were changed
     user_after = app.screenManager.database.getPatronData(user_id)
-    assert user_after.totalCredits == 100.0
+    assert user_after.totalCredits == Credits("100.00")
 
 
 @pytest.mark.asyncio
@@ -346,11 +347,11 @@ async def test_edit_user_negative_credits_rejected(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
-    app.screenManager.database.addCredits(user.patronId, 50.0)
+    app.screenManager.database.addCredits(user.patronId, Credits("50.00"))
 
     user = app.screenManager.database.getPatronData(user_id)
     original_credits = user.totalCredits
@@ -383,11 +384,11 @@ async def test_edit_user_invalid_credits_rejected(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
-    app.screenManager.database.addCredits(user.patronId, 50.0)
+    app.screenManager.database.addCredits(user.patronId, Credits("50.00"))
 
     user = app.screenManager.database.getPatronData(user_id)
 
@@ -432,12 +433,12 @@ async def test_edit_user_duplicate_card_id_rejected(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to edit
-    user_id_1 = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id_1 = app.screenManager.database.getPatronIdByCardId("987654321")
     user1 = app.screenManager.database.getPatronData(user_id_1)
     assert user1 is not None
 
     # Get a user to edit
-    user_id_2 = app.screenManager.database.getPatronIdByCardId(123456789)
+    user_id_2 = app.screenManager.database.getPatronIdByCardId("123456789")
     user2 = app.screenManager.database.getPatronData(user_id_2)
     assert user2 is not None
 
@@ -480,7 +481,7 @@ async def test_edit_user_set_card_on_user_with_no_card(app_with_only_users):
 
     # Set a card ID
     edit_screen = app.screenManager.current_screen
-    edit_screen.cardRead(1233332323)
+    edit_screen.cardRead("1233332323")
 
     assert edit_screen.ids.cardIdInput.getText() == "1233332323"
 
@@ -498,7 +499,7 @@ async def test_edit_user_remove_user(app_with_only_users):
     app = app_with_only_users
 
     # Get a user to remove
-    user_id = app.screenManager.database.getPatronIdByCardId(987654321)
+    user_id = app.screenManager.database.getPatronIdByCardId("987654321")
     user = app.screenManager.database.getPatronData(user_id)
     assert user is not None
 
@@ -543,7 +544,7 @@ async def test_edit_user_screen_refresh(app_with_only_users):
     app.screenManager.database.addPatron(
         first_name="NewUser",
         last_name="NewLastName",
-        employee_id=111111111,
+        employee_id="111111111",
     )
 
     # Navigate back to edit users screen

@@ -1,4 +1,4 @@
-from database import HistoryData
+from app_types import HistoryData
 from kivy.clock import Clock
 from kivy.uix.modalview import ModalView
 

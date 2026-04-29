@@ -1,4 +1,4 @@
-from database import TransactionType
+from app_types import TransactionType, Credits
 from widgets.GridLayoutScreen import GridLayoutScreen
 
 
@@ -36,9 +36,9 @@ class StoreStatisticsScreen(GridLayoutScreen):
         )
 
         number_of_sold_snacks = 0
-        store_revenue = 0.0
-        gambling_revenue = 0.0
-        gambling_returns = 0.0
+        store_revenue = Credits("0.00")
+        gambling_revenue = Credits("0.00")
+        gambling_returns = Credits("0.00")
         users = self.manager.database.getAllPatrons()
         for user in users:
             transactions = self.manager.database.getTransactions(user.patronId)

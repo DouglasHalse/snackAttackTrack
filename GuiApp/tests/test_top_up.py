@@ -11,11 +11,11 @@ async def test_return_from_top_up_with_back_button(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -40,11 +40,11 @@ async def test_return_from_top_up_with_cancel_button(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -69,11 +69,11 @@ async def test_no_amount_selected(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -98,11 +98,11 @@ async def test_less_than_one_amount_selected(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -174,11 +174,11 @@ async def test_negative_amount_selected(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -203,11 +203,11 @@ async def test_return_from_payment_with_back_button(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -238,11 +238,11 @@ async def test_return_from_payment_with_cancel_button(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -273,7 +273,7 @@ async def test_add_hundred_credits(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
@@ -285,7 +285,7 @@ async def test_add_hundred_credits(app_with_only_users):
 
     initial_credits = patron_data.totalCredits
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -328,11 +328,11 @@ async def test_auto_logout_while_entering_amount(app_with_only_users):
     assert app_with_only_users.screenManager.current == "splashScreen"
 
     assert (
-        app_with_only_users.screenManager.database.getPatronIdByCardId(123456789)
+        app_with_only_users.screenManager.database.getPatronIdByCardId("123456789")
         is not None
     )
 
-    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
 
@@ -363,9 +363,9 @@ async def test_return_from_top_up_amount_with_back_button_with_buy_screen_as_ref
 
     assert app.screenManager.current == "splashScreen"
 
-    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
+    assert app.screenManager.database.getPatronIdByCardId("123456789") is not None
 
-    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app.screenManager.current == "mainUserPage"
 
@@ -403,9 +403,9 @@ async def test_return_from_top_up_amount_with_cancel_button_with_buy_screen_as_r
 
     assert app.screenManager.current == "splashScreen"
 
-    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
+    assert app.screenManager.database.getPatronIdByCardId("123456789") is not None
 
-    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app.screenManager.current == "mainUserPage"
 
@@ -443,11 +443,11 @@ async def test_top_up_with_buy_screen_as_referee(
 
     assert app.screenManager.current == "splashScreen"
 
-    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
+    assert app.screenManager.database.getPatronIdByCardId("123456789") is not None
 
-    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
-    user_id = app.screenManager.database.getPatronIdByCardId(123456789)
+    user_id = app.screenManager.database.getPatronIdByCardId("123456789")
 
     patron_data = app.screenManager.database.getPatronData(user_id)
 
@@ -534,9 +534,9 @@ async def test_return_from_top_up_amount_with_back_button_with_wheel_of_snacks_s
 
     assert app.screenManager.current == "splashScreen"
 
-    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
+    assert app.screenManager.database.getPatronIdByCardId("123456789") is not None
 
-    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app.screenManager.current == "mainUserPage"
 
@@ -568,9 +568,9 @@ async def test_return_from_top_up_amount_with_cancel_button_with_wheel_of_snacks
 
     assert app.screenManager.current == "splashScreen"
 
-    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
+    assert app.screenManager.database.getPatronIdByCardId("123456789") is not None
 
-    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app.screenManager.current == "mainUserPage"
 
@@ -602,9 +602,9 @@ async def test_top_up_with_wheel_of_snacks_screen_as_referee(
 
     assert app.screenManager.current == "splashScreen"
 
-    assert app.screenManager.database.getPatronIdByCardId(123456789) is not None
+    assert app.screenManager.database.getPatronIdByCardId("123456789") is not None
 
-    app.screenManager.RFIDReader.triggerFakeRead(card_id=123456789)
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
 
     assert app.screenManager.current == "mainUserPage"
 
@@ -615,11 +615,8 @@ async def test_top_up_with_wheel_of_snacks_screen_as_referee(
     assert app.screenManager.current == "wheelOfSnacksScreen"
 
     snacks_in_inventory = app.screenManager.database.getAllSnacks()
-    cost_to_gamble = sum(s.pricePerItem for s in snacks_in_inventory) / len(
-        snacks_in_inventory
-    )
-
-    cost_to_gamble = float(f"{cost_to_gamble:.2f}")
+    total_cost_of_snacks = sum(s.pricePerItem for s in snacks_in_inventory)
+    cost_to_gamble = total_cost_of_snacks / len(snacks_in_inventory)
 
     current_patron = app.screenManager.getCurrentPatron()
     missing_credits = cost_to_gamble - current_patron.totalCredits
