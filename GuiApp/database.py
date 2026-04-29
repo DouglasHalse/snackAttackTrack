@@ -1,6 +1,9 @@
 import sqlite3
 from datetime import datetime
+from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
+
+from DatabaseMigrator import DatabaseMigrator
 
 
 class TransactionType(Enum):
@@ -26,6 +29,33 @@ def transactionTypeToPresentableString(transactionType: TransactionType) -> str:
     if transactionType == TransactionType.GAMBLE:
         return "Gamble"
     return "Unknown"
+
+
+TWODECIMALS = Decimal("0.00")
+
+
+class Credits(Decimal):
+    """A custom Decimal that always stays at 2 decimal places."""
+
+    def __new__(cls, value):
+        obj = super().__new__(cls, value)
+        return obj.quantize(TWODECIMALS, rounding=ROUND_HALF_UP)
+
+    def __add__(self, other):
+        result = super().__add__(Decimal(other))
+        return Credits(result)
+
+    def __sub__(self, other):
+        result = super().__sub__(Decimal(other))
+        return Credits(result)
+
+    def __mul__(self, other):
+        result = super().__mul__(Decimal(other))
+        return Credits(result)
+
+    def __truediv__(self, other):
+        result = super().__truediv__(Decimal(other))
+        return Credits(result)
 
 
 class UserData:
@@ -79,6 +109,8 @@ class DatabaseConnector:
     def __init__(self, database_path: str = "database.db"):
         self.connection = sqlite3.connect(database_path)
         self.cursor = self.connection.cursor()
+        if DatabaseMigrator.needs_migration(self.cursor):
+            print("Database migration needed. Migrating database...")
         self.createAllTables()
 
     def close(self):
@@ -91,44 +123,44 @@ class DatabaseConnector:
             # FirstName is the user's first name
             # LastName is the user's last name
             # EmployeeID is the user's employee ID
-            # TotalCredits is the user's total credits
+            # TotalCredits is the user's total credits in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS Patrons (
                 PatronID INTEGER PRIMARY KEY AUTOINCREMENT,
                 FirstName TEXT NOT NULL,
                 LastName TEXT NOT NULL,
                 EmployeeID TEXT NOT NULL,
-                TotalCredits REAL NOT NULL DEFAULT 0
+                TotalCredits INTEGER NOT NULL DEFAULT 0
             );
             """,
             # Table of all the snacks currently available for purchase
             # ItemName is name of the snack
             # Quantity is the number of snacks available for purchase
             # ImageID is the ID of the snack's image (unused)
-            # PricePerItem is the price of a single snack
+            # PricePerItem is the price of a single snack in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS Snacks (
                 ItemID INTEGER PRIMARY KEY AUTOINCREMENT,
                 ItemName TEXT NOT NULL,
                 Quantity INTEGER NOT NULL,
                 ImageID TEXT NOT NULL,
-                PricePerItem REAL NOT NULL
+                PricePerItem INTEGER NOT NULL
             );
             """,
             # Table of all the transactions that have occurred
             # TransactionType is one of TransactionType enum
             # PatronID references Patrons.PatronID
             # TransactionDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
-            # AmountBeforeTransaction is the amount of credits the patron had before the transaction
-            # AmountAfterTransaction is the amount of credits the patron had after the transaction
+            # AmountBeforeTransaction is the amount of credits the patron had before the transaction in hundreths of a credit (integer)
+            # AmountAfterTransaction is the amount of credits the patron had after the transaction in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS Transactions (
                 TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
                 TransactionType TEXT NOT NULL,
                 PatronID INTEGER NOT NULL, 
                 TransactionDate TEXT NOT NULL, 
-                AmountBeforeTransaction REAL NOT NULL, 
-                AmountAfterTransaction REAL NOT NULL,
+                AmountBeforeTransaction INTEGER NOT NULL, 
+                AmountAfterTransaction INTEGER NOT NULL,
                 FOREIGN KEY(PatronID) REFERENCES Patrons(PatronID)
             );
             """,
@@ -136,14 +168,14 @@ class DatabaseConnector:
             # TransactionID references Transactions.TransactionID
             # ItemName references Snacks.ItemName
             # Quantity is the number of items of this type in the transaction
-            # PricePerItem is the price of a single item of this type
+            # PricePerItem is the price of a single item of this type in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS TransactionItems (
                 TransactionItemId INTEGER PRIMARY KEY AUTOINCREMENT,
                 TransactionID INTEGER NOT NULL,
                 ItemName TEXT NOT NULL,
                 Quantity INTEGER NOT NULL,
-                PricePerItem REAL NOT NULL,
+                PricePerItem INTEGER NOT NULL,
                 FOREIGN KEY(TransactionID) REFERENCES Transactions(TransactionID)
             );
             """,
@@ -151,14 +183,14 @@ class DatabaseConnector:
             # SnackName references Snacks.ItemName
             # AddedDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
             # Quantity is the number of snacks added
-            # Value is the total value of the added snacks
+            # Value is the total value of the added snacks in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS AddedSnacks (
                 AddedID INTEGER PRIMARY KEY AUTOINCREMENT,
                 SnackName TEXT NOT NULL,
                 AddedDate TEXT NOT NULL,
                 Quantity INTEGER NOT NULL,
-                Value REAL NOT NULL
+                Value INTEGER NOT NULL
             );
             """,
             # Table of all snacks cosidered stolen or lost
@@ -166,7 +198,7 @@ class DatabaseConnector:
             # Reason references LostSnackReason enum
             # LostDate is stored as a string in the format "%Y-%m-%d %H:%M:%S.%f"
             # Quantity is the number of snacks lost
-            # Value is the total value of the lost snacks
+            # Value is the total value of the lost snacks in hundreths of a credit (integer)
             """
             CREATE TABLE IF NOT EXISTS LostSnacks (
                 LostID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -174,7 +206,14 @@ class DatabaseConnector:
                 Reason INTEGER NOT NULL,
                 LostDate TEXT NOT NULL,
                 Quantity INTEGER NOT NULL,
-                Value REAL NOT NULL
+                Value INTEGER NOT NULL
+            );
+            """,
+            # Table to store settings, including the current schema version for database migration purposes
+            """
+            CREATE TABLE IF NOT EXISTS settings (
+                name TEXT PRIMARY KEY,
+                value TEXT NOT NULL
             );
             """,
         ]
@@ -183,6 +222,13 @@ class DatabaseConnector:
             self.cursor.execute(query)
 
         self.connection.commit()
+
+        if DatabaseMigrator.get_stored_database_version(self.cursor) == 1:
+            self.cursor.execute(
+                "INSERT OR IGNORE INTO settings (name, value) VALUES ('schema_version', ?)",
+                (DatabaseMigrator.CURRENT_SCHEMA_VERSION,),
+            )
+            self.connection.commit()
 
     def clear_lost_snacks(self):
         """Remove all rows from LostSnacks."""
