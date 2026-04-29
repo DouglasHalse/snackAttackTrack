@@ -62,9 +62,74 @@ class DatabaseMigrator:
         """
         )
 
-        # Change credits datatype to integer (hundreths of a credit)
-        cursor.execute("ALTER TABLE users ADD COLUMN credits_temp INTEGER")
-        cursor.execute("UPDATE users SET credits_temp = CAST(credits * 100 AS INTEGER)")
-        cursor.execute("ALTER TABLE users DROP COLUMN credits")
-        cursor.execute("ALTER TABLE users RENAME COLUMN credits_temp TO credits")
+        # Change TotalCredits from REAL to INTEGER for Patrons (hundreths of a credit)
+        cursor.execute("ALTER TABLE Patrons ADD COLUMN TotalCredits_temp INTEGER")
+        cursor.execute(
+            "UPDATE Patrons SET TotalCredits_temp = CAST(TotalCredits * 100 AS INTEGER)"
+        )
+        cursor.execute("ALTER TABLE Patrons DROP COLUMN TotalCredits")
+        cursor.execute(
+            "ALTER TABLE Patrons RENAME COLUMN TotalCredits_temp TO TotalCredits"
+        )
+
+        # Change PricePerItem from REAL to INTEGER for Snacks (hundreths of a credit)
+        cursor.execute("ALTER TABLE Snacks ADD COLUMN PricePerItem_temp INTEGER")
+        cursor.execute(
+            "UPDATE Snacks SET PricePerItem_temp = CAST(PricePerItem * 100 AS INTEGER)"
+        )
+        cursor.execute("ALTER TABLE Snacks DROP COLUMN PricePerItem")
+        cursor.execute(
+            "ALTER TABLE Snacks RENAME COLUMN PricePerItem_temp TO PricePerItem"
+        )
+
+        # Change Value from REAL to INTEGER for AddedSnacks (hundreths of a credit)
+        cursor.execute("ALTER TABLE AddedSnacks ADD COLUMN Value_temp INTEGER")
+        cursor.execute(
+            "UPDATE AddedSnacks SET Value_temp = CAST(Value * 100 AS INTEGER)"
+        )
+        cursor.execute("ALTER TABLE AddedSnacks DROP COLUMN Value")
+        cursor.execute("ALTER TABLE AddedSnacks RENAME COLUMN Value_temp TO Value")
+
+        # Change Value from REAL to INTEGER for LostSnacks (hundreths of a credit)
+        cursor.execute("ALTER TABLE LostSnacks ADD COLUMN Value_temp INTEGER")
+        cursor.execute(
+            "UPDATE LostSnacks SET Value_temp = CAST(Value * 100 AS INTEGER)"
+        )
+        cursor.execute("ALTER TABLE LostSnacks DROP COLUMN Value")
+        cursor.execute("ALTER TABLE LostSnacks RENAME COLUMN Value_temp TO Value")
+
+        # Change AmountBeforeTransaction and AmountAfterTransaction from REAL to INTEGER for Transactions (hundreths of a credit)
+        cursor.execute(
+            "ALTER TABLE Transactions ADD COLUMN AmountBeforeTransaction_temp INTEGER"
+        )
+        cursor.execute(
+            "UPDATE Transactions SET AmountBeforeTransaction_temp = CAST(AmountBeforeTransaction * 100 AS INTEGER)"
+        )
+        cursor.execute(
+            "ALTER TABLE Transactions ADD COLUMN AmountAfterTransaction_temp INTEGER"
+        )
+        cursor.execute(
+            "UPDATE Transactions SET AmountAfterTransaction_temp = CAST(AmountAfterTransaction * 100 AS INTEGER)"
+        )
+        cursor.execute("ALTER TABLE Transactions DROP COLUMN AmountBeforeTransaction")
+        cursor.execute("ALTER TABLE Transactions DROP COLUMN AmountAfterTransaction")
+        cursor.execute(
+            "ALTER TABLE Transactions RENAME COLUMN AmountBeforeTransaction_temp TO AmountBeforeTransaction"
+        )
+        cursor.execute(
+            "ALTER TABLE Transactions RENAME COLUMN AmountAfterTransaction_temp TO AmountAfterTransaction"
+        )
+
+        # Change Amount from REAL to INTEGER for TransactionItems (hundreths of a credit)
+        cursor.execute(
+            "ALTER TABLE TransactionItems ADD COLUMN PricePerItem_temp INTEGER"
+        )
+        cursor.execute(
+            "UPDATE TransactionItems SET PricePerItem_temp = CAST(PricePerItem * 100 AS INTEGER)"
+        )
+        cursor.execute("ALTER TABLE TransactionItems DROP COLUMN PricePerItem")
+        cursor.execute(
+            "ALTER TABLE TransactionItems RENAME COLUMN PricePerItem_temp TO PricePerItem"
+        )
+
         connection.commit()
