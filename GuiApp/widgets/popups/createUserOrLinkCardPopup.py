@@ -14,7 +14,7 @@ class CreateUserOrLinkCardPopup(ModalView):
 
     def linkCardPressed(self):
         self.dismiss()
-        self.screenManager.get_screen("linkCardScreen").setCardToLink(self.readCard)
+        self.screenManager.get_screen("linkCardScreen").set_card_to_link(self.readCard)
         self.screenManager.transitionToScreen("linkCardScreen")
 
     def on_dismiss(self):
