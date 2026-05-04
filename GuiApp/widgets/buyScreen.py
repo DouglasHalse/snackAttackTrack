@@ -35,17 +35,17 @@ class BuyScreen(GridLayoutScreen):
 
     def pop_snack_stash(self):
         for snackId, quantity in self.snackStash.items():
-            if snackId in self.snackDict:
-                if quantity <= self.snackDict[snackId][ItemLocation.INVENTORY]:
-                    self.snackDict[snackId][ItemLocation.INVENTORY] -= quantity
-                    self.snackDict[snackId][ItemLocation.SHOPPINGCART] += quantity
-                    self.updateSnackInLists(snackId=snackId)
-                else:
-                    self.snackDict[snackId][
-                        ItemLocation.SHOPPINGCART
-                    ] += self.snackDict[snackId][ItemLocation.INVENTORY]
-                    self.snackDict[snackId][ItemLocation.INVENTORY] = 0
-                    self.updateSnackInLists(snackId=snackId)
+            assert (
+                snackId in self.snackDict
+            ), "Snack ID from stash not found in snackDict"
+            quantity_to_add_to_cart = min(
+                quantity, self.snackDict[snackId][ItemLocation.INVENTORY]
+            )
+            self.snackDict[snackId][ItemLocation.INVENTORY] -= quantity_to_add_to_cart
+            self.snackDict[snackId][
+                ItemLocation.SHOPPINGCART
+            ] += quantity_to_add_to_cart
+            self.updateSnackInLists(snackId=snackId)
         self.snackStash = {}
 
     def on_pre_leave(self, *args):

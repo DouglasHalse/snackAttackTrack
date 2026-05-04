@@ -2,6 +2,7 @@ import asyncio
 
 import pytest
 
+from app_types import Credits
 from GuiApp.widgets.settingsManager import SettingName
 
 
@@ -375,13 +376,15 @@ async def test_return_from_top_up_amount_with_back_button_with_buy_screen_as_ref
 
     assert app.screenManager.current == "buyScreen"
 
-    available_snacks = app.screenManager.database.getAllSnacks()
+    snacks = app.screenManager.database.getAllSnacks()
 
-    first_snack_id = available_snacks[0].snackId
+    assert len(snacks) == 3
 
-    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(first_snack_id)
+    snack = snacks[2]
 
-    app.screenManager.current_screen.ids.buyButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(snack.snackId)
+
+    app.screenManager.current_screen.ids.buyButton.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
@@ -415,13 +418,15 @@ async def test_return_from_top_up_amount_with_cancel_button_with_buy_screen_as_r
 
     assert app.screenManager.current == "buyScreen"
 
-    available_snacks = app.screenManager.database.getAllSnacks()
+    snacks = app.screenManager.database.getAllSnacks()
 
-    first_snack_id = available_snacks[0].snackId
+    assert len(snacks) == 3
 
-    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(first_snack_id)
+    snack = snacks[2]
 
-    app.screenManager.current_screen.ids.buyButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(snack.snackId)
+
+    app.screenManager.current_screen.ids.buyButton.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
@@ -461,22 +466,33 @@ async def test_top_up_with_buy_screen_as_referee(
 
     assert app.screenManager.current == "buyScreen"
 
-    available_snacks = app.screenManager.database.getAllSnacks()
+    snacks = app.screenManager.database.getAllSnacks()
 
-    first_snack = available_snacks[0]
+    assert len(snacks) == 3
 
-    missing_credits = (first_snack.pricePerItem * 2) - patron_data.totalCredits
+    snack1 = snacks[0]
+    snack2 = snacks[1]
 
-    # Add two of first snack to shopping cart
-    assert first_snack.quantity >= 2
-    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
-        first_snack.snackId
-    )
-    app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
-        first_snack.snackId
-    )
+    # We will buy two of snack1 and all of snack2, so calculate missing credits based on that
+    missing_credits = Credits("0.00")
+    missing_credits += snack1.pricePerItem * 2
+    missing_credits += snack2.pricePerItem * snack2.quantity
+    missing_credits -= patron_data.totalCredits
 
-    app.screenManager.current_screen.ids.buyButton.dispatch("on_press")
+    # Add two of the first snack to the shopping cart
+    assert snack1.quantity >= 2
+    for _ in range(2):
+        app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
+            snack1.snackId
+        )
+
+    # Add all of snack2
+    for _ in range(snack2.quantity):
+        app.screenManager.current_screen.ids.inventoryTable.onEntryPressed(
+            snack2.snackId
+        )
+
+    app.screenManager.current_screen.ids.buyButton.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
@@ -507,24 +523,28 @@ async def test_top_up_with_buy_screen_as_referee(
     )
 
     # Originally added snacks should still be in shopping cart
-    assert len(entries_in_shopping_cart_table) == 1
-    assert entries_in_shopping_cart_table[0]["entryIdentifier"] == first_snack.snackId
-    assert (
-        entries_in_shopping_cart_table[0]["entryContents"][0] == first_snack.snackName
-    )
+    assert len(entries_in_shopping_cart_table) == 2
+    assert entries_in_shopping_cart_table[0]["entryIdentifier"] == snack1.snackId
+    assert entries_in_shopping_cart_table[0]["entryContents"][0] == snack1.snackName
     assert int(entries_in_shopping_cart_table[0]["entryContents"][1]) == 2
+
+    assert entries_in_shopping_cart_table[1]["entryIdentifier"] == snack2.snackId
+    assert entries_in_shopping_cart_table[1]["entryContents"][0] == snack2.snackName
+    assert int(entries_in_shopping_cart_table[1]["entryContents"][1]) == snack2.quantity
 
     entries_in_inventory_table = (
         app.screenManager.current_screen.ids.inventoryTable.ids.rw.data
     )
 
     # Inventory should be updated correctly and remember reduced quantity
-    assert first_snack.snackId in [
-        entry["entryIdentifier"] for entry in entries_in_inventory_table
-    ]
+    assert app.screenManager.current_screen.ids.inventoryTable.hasEntry(snack1.snackId)
+    assert not app.screenManager.current_screen.ids.inventoryTable.hasEntry(
+        snack2.snackId
+    )
+
     for entry in entries_in_inventory_table:
-        if entry["entryIdentifier"] == first_snack.snackId:
-            assert int(entry["entryContents"][1]) == first_snack.quantity - 2
+        if entry["entryIdentifier"] == snack1.snackId:
+            assert int(entry["entryContents"][1]) == snack1.quantity - 2
 
 
 @pytest.mark.asyncio
