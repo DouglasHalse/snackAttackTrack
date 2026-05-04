@@ -616,6 +616,10 @@ class DatabaseConnector:
 
         self.cursor.execute(f"SELECT * FROM Snacks WHERE ItemID = {snackId}")
         sqlResult = self.cursor.fetchone()
+
+        if sqlResult is None:
+            return None
+
         snackId = sqlResult[0]
         snackName = sqlResult[1]
         quantity = sqlResult[2]
