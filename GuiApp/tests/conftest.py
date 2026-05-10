@@ -172,3 +172,67 @@ async def app_on_buy_screen(app):
     await asyncio.sleep(0.5)
 
     return app
+
+
+@pytest_asyncio.fixture
+async def app_on_user_statistics_screen(app):
+
+    assert app.screenManager.current == "splashScreen"
+
+    assert app.screenManager.database.getPatronIdByCardId("555555555") is not None
+
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="555555555")
+
+    assert app.screenManager.current == "mainUserPage"
+
+    # Go to settings (admin screen)
+    app.screenManager.current_screen.ids.header.settings_button.dispatch("on_release")
+    await asyncio.sleep(0.5)
+
+    assert app.screenManager.current == "adminScreen"
+
+    # Go back to main user page
+    app.screenManager.current_screen.ids.header.ids.backButton.dispatch("on_release")
+    await asyncio.sleep(0.5)
+
+    assert app.screenManager.current == "mainUserPage"
+
+    # Go to profile screen
+    app.screenManager.current_screen.ids.profileOption.dispatch("on_release")
+    await asyncio.sleep(0.5)
+
+    assert app.screenManager.current == "profileScreen"
+
+    # Open user statistics
+    app.screenManager.current_screen.ids.statisticsOption.dispatch("on_release")
+    await asyncio.sleep(0.5)
+
+    assert app.screenManager.current == "userStatisticsScreen"
+
+    return app
+
+
+@pytest_asyncio.fixture
+async def app_on_store_statistics_screen(app):
+
+    assert app.screenManager.current == "splashScreen"
+
+    assert app.screenManager.database.getPatronIdByCardId("555555555") is not None
+
+    app.screenManager.RFIDReader.triggerFakeRead(card_id="555555555")
+
+    assert app.screenManager.current == "mainUserPage"
+
+    # Go to admin screen
+    app.screenManager.current_screen.ids.header.settings_button.dispatch("on_release")
+    await asyncio.sleep(0.5)
+
+    assert app.screenManager.current == "adminScreen"
+
+    # Open store statistics
+    app.screenManager.current_screen.ids.storeStatsOption.dispatch("on_release")
+    await asyncio.sleep(0.5)
+
+    assert app.screenManager.current == "storeStatsScreen"
+
+    return app
