@@ -1,16 +1,18 @@
+import glob
 import os
 import shutil
 import sqlite3
+import time
 
 import pytest
 
 from GuiApp.database import DatabaseConnector, LostSnackReason, TransactionType
 from GuiApp.DatabaseMigrator import DatabaseMigrator
 
-# Fixtures are counted as redefine-outer-name
 # pylint: disable=redefined-outer-name
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-statements
+# pylint: disable=duplicate-code
 
 
 class PatronData:
@@ -81,12 +83,23 @@ class TransactionItemData:
 
 @pytest.fixture
 def new_database_connector():
-    if os.path.exists("test_new_database.db"):
-        os.remove("test_new_database.db")
+    _remove_if_exists("test_new_database.db")
     database_connector = DatabaseConnector("test_new_database.db")
     yield database_connector
-    if os.path.exists("test_new_database.db"):
-        os.remove("test_new_database.db")
+    database_connector.close()
+    _remove_if_exists("test_new_database.db")
+
+
+def _remove_if_exists(path, retries=3, delay=0.2):
+    """Try to remove a file, retrying on PermissionError (Windows SQLite)."""
+    for attempt in range(retries):
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+            return
+        except OSError:
+            if attempt < retries - 1:
+                time.sleep(delay)
 
 
 @pytest.fixture
@@ -344,7 +357,16 @@ def test_migrate_database_version_1_database(version_1_database):
     assert transaction_item5_before.pricePerItem == 0.14
 
     # Perform migration
+    # Snapshot pre-existing backup files so we only clean up the new one
+    backup_files_before = set(glob.glob("database_backup_*.db"))
     DatabaseMigrator.migrate_database(*version_1_database)
+
+    # Verify a new backup file was created by the migration
+    backup_files_after = set(glob.glob("database_backup_*.db"))
+    new_backups = backup_files_after - backup_files_before
+    assert (
+        len(new_backups) >= 1
+    ), "Expected at least one new backup file to be created during migration"
 
     # After migration, the database should be at the current schema version
     version_after_migration = DatabaseMigrator.get_stored_database_version(cursor)
@@ -607,3 +629,7 @@ def test_migrate_database_version_1_database(version_1_database):
     assert transaction_item5_after.pricePerItem == int(
         transaction_item5_before.pricePerItem * 100
     )
+
+    # Clean up only the backup file(s) created by this test
+    for backup_path in new_backups:
+        os.remove(backup_path)
