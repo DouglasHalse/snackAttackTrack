@@ -1,7 +1,7 @@
 import pytest
 
 from app_types import Credits
-from GuiApp.database import SnackData
+from app_types import SnackData
 from GuiApp.snackReorderer import SnackReorderer
 
 # Fixtures are counted as redefine-outer-name

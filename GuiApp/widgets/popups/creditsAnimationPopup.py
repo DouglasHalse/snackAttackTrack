@@ -4,9 +4,13 @@ from kivy.uix.modalview import ModalView
 from kivy.animation import AnimationTransition
 from kivy.clock import Clock
 
+from app_types import Credits
+
 
 class CreditsAnimationPopup(ModalView):
-    def __init__(self, title: str, creditsBefore: float, creditsAfter: float, **kwargs):
+    def __init__(
+        self, title: str, creditsBefore: Credits, creditsAfter: Credits, **kwargs
+    ):
         super().__init__(**kwargs)
         self.creditsBefore = creditsBefore
         self.creditsAfter = creditsAfter

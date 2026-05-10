@@ -192,7 +192,7 @@ class BuyScreen(GridLayoutScreen):
                 snacksInShoppingCart.append(snackBought)
         return snacksInShoppingCart
 
-    def getTotalPriceOfSnacks(self, snacks: list[SnackData]) -> float:
+    def getTotalPriceOfSnacks(self, snacks: list[SnackData]) -> Credits:
         totalPrice = Credits("0.00")
         for snack in snacks:
             totalPrice += snack.pricePerItem * snack.quantity

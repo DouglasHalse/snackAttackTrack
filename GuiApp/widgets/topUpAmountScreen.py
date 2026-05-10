@@ -39,7 +39,7 @@ class TopUpAmountScreen(GridLayoutScreen):
             )
             self.credit_input_popup.open()
 
-    def set_amount_to_add(self, amount: float):
+    def set_amount_to_add(self, amount: Credits):
         self.ids.creditsToAdd.text = f"{amount:.2f}"
 
     def updateCreditsAfterwards(self, instance, text):
