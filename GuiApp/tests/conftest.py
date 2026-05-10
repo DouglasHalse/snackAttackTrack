@@ -1,5 +1,13 @@
+# -- Kivy config MUST be set before any Kivy imports --
+# Prevents the Clock from pausing when the window loses focus,
+# which would cause screen transitions to never complete and tests to fail.
+# pylint: disable=wrong-import-position,wrong-import-order,ungrouped-imports
+from kivy.config import Config
+
+Config.set("kivy", "pause_on_minimize", "0")
 import asyncio
 import os
+import time
 
 import pytest_asyncio
 from kivy.core.window import Window
@@ -18,32 +26,40 @@ Window.size = (1280, 800)
 
 
 async def tear_down(event_loop):
-    # Collect all tasks and cancel those that are not 'done'.
-    tasks = asyncio.all_tasks(event_loop)
-    tasks = [t for t in tasks if not t.done()]
-    for task in tasks:
-        task.cancel()
-
-    if os.path.exists("PytestDatabase.db"):
-        os.remove("PytestDatabase.db")
-    if os.path.exists("PytestSettings.json"):
-        os.remove("PytestSettings.json")
-
-    # Wait for all tasks to complete, ignoring any CancelledErrors
+    """Cancel all pending asyncio tasks and clean up test artifacts."""
     try:
-        await asyncio.wait(tasks)
-    except asyncio.exceptions.CancelledError:
+        current_task = asyncio.current_task(event_loop)
+        tasks = asyncio.all_tasks(event_loop)
+        tasks = [t for t in tasks if not t.done() and t is not current_task]
+
+        for task in tasks:
+            task.cancel()
+
+        if tasks:
+            await asyncio.wait(tasks, timeout=5.0)
+    except Exception:  # pylint: disable=broad-exception-caught
         pass
+
+    for path in ("PytestDatabase.db", "PytestSettings.json"):
+        _remove_if_exists(path)
+
+
+def _remove_if_exists(path, retries=3, delay=0.2):
+    """Try to remove a file, retrying on PermissionError (Windows SQLite)."""
+    for attempt in range(retries):
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+            return
+        except OSError:
+            if attempt < retries - 1:
+                time.sleep(delay)
 
 
 @pytest_asyncio.fixture
 async def app_with_nothing():
-    print("Starting app fixture")
-
-    if os.path.exists("PytestDatabase.db"):
-        os.remove("PytestDatabase.db")
-    if os.path.exists("PytestSettings.json"):
-        os.remove("PytestSettings.json")
+    _remove_if_exists("PytestDatabase.db")
+    _remove_if_exists("PytestSettings.json")
 
     app = snackAttackTrackApp(
         settings_path="PytestSettings.json",
@@ -52,8 +68,8 @@ async def app_with_nothing():
     # start the Kivy event loop in background so tests can drive it
     asyncio.create_task(app.async_run(), name="kivy_event_loop")
     # wait a bit for the window and initial frames to appear
-
     await asyncio.sleep(0.5)
+
     try:
         yield app
     finally:
