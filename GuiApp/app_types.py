@@ -71,6 +71,39 @@ class Credits(Decimal):
         )
         return Credits(result)
 
+    def __neg__(self):
+        return self._as_credits(-Decimal(self))
+
+    def __pos__(self):
+        return self._as_credits(+Decimal(self))
+
+    def __abs__(self):
+        return self._as_credits(abs(Decimal(self)))
+
+    def __floordiv__(self, other):
+        result = (Decimal(self) // Decimal(other)).quantize(
+            TWODECIMALS, rounding=ROUND_HALF_UP
+        )
+        return Credits(result)
+
+    def __rfloordiv__(self, other):
+        result = (Decimal(other) // Decimal(self)).quantize(
+            TWODECIMALS, rounding=ROUND_HALF_UP
+        )
+        return Credits(result)
+
+    def __mod__(self, other):
+        result = (Decimal(self) % Decimal(other)).quantize(
+            TWODECIMALS, rounding=ROUND_HALF_UP
+        )
+        return Credits(result)
+
+    def __rmod__(self, other):
+        result = (Decimal(other) % Decimal(self)).quantize(
+            TWODECIMALS, rounding=ROUND_HALF_UP
+        )
+        return Credits(result)
+
     def to_hundredths(self) -> int:
         return int((Decimal(self) * 100).to_integral_value(rounding=ROUND_HALF_UP))
 

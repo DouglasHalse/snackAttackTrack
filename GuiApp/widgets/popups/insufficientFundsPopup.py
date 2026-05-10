@@ -1,3 +1,4 @@
+from app_types import Credits
 from kivy.uix.modalview import ModalView
 
 
@@ -23,7 +24,7 @@ class InsufficientFundsPopup(ModalView):
         self.dismiss()
         self.screen_manager.transitionToScreen("topUpAmountScreen")
         if self.credits_needed:
-            self.credits_needed = max(self.credits_needed, 1.0)
+            self.credits_needed = max(self.credits_needed, Credits("1.00"))
             self.screen_manager.get_screen("topUpAmountScreen").set_amount_to_add(
                 self.credits_needed
             )

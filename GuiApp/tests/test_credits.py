@@ -36,3 +36,42 @@ def test_to_and_from_hundredths():
     c = Credits("12.34")
     assert c.to_hundredths() == 1234
     assert Credits.from_hundredths(1234) == Credits("12.34")
+
+
+def test_negation():
+    assert -Credits("5.50") == Credits("-5.50")
+    assert -Credits("-3.00") == Credits("3.00")
+    assert isinstance(-Credits("1.00"), Credits)
+
+
+def test_pos():
+    assert +Credits("7.77") == Credits("7.77")
+    assert isinstance(+Credits("1.00"), Credits)
+
+
+def test_abs():
+    assert abs(Credits("-4.00")) == Credits("4.00")
+    assert abs(Credits("4.00")) == Credits("4.00")
+    assert isinstance(abs(Credits("-1.00")), Credits)
+
+
+def test_floordiv():
+    assert Credits("10.00") // Credits("3.00") == Credits("3.00")
+    assert Credits("5.50") // Credits("2.00") == Credits("2.00")
+    assert isinstance(Credits("10.00") // Credits("3.00"), Credits)
+
+
+def test_rfloordiv():
+    assert 10 // Credits("3.00") == Credits("3.00")
+    assert isinstance(10 // Credits("3.00"), Credits)
+
+
+def test_mod():
+    assert Credits("10.00") % Credits("3.00") == Credits("1.00")
+    assert Credits("10.50") % Credits("3.00") == Credits("1.50")
+    assert isinstance(Credits("10.00") % Credits("3.00"), Credits)
+
+
+def test_rmod():
+    assert 10 % Credits("3.00") == Credits("1.00")
+    assert isinstance(10 % Credits("3.00"), Credits)
