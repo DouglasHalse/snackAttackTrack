@@ -1,5 +1,7 @@
 # Snack Attack Track
 
+[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/DouglasHalse/96b0d2232509808bb39c8fd3a4435cc3/raw/coverage.json)](https://github.com/DouglasHalse/snackAttackTrack/actions)
+
 Snack Attack Track is a subscription/membership management software meant to run on a raspberry pi with a touchscreen.
 
 ## Setup development environment

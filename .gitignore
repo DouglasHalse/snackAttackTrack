@@ -19,6 +19,11 @@ settings.json
 # Generated qr code
 qr.png
 
+# Coverage reports
+.coverage
+htmlcov/
+coverage.xml
+
 # Negations last
 !.vscode/settings.json
 !.vscode/tasks.json
