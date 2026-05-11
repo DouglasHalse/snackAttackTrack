@@ -1,0 +1,30 @@
+#:kivy 2.1.0
+
+<SalesHistoryScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        page_name: "Sales History"
+        on_back_button_pressed: root.onBackButtonPressed(args)
+    GridLayout:
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        rows: 1
+        cols: 1
+        padding: 30
+        spacing: 30
+        
+        # Scrollable table
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            ClickableTable:
+                id: salesTable
+                columns: ["Date & Time", "Customer", "Type", "Items", "Total"]
+                columnExamples: ["2025-01-12 15:04", "John Doe Smith", "Purchase", "999", "$999.99"]
+                onEntryPressed: root.onSalesEntryPressed
