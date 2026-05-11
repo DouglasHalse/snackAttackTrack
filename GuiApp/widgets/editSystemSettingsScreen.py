@@ -2,10 +2,12 @@ from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.spinner import SpinnerOption
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.popups.removeConfirmationPopup import RemoveConfirmationPopup
 from widgets.settingsManager import (
+    PaymentMethodType,
     SettingName,
     SettingsManager,
     get_presentable_setting_name,
@@ -15,6 +17,10 @@ from widgets.uiElements.textInputs import TextInputPopup
 
 class BoxLayoutButton(ButtonBehavior, BoxLayout):
     pass
+
+
+class PaymentMethodOption(SpinnerOption):
+    """Custom option class for the payment method Spinner dropdown items."""
 
 
 class BoolSettingRow(GridLayout):
@@ -47,6 +53,49 @@ class BoolSettingRow(GridLayout):
             self.ids["toggleButtonImage"].source = "Images/toggle-off.png"
 
 
+class EnumSettingRow(GridLayout):
+    """A setting row with a dropdown (Spinner) to pick from enum options.
+
+    The spinner is populated with the display names of all enum members.
+    Selecting an item saves the corresponding enum value to the setting.
+    """
+
+    def __init__(
+        self,
+        settingName: SettingName,
+        settingManager: SettingsManager,
+        enum_type: type,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.settingManager: SettingsManager = settingManager
+        self.settingName: SettingName = settingName
+        self.enum_type = enum_type
+        self.ids["settingName"].text = get_presentable_setting_name(self.settingName)
+
+        # Populate the spinner with display names of all enum options
+        self.ids.spinner.values = [m.display_name() for m in self.enum_type]
+        self.ids.spinner.bind(text=self._on_spinner_text)
+
+        self._update_display()
+
+    def _update_display(self):
+        current_value = self.settingManager.get_setting_value(
+            settingName=self.settingName
+        )
+        member = self.enum_type.from_value(current_value)  # type: ignore
+        self.ids.spinner.text = member.display_name()
+
+    def _on_spinner_text(self, spinner, text):
+        """Called when the spinner selection changes."""
+        for member in self.enum_type:
+            if member.display_name() == text:
+                self.settingManager.set_setting_value(
+                    settingName=self.settingName, value=member.value
+                )
+                break
+
+
 class ButtonOptionRow(GridLayout):
     __events__ = ("on_option_button_released",)
 
@@ -55,7 +104,7 @@ class ButtonOptionRow(GridLayout):
         optionName: str,
         buttonText: str,
         settingManager: SettingsManager,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.settingManager: SettingsManager = settingManager
@@ -167,11 +216,17 @@ class EditSystemSettingsScreen(GridLayoutScreen):
     # pylint: disable=too-many-locals
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self._payment_detail_row = None
         Clock.schedule_once(lambda dt: self.init_settings())
         self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
 
     def on_back_button_pressed(self, *args):
         self.manager.transitionToScreen("adminScreen", transitionDirection="right")
+
+    def scroll_to_payment_detail_setting(self):
+        """Scroll the settings view to the payment detail row (e.g. Swish number)."""
+        if self._payment_detail_row:
+            self.ids.settingsScrollView.scroll_to(self._payment_detail_row)
 
     def on_leave(self, *args):
         # Reset scroll view after leave
@@ -243,13 +298,20 @@ class EditSystemSettingsScreen(GridLayoutScreen):
             settingName=SettingName.PURCHASE_FEE,
             settingManager=self.manager.settingsManager,
         )
-        paymentSwishNumber = StringSettingRow(
+        paymentMethodRow = EnumSettingRow(
+            settingName=SettingName.PAYMENT_METHOD,
+            settingManager=self.manager.settingsManager,
+            enum_type=PaymentMethodType,
+        )
+        paymentSwishNumberRow = StringSettingRow(
             settingName=SettingName.PAYMENT_SWISH_NUMBER,
             settingManager=self.manager.settingsManager,
         )
+        self._payment_detail_row = paymentSwishNumberRow
 
         financialSection.ids["sectionContent"].add_widget(purchaseFee)
-        financialSection.ids["sectionContent"].add_widget(paymentSwishNumber)
+        financialSection.ids["sectionContent"].add_widget(paymentMethodRow)
+        financialSection.ids["sectionContent"].add_widget(paymentSwishNumberRow)
 
         buyScreenSection = SettingsSection(sectionName="Buy screen")
 

@@ -139,8 +139,16 @@ class snackAttackTrackApp(App):
         )
 
         sm.add_setting_if_undefined(
+            settingName=SettingName.PAYMENT_METHOD,
+            default_value="swish",
+            datatype=SettingDataType.STRING,
+            min_value=0,
+            max_value=0,
+        )
+
+        sm.add_setting_if_undefined(
             settingName=SettingName.PAYMENT_SWISH_NUMBER,
-            default_value="0723071057",
+            default_value="",
             datatype=SettingDataType.STRING,
             min_value=0,
             max_value=0,

@@ -1,5 +1,6 @@
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.popups.noPaymentMethodPopup import NoPaymentMethodPopup
 from widgets.settingsManager import SettingName
 from widgets.uiElements.buttons import ImageAndTextButton
 
@@ -28,11 +29,21 @@ class MainUserScreen(GridLayoutScreen):
         self.ids.profileOption.bind(on_release=self.onProfileButtonPressed)
         self.ids.gambleOption.bind(on_release=self.onGambleButtonPressed)
         self.ids.header.bind(on_back_button_pressed=self.onBackButtonPressed)
+        self._no_payment_method_popup = None
+
+    def _show_no_payment_method_popup(self):
+        self._no_payment_method_popup = NoPaymentMethodPopup(
+            screen_manager=self.manager
+        )
+        self._no_payment_method_popup.open()
 
     def onBuyButtonPressed(self, _):
         self.manager.transitionToScreen("buyScreen")
 
     def onTopUpButtonPressed(self, _):
+        if not self.manager.settingsManager.is_payment_method_ready():
+            self._show_no_payment_method_popup()
+            return
         self.manager.transitionToScreen("topUpAmountScreen")
 
     def onProfileButtonPressed(self, _):
@@ -54,3 +65,5 @@ class MainUserScreen(GridLayoutScreen):
             settingName=SettingName.ENABLE_GAMBLING
         )
         self.ids.gambleOption.disabled = not gamble_enabled
+        if not self.manager.settingsManager.is_payment_method_ready():
+            self._show_no_payment_method_popup()
