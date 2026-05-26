@@ -79,6 +79,8 @@ class RFIDReader:
             try:
                 while not self.running.is_set():
                     card_id = reader.read_id_no_block()
+                    if card_id is not None and not isinstance(card_id, str):
+                        card_id = str(card_id)
                     if (
                         card_id is not None
                         and card_id != self.last_read_id
