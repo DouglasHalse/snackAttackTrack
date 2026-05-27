@@ -1,0 +1,48 @@
+#:kivy 2.1.0     
+
+<NoPaymentMethodPopup>:
+    id: noPaymentMethodPopup
+    size_hint: (0.8, 0.8)
+    canvas:
+        Color:
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+    GridLayout:
+        cols: 1
+        padding: '20dp'
+        Label:
+            size_hint_y: None
+            height: self.width / 14
+            font_size: self.width / 16
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            bold: True            
+            text: 'Payment Method Not Configured'
+        Label:
+            font_size: self.width / 26
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+            text: 'The payment method for this store has not been fully configured. Top-ups are disabled until a store administrator sets up the payment details in system settings.\n\nOnly change this setting if you have permission from the store owner.'
+        GridLayout:
+            rows: 1
+            size_hint: (1, None)
+            height: self.minimum_height
+            OrangeButton:
+                id: cancelButton
+                text: "Cancel"
+                width: self.parent.width / 2.5
+                height: self.width / 4
+                text_size: self.height / 2
+                on_press: root.on_cancel()
+            Widget: # Horizontal Spacer
+            GreenButton:
+                id: setPaymentMethodButton
+                text: "Set Up Payment"
+                width: self.parent.width / 2.5
+                height: self.width / 4
+                text_size: self.height / 2
+                on_press: root.on_set_up_payment()

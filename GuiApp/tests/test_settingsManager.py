@@ -2,7 +2,12 @@ import json
 
 import pytest
 
-from GuiApp.widgets.settingsManager import SettingDataType, SettingName, SettingsManager
+from GuiApp.widgets.settingsManager import (
+    PaymentMethodType,
+    SettingDataType,
+    SettingName,
+    SettingsManager,
+)
 
 # Fixtures are counted as redefine-outer-name
 # pylint: disable=redefined-outer-name
@@ -151,3 +156,61 @@ def test_callback_not_invoked_for_different_setting(settings_manager):
     )
     settings_manager.set_setting_value(SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE, False)
     assert not callback_called
+
+
+class TestPaymentMethodType:
+    def test_swish_display_name(self):
+        assert PaymentMethodType.SWISH.display_name() == "Swish"
+
+    def test_from_value_swish(self):
+        assert PaymentMethodType.from_value("swish") == PaymentMethodType.SWISH
+
+    def test_from_value_unknown_defaults_to_swish(self):
+        assert PaymentMethodType.from_value("klarna") == PaymentMethodType.SWISH
+
+    def test_from_value_empty_defaults_to_swish(self):
+        assert PaymentMethodType.from_value("") == PaymentMethodType.SWISH
+
+
+# --- SettingsManager.is_payment_method_ready tests ---
+
+
+@pytest.fixture
+def settings_manager_with_payment_methods(settings_manager):
+    settings_manager.add_setting_if_undefined(
+        SettingName.PAYMENT_METHOD, "swish", SettingDataType.STRING, 0, 0
+    )
+    settings_manager.add_setting_if_undefined(
+        SettingName.PAYMENT_SWISH_NUMBER, "", SettingDataType.STRING, 0, 0
+    )
+    return settings_manager
+
+
+class TestIsPaymentMethodReady:
+    def test_swish_with_number(self, settings_manager_with_payment_methods):
+        sm = settings_manager_with_payment_methods
+        sm.set_setting_value(SettingName.PAYMENT_SWISH_NUMBER, "1234567890")
+        assert sm.is_payment_method_ready() is True
+
+    def test_swish_without_number(self, settings_manager_with_payment_methods):
+        sm = settings_manager_with_payment_methods
+        sm.set_setting_value(SettingName.PAYMENT_SWISH_NUMBER, "")
+        assert sm.is_payment_method_ready() is False
+
+    def test_unknown_method(self, settings_manager):
+        settings_manager.add_setting_if_undefined(
+            SettingName.PAYMENT_METHOD, "unknown", SettingDataType.STRING, 0, 0
+        )
+        settings_manager.add_setting_if_undefined(
+            SettingName.PAYMENT_SWISH_NUMBER, "1234567890", SettingDataType.STRING, 0, 0
+        )
+        assert settings_manager.is_payment_method_ready() is False
+
+    def test_unset_method_with_number(self, settings_manager):
+        settings_manager.add_setting_if_undefined(
+            SettingName.PAYMENT_METHOD, "", SettingDataType.STRING, 0, 0
+        )
+        settings_manager.add_setting_if_undefined(
+            SettingName.PAYMENT_SWISH_NUMBER, "1234567890", SettingDataType.STRING, 0, 0
+        )
+        assert settings_manager.is_payment_method_ready() is False

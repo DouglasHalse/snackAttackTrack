@@ -15,6 +15,7 @@ from kivy.core.window import Window
 from app_types import Credits
 from GuiApp.main import snackAttackTrackApp
 from GuiApp.widgets.editSnacksScreen import EditSnacksScreen
+from GuiApp.widgets.settingsManager import SettingName
 
 # Fixtures are counted as redefine-outer-name
 # pylint: disable=redefined-outer-name
@@ -93,6 +94,11 @@ async def app_with_only_users(app_with_nothing):
     app_with_nothing.screenManager.database.addCredits(
         userId=app_with_nothing.screenManager.database.getPatronIdByCardId("555555555"),
         amount=Credits("11.00"),
+    )
+
+    # Set a default Swish number so top-up tests work
+    app_with_nothing.screenManager.settingsManager.set_setting_value(
+        settingName=SettingName.PAYMENT_SWISH_NUMBER, value="1234567890"
     )
 
     return app_with_nothing

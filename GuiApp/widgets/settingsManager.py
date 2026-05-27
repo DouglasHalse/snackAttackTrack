@@ -10,12 +10,31 @@ class SettingName(Enum):
     AUTO_LOGOUT_ON_IDLE_TIME = "auto_logout_on_idle_time"
     AUTO_LOGOUT_AFTER_PURCHASE = "auto_logout_after_purchase"
     PURCHASE_FEE = "purchase_fee"
+    PAYMENT_METHOD = "payment_method"
     PAYMENT_SWISH_NUMBER = "payment_swish_number"
     GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE = "go_to_splash_screen_on_idle_enable"
     GO_TO_SPLASH_SCREEN_ON_IDLE_TIME = "go_to_splash_screen_on_idle_time"
     ORDER_INVENTORY_BY_MOST_PURCHASED = "order_inventory_by_most_purchased"
     ENABLE_GAMBLING = "enable_gambling"
     EXCITING_GAMBLING = "exciting_gambling"
+
+
+class PaymentMethodType(Enum):
+    """Supported payment method options."""
+
+    SWISH = "swish"
+
+    def display_name(self) -> str:
+        """Return a human-readable name for this payment method."""
+        return self.value.replace("_", " ").title()
+
+    @staticmethod
+    def from_value(value: str) -> "PaymentMethodType":
+        """Get the enum member for a given string value, defaulting to SWISH."""
+        for member in PaymentMethodType:
+            if member.value == value:
+                return member
+        return PaymentMethodType.SWISH
 
 
 def get_presentable_setting_name(settingName: SettingName):
@@ -132,6 +151,20 @@ class SettingsManager:
     def _notify_setting_change(self, settingName: SettingName, value):
         if settingName.value in self.callbacks:
             self.callbacks[settingName.value](value)
+
+    def is_payment_method_ready(self) -> bool:
+        """Check whether the currently selected payment method is fully configured.
+
+        Dispatches to method-specific checks so each payment type can define
+        what "ready" means (e.g. Swish needs a phone number).
+        """
+        method = self.get_setting_value(settingName=SettingName.PAYMENT_METHOD)
+        if method == PaymentMethodType.SWISH.value:
+            return bool(
+                self.get_setting_value(settingName=SettingName.PAYMENT_SWISH_NUMBER)
+            )
+        # Unknown / unset method → not ready
+        return False
 
 
 # Example usage

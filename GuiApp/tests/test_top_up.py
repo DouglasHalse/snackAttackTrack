@@ -1,9 +1,12 @@
 import asyncio
 
 import pytest
+from kivy.core.window import Window
 
 from app_types import Credits
 from GuiApp.widgets.settingsManager import SettingName
+
+# pylint: disable=protected-access
 
 
 @pytest.mark.asyncio
@@ -666,3 +669,121 @@ async def test_top_up_with_wheel_of_snacks_screen_as_referee(
 
     current_patron = app.screenManager.getCurrentPatron()
     assert current_patron.totalCredits >= cost_to_gamble
+
+
+def _dismiss_stale_no_payment_method_popups():
+    """Dismiss any NoPaymentMethodPopup instances left from previous tests
+    (Window is a singleton across tests so popups can leak)."""
+    for child in list(Window.children):
+        if type(child).__name__ == "NoPaymentMethodPopup":
+            child.dismiss(animation=False)
+
+
+@pytest.mark.asyncio
+async def test_no_payment_method_popup_shows_on_login(app_with_only_users):
+    _dismiss_stale_no_payment_method_popups()
+    await asyncio.sleep(0.5)
+
+    # Clear the Swish number to trigger the popup
+    app_with_only_users.screenManager.settingsManager.set_setting_value(
+        settingName=SettingName.PAYMENT_SWISH_NUMBER, value=""
+    )
+
+    assert app_with_only_users.screenManager.current == "splashScreen"
+
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
+
+    await asyncio.sleep(0.5)
+
+    # Should still be on mainUserPage (popup doesn't navigate away)
+    assert app_with_only_users.screenManager.current == "mainUserPage"
+
+    # Check that NoPaymentMethodPopup is stored on the screen
+    main_screen = app_with_only_users.screenManager.current_screen
+    assert (
+        main_screen._no_payment_method_popup is not None
+    ), "NoPaymentMethodPopup should be created when Swish number is not set"
+
+    # Clean up: dismiss the popup so it doesn't leak into subsequent tests
+    main_screen._no_payment_method_popup.dismiss(animation=False)
+    await asyncio.sleep(0.5)
+
+
+@pytest.mark.asyncio
+async def test_no_payment_method_popup_cancel_dismisses(app_with_only_users):
+    _dismiss_stale_no_payment_method_popups()
+    await asyncio.sleep(0.5)
+
+    # Clear the Swish number to trigger the popup
+    app_with_only_users.screenManager.settingsManager.set_setting_value(
+        settingName=SettingName.PAYMENT_SWISH_NUMBER, value=""
+    )
+
+    assert app_with_only_users.screenManager.current == "splashScreen"
+
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
+
+    await asyncio.sleep(0.5)
+
+    # Get the popup from the screen's stored reference
+    main_screen = app_with_only_users.screenManager.current_screen
+    popup = main_screen._no_payment_method_popup
+    assert popup is not None, "NoPaymentMethodPopup should be visible"
+
+    # Dismiss without animation (animation=False bypasses the fade-out delay)
+    popup.dismiss(animation=False)
+
+    await asyncio.sleep(0.5)
+
+    # Dismiss any other stale NoPaymentMethodPopup instances that may have
+    # leaked from previous tests (Window is a singleton across tests)
+    for child in list(Window.children):
+        if type(child).__name__ == "NoPaymentMethodPopup":
+            child.dismiss(animation=False)
+    await asyncio.sleep(0.5)
+
+    # Verify all popups are dismissed
+    has_popup = any(
+        type(child).__name__ == "NoPaymentMethodPopup" for child in Window.children
+    )
+    assert not has_popup, "NoPaymentMethodPopup should be dismissed after cancel"
+
+
+@pytest.mark.asyncio
+async def test_no_payment_method_popup_blocks_top_up(app_with_only_users):
+    _dismiss_stale_no_payment_method_popups()
+    await asyncio.sleep(0.5)
+
+    # Clear the Swish number to trigger the popup
+    app_with_only_users.screenManager.settingsManager.set_setting_value(
+        settingName=SettingName.PAYMENT_SWISH_NUMBER, value=""
+    )
+
+    assert app_with_only_users.screenManager.current == "splashScreen"
+
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
+
+    await asyncio.sleep(0.5)
+
+    # Dismiss the login popup first via screen reference
+    main_screen = app_with_only_users.screenManager.current_screen
+    popup = main_screen._no_payment_method_popup
+    assert popup is not None, "NoPaymentMethodPopup should appear on login"
+    popup.dismiss(animation=False)
+    await asyncio.sleep(0.5)
+
+    # Now try top-up
+    main_screen.ids.topUpOption.dispatch("on_release")
+
+    await asyncio.sleep(0.5)
+
+    # Should NOT navigate to topUpAmountScreen
+    assert (
+        app_with_only_users.screenManager.current == "mainUserPage"
+    ), "Top-up should be blocked when no Swish number is set"
+
+    # Should show the popup again (new instance stored on screen)
+    has_popup = any(
+        type(child).__name__ == "NoPaymentMethodPopup" for child in Window.children
+    )
+    assert has_popup, "NoPaymentMethodPopup should block top-up navigation"
