@@ -2,6 +2,7 @@ from decimal import InvalidOperation
 from app_types import Credits
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+from widgets.settingsManager import SettingName
 from widgets.uiElements.textInputs import TextInputPopup
 
 
@@ -69,8 +70,20 @@ class TopUpAmountScreen(GridLayoutScreen):
             ErrorMessagePopup(errorMessage="Minimum amount is 1.0 Credits").open()
             return
 
-        self.manager.get_screen("topUpPaymentScreen").setAmountToBePayed(creditsToAdd)
-        self.manager.transitionToScreen("topUpPaymentScreen")
+        # Route to the correct payment screen based on commerce mode
+        commerce_enabled = self.manager.settingsManager.get_setting_value(
+            settingName=SettingName.ENABLE_SWISH_COMMERCE
+        )
+        if commerce_enabled:
+            self.manager.get_screen("topUpSwishCommerceScreen").setAmountToBePayed(
+                creditsToAdd
+            )
+            self.manager.transitionToScreen("topUpSwishCommerceScreen")
+        else:
+            self.manager.get_screen("topUpPaymentScreen").setAmountToBePayed(
+                creditsToAdd
+            )
+            self.manager.transitionToScreen("topUpPaymentScreen")
 
     def onCancel(self, *largs):
         self.manager.transition_back_from_top_up()

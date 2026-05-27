@@ -16,8 +16,9 @@ venv/
 database.db
 settings.json
 
-# Generated qr code
+# Generated qr codes
 qr.png
+qr_online.png
 
 # Coverage reports
 .coverage

@@ -117,6 +117,46 @@
             background_color: 1, 1, 1, 1
             size_hint: 1, 1
 
+<StatusSettingRow>:
+    rows: 1
+    size_hint: (1, None)
+    height: self.width / 12
+    padding: [20, 5]
+    canvas:
+        Color:
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [(2, 2),(2, 2),(2, 2),(2, 2)]
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 10, -10
+            blur_radius: 15
+            spread_radius: -5, -5
+            border_radius: 2, 2, 2, 2
+    Label:
+        id: settingName
+        text: "Status"
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        bold: True
+        font_size: self.height / 2
+    Label:
+        id: statusLabel
+        text: "Checking..."
+        text_size: self.size
+        halign: 'center'
+        valign: 'middle'
+        font_size: self.height / 2
+        size_hint_x: None
+        width: self.parent.height * 4
+
 <ButtonOptionRow>:
     rows: 1
     size_hint: (1, None)

@@ -3,6 +3,8 @@ import os
 from enum import Enum
 from typing import Any, Callable, Dict
 
+from widgets.swishApiClient import SwishApiClient
+
 
 class SettingName(Enum):
     SPILL_FACTOR = "spill_factor"
@@ -12,6 +14,8 @@ class SettingName(Enum):
     PURCHASE_FEE = "purchase_fee"
     PAYMENT_METHOD = "payment_method"
     PAYMENT_SWISH_NUMBER = "payment_swish_number"
+    ENABLE_SWISH_COMMERCE = "enable_swish_commerce"
+    SWISH_API_BASE_URL = "swish_api_base_url"
     GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE = "go_to_splash_screen_on_idle_enable"
     GO_TO_SPLASH_SCREEN_ON_IDLE_TIME = "go_to_splash_screen_on_idle_time"
     ORDER_INVENTORY_BY_MOST_PURCHASED = "order_inventory_by_most_purchased"
@@ -35,6 +39,32 @@ class PaymentMethodType(Enum):
             if member.value == value:
                 return member
         return PaymentMethodType.SWISH
+
+
+class SwishEnvironment(Enum):
+    """Swish API environment options with human-readable names."""
+
+    MSS = "https://mss.cpc.getswish.net"
+    SANDBOX = "https://staging.getswish.pub.tds.tieto.com"
+    PRODUCTION = "https://cpc.getswish.net"
+
+    def display_name(self) -> str:
+        """Return a human-readable name for this environment."""
+        if self == SwishEnvironment.MSS:
+            return "MSS (Test)"
+        if self == SwishEnvironment.SANDBOX:
+            return "Sandbox"
+        if self == SwishEnvironment.PRODUCTION:
+            return "Production"
+        return self.value.replace("_", " ").title()
+
+    @staticmethod
+    def from_value(value: str) -> "SwishEnvironment":
+        """Get the enum member for a given URL, defaulting to MSS."""
+        for member in SwishEnvironment:
+            if member.value == value:
+                return member
+        return SwishEnvironment.MSS
 
 
 def get_presentable_setting_name(settingName: SettingName):
@@ -156,10 +186,16 @@ class SettingsManager:
         """Check whether the currently selected payment method is fully configured.
 
         Dispatches to method-specific checks so each payment type can define
-        what "ready" means (e.g. Swish needs a phone number).
+        what "ready" means (e.g. Swish needs a phone number, Swish Online
+        needs API credentials).
         """
         method = self.get_setting_value(settingName=SettingName.PAYMENT_METHOD)
         if method == PaymentMethodType.SWISH.value:
+            if self.get_setting_value(settingName=SettingName.ENABLE_SWISH_COMMERCE):
+                # Commerce mode: check for certificates
+                detected = SwishApiClient.detect_certificates()
+                return bool(detected.get("cert_path"))
+            # Manual mode: check for Swish number
             return bool(
                 self.get_setting_value(settingName=SettingName.PAYMENT_SWISH_NUMBER)
             )

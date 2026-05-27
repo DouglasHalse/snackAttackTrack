@@ -10,8 +10,10 @@ from widgets.settingsManager import (
     PaymentMethodType,
     SettingName,
     SettingsManager,
+    SwishEnvironment,
     get_presentable_setting_name,
 )
+from widgets.swishApiClient import SwishApiClient
 from widgets.uiElements.textInputs import TextInputPopup
 
 
@@ -202,8 +204,26 @@ class StringSettingRow(GridLayout):
                 originalTextInputWidget=self.ids["textInput"],
                 headerText="Edit " + get_presentable_setting_name(self.settingName),
                 hintText="Setting value",
-                inputFilter="float",
+                inputFilter=None,
             ).open()
+
+
+class StatusSettingRow(GridLayout):
+    """A read-only row that displays certificate detection status."""
+
+    def __init__(self, settings_manager: SettingsManager, **kwargs):
+        super().__init__(**kwargs)
+        self.settings_manager = settings_manager
+        self.ids["settingName"].text = "Certificate Status"
+        self.refresh_status()
+
+    def refresh_status(self):
+        """Update the status label by testing the Swish API connection."""
+        base_url = self.settings_manager.get_setting_value(
+            settingName=SettingName.SWISH_API_BASE_URL
+        )
+        status = SwishApiClient.test_connection(base_url=base_url)
+        self.ids["statusLabel"].text = status
 
 
 class SettingsSection(GridLayout):
@@ -217,8 +237,23 @@ class EditSystemSettingsScreen(GridLayoutScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._payment_detail_row = None
+        self._certificate_status_row = None
         Clock.schedule_once(lambda dt: self.init_settings())
         self.ids.header.bind(on_back_button_pressed=self.on_back_button_pressed)
+
+    def on_pre_enter(self, *args):
+        """Refresh the connection status every time the screen is entered."""
+        super().on_pre_enter(*args)
+        if self._certificate_status_row:
+            commerce_enabled = self.manager.settingsManager.get_setting_value(
+                settingName=SettingName.ENABLE_SWISH_COMMERCE
+            )
+            if commerce_enabled:
+                self._certificate_status_row.refresh_status()
+            else:
+                self._certificate_status_row.ids[
+                    "statusLabel"
+                ].text = "Commerce disabled"
 
     def on_back_button_pressed(self, *args):
         self.manager.transitionToScreen("adminScreen", transitionDirection="right")
@@ -303,15 +338,79 @@ class EditSystemSettingsScreen(GridLayoutScreen):
             settingManager=self.manager.settingsManager,
             enum_type=PaymentMethodType,
         )
+        enableSwishCommerce = BoolSettingRow(
+            settingName=SettingName.ENABLE_SWISH_COMMERCE,
+            settingManager=self.manager.settingsManager,
+        )
         paymentSwishNumberRow = StringSettingRow(
             settingName=SettingName.PAYMENT_SWISH_NUMBER,
             settingManager=self.manager.settingsManager,
         )
         self._payment_detail_row = paymentSwishNumberRow
 
+        swishApiBaseUrlRow = EnumSettingRow(
+            settingName=SettingName.SWISH_API_BASE_URL,
+            settingManager=self.manager.settingsManager,
+            enum_type=SwishEnvironment,
+        )
+
+        # Disable Swish number and API base URL when commerce mode is on
+        def _on_commerce_toggled(value):
+            paymentSwishNumberRow.set_disabled(value)
+            swishApiBaseUrlRow.set_disabled(not value)
+            certificateStatusRow.set_disabled(not value)
+            if value:
+                # Extract Swish number from certificate and update the setting
+                detected = SwishApiClient.detect_certificates()
+                cert_number = detected.get("payee_alias", "")
+                if cert_number:
+                    self.manager.settingsManager.set_setting_value(
+                        settingName=SettingName.PAYMENT_SWISH_NUMBER,
+                        value=cert_number,
+                    )
+                certificateStatusRow.refresh_status()
+            else:
+                certificateStatusRow.ids["statusLabel"].text = "Commerce disabled"
+
+        commerce_enabled = self.manager.settingsManager.get_setting_value(
+            settingName=SettingName.ENABLE_SWISH_COMMERCE
+        )
+        paymentSwishNumberRow.set_disabled(commerce_enabled)
+        swishApiBaseUrlRow.set_disabled(not commerce_enabled)
+
+        certificateStatusRow = StatusSettingRow(
+            settings_manager=self.manager.settingsManager
+        )
+        self._certificate_status_row = certificateStatusRow
+        certificateStatusRow.set_disabled(not commerce_enabled)
+        if commerce_enabled:
+            detected = SwishApiClient.detect_certificates()
+            cert_number = detected.get("payee_alias", "")
+            if cert_number:
+                self.manager.settingsManager.set_setting_value(
+                    settingName=SettingName.PAYMENT_SWISH_NUMBER,
+                    value=cert_number,
+                )
+        else:
+            certificateStatusRow.ids["statusLabel"].text = "Commerce disabled"
+
+        self.manager.settingsManager.register_on_setting_change_callback(
+            SettingName.ENABLE_SWISH_COMMERCE,
+            _on_commerce_toggled,
+        )
+
+        # Refresh connection status when the base URL changes
+        self.manager.settingsManager.register_on_setting_change_callback(
+            SettingName.SWISH_API_BASE_URL,
+            lambda _: certificateStatusRow.refresh_status(),
+        )
+
         financialSection.ids["sectionContent"].add_widget(purchaseFee)
         financialSection.ids["sectionContent"].add_widget(paymentMethodRow)
         financialSection.ids["sectionContent"].add_widget(paymentSwishNumberRow)
+        financialSection.ids["sectionContent"].add_widget(enableSwishCommerce)
+        financialSection.ids["sectionContent"].add_widget(swishApiBaseUrlRow)
+        financialSection.ids["sectionContent"].add_widget(certificateStatusRow)
 
         buyScreenSection = SettingsSection(sectionName="Buy screen")
 

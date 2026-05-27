@@ -2,3 +2,5 @@ kivy[base]
 kivy_examples
 pillow
 qrcode
+requests
+cryptography

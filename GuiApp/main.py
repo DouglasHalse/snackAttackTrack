@@ -1,4 +1,5 @@
 import argparse
+import os
 
 # Disable all the unused-import violations due to .kv files
 # pylint: disable=unused-import
@@ -37,8 +38,10 @@ from widgets.splashScreen import SplashScreenWidget
 from widgets.StoreStatisticsScreen import StoreStatisticsScreen
 from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
+from widgets.topUpSwishCommerceScreen import TopUpSwishCommerceScreen
 from widgets.UserStatisticsScreen import UserStatisticsScreen
 from widgets.wheelOfSnacksScreen import WheelOfSnacksScreen
+from widgets.swishApiClient import SwishApiClient
 
 # pylint: enable=unused-import
 
@@ -155,6 +158,22 @@ class snackAttackTrackApp(App):
         )
 
         sm.add_setting_if_undefined(
+            settingName=SettingName.ENABLE_SWISH_COMMERCE,
+            default_value=False,
+            datatype=SettingDataType.BOOL,
+            min_value=0,
+            max_value=1,
+        )
+
+        sm.add_setting_if_undefined(
+            settingName=SettingName.SWISH_API_BASE_URL,
+            default_value="https://cpc.getswish.net",
+            datatype=SettingDataType.STRING,
+            min_value=0,
+            max_value=0,
+        )
+
+        sm.add_setting_if_undefined(
             settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE,
             default_value=True,
             datatype=SettingDataType.BOOL,
@@ -208,6 +227,9 @@ class snackAttackTrackApp(App):
         self.screenManager.add_widget(AddSnackScreen(name="addSnackScreen"))
         self.screenManager.add_widget(TopUpAmountScreen(name="topUpAmountScreen"))
         self.screenManager.add_widget(TopUpPaymentScreen(name="topUpPaymentScreen"))
+        self.screenManager.add_widget(
+            TopUpSwishCommerceScreen(name="topUpSwishCommerceScreen")
+        )
         self.screenManager.add_widget(BuyScreen(name="buyScreen"))
         self.screenManager.add_widget(EditUserScreen(name="editUserScreen"))
         self.screenManager.add_widget(HistoryScreen(name="historyScreen"))
@@ -251,10 +273,11 @@ def main():
     Window.rotation = args.rotate_screen
     Window.show_cursor = not args.hide_cursor
 
-    if args.no_inspector:
-        app = snackAttackTrackApp(use_inspector=False)
-    else:
-        app = snackAttackTrackApp(use_inspector=True)
+    app = snackAttackTrackApp(use_inspector=not args.no_inspector)
+
+    # Point the Swish API client at the payment certificates folder
+    cert_dir = os.path.join(os.path.dirname(__file__), "payment_certificates")
+    SwishApiClient.set_cert_dir(cert_dir)
 
     app.run()
 

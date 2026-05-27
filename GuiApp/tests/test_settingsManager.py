@@ -183,6 +183,9 @@ def settings_manager_with_payment_methods(settings_manager):
     settings_manager.add_setting_if_undefined(
         SettingName.PAYMENT_SWISH_NUMBER, "", SettingDataType.STRING, 0, 0
     )
+    settings_manager.add_setting_if_undefined(
+        SettingName.ENABLE_SWISH_COMMERCE, False, SettingDataType.BOOL, 0, 1
+    )
     return settings_manager
 
 
@@ -214,3 +217,32 @@ class TestIsPaymentMethodReady:
             SettingName.PAYMENT_SWISH_NUMBER, "1234567890", SettingDataType.STRING, 0, 0
         )
         assert settings_manager.is_payment_method_ready() is False
+
+
+class TestIsPaymentMethodReadyCommerce:
+    def test_commerce_with_certs(self, settings_manager):
+        """Commerce mode with certificates present is ready."""
+        settings_manager.add_setting_if_undefined(
+            SettingName.PAYMENT_METHOD, "swish", SettingDataType.STRING, 0, 0
+        )
+        settings_manager.add_setting_if_undefined(
+            SettingName.ENABLE_SWISH_COMMERCE, True, SettingDataType.BOOL, 0, 1
+        )
+        settings_manager.add_setting_if_undefined(
+            SettingName.PAYMENT_SWISH_NUMBER, "", SettingDataType.STRING, 0, 0
+        )
+        # Certs are present in the test environment → ready
+        assert settings_manager.is_payment_method_ready() is True
+
+    def test_commerce_without_commerce_flag(self, settings_manager):
+        """Commerce flag off with Swish number set is ready (manual mode)."""
+        settings_manager.add_setting_if_undefined(
+            SettingName.PAYMENT_METHOD, "swish", SettingDataType.STRING, 0, 0
+        )
+        settings_manager.add_setting_if_undefined(
+            SettingName.ENABLE_SWISH_COMMERCE, False, SettingDataType.BOOL, 0, 1
+        )
+        settings_manager.add_setting_if_undefined(
+            SettingName.PAYMENT_SWISH_NUMBER, "1234567890", SettingDataType.STRING, 0, 0
+        )
+        assert settings_manager.is_payment_method_ready() is True

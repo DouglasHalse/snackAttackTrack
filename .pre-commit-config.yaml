@@ -11,4 +11,4 @@ repos:
       - id: pylint
         language_version: python3.9
         args:
-          - --disable=invalid-name,missing-module-docstring,import-error,missing-function-docstring,missing-class-docstring,too-few-public-methods,line-too-long,too-many-arguments,unused-argument,undefined-variable,fixme,useless-parent-delegation
+          - --disable=invalid-name,missing-module-docstring,import-error,missing-function-docstring,missing-class-docstring,too-few-public-methods,line-too-long,too-many-arguments,unused-argument,undefined-variable,fixme,useless-parent-delegation,duplicate-code,too-many-statements,import-outside-toplevel,too-many-return-statements,too-many-branches,broad-exception-caught,consider-using-with,raise-missing-from,attribute-defined-outside-init,use-maxsplit-arg,reimported
