@@ -57,7 +57,7 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.onRemove()
+                on_release: root.onRemove()
             Widget: # Horizontal Spacer
             OrangeButton:
                 id: cancelButton
@@ -65,7 +65,7 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.onCancel()
+                on_release: root.onCancel()
             Widget: # Horizontal Spacer
             GreenButton:
                 id: confirmButton
@@ -73,7 +73,7 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.onConfirm()
+                on_release: root.onConfirm()
             Widget: # Horizontal Spacer
         Widget: # Vertical Spacer
 

@@ -1,54 +1,47 @@
-#:kivy 2.1.0     
+#:kivy 2.1.0
+
+<PressButton>:
+    text: "UNDEFINED"
+    text_size: 16
+    size_hint: (None, None)
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: -8 + root.press_offset, -8 + root.press_offset
+            blur_radius: 8 - root.press_offset
+            spread_radius: -1 - root.press_offset, -1 - root.press_offset
+            border_radius: 10, 10, 10, 10
+    canvas:
+        Color:
+            rgba: [c * 0.65 for c in app.colors[root.button_color_name]]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: app.colors[root.button_color_name]
+        SmoothRoundedRectangle:
+            pos: (self.x, self.y)
+            size: (self.width - root.press_offset, self.height - root.press_offset)
+    Label:
+        bold: True
+        text: root.text
+        font_size: root.text_size
+        size_hint: (None, None)
+        size: self.texture_size
+        x: root.center_x - self.width / 2 - root.press_offset
+        y: root.center_y - self.height / 2 - root.press_offset
 
 <GreenButton>:
-    text: "UNDEFINED"
-    text_size: 16
-    size_hint: (None, None)
-    canvas:
-        Color:
-            rgba: app.colors["green_button"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
-    Label:
-        bold: True
-        text: root.text
-        font_size: root.text_size
-        size_hint: (1, 1)
-
+    button_color_name: "green_button"
 
 <OrangeButton>:
-    text: "UNDEFINED"
-    text_size: 16
-    size_hint: (None, None)
-    canvas:
-        Color:
-            rgba: app.colors["orange_button"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
-    Label:
-        bold: True
-        text: root.text
-        font_size: root.text_size
-        size_hint: (1, 1)
-
+    button_color_name: "orange_button"
 
 <RedButton>:
-    text: "UNDEFINED"
-    text_size: 16
-    size_hint: (None, None)
-    canvas:
-        Color:
-            rgba: app.colors["red_button"]
-        SmoothRoundedRectangle:
-            pos: self.pos
-            size: self.size
-    Label:
-        bold: True
-        text: root.text
-        font_size: root.text_size
-        size_hint: (1, 1)
+    button_color_name: "red_button"
 
 
 <ImageAndTextButton>:

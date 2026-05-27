@@ -58,7 +58,7 @@ async def test_return_from_top_up_with_cancel_button(app_with_only_users):
     assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
     app_with_only_users.screenManager.current_screen.ids.cancelButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
@@ -87,7 +87,7 @@ async def test_no_amount_selected(app_with_only_users):
     assert app_with_only_users.screenManager.current == "topUpAmountScreen"
 
     app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_only_users.screenManager.current == "topUpAmountScreen"
@@ -160,7 +160,7 @@ async def test_less_than_one_amount_selected(app_with_only_users):
     )
 
     app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     await asyncio.sleep(0.5)
@@ -192,7 +192,7 @@ async def test_negative_amount_selected(app_with_only_users):
     app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text = "-10.00"
 
     app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_only_users.screenManager.current == "topUpAmountScreen"
@@ -221,7 +221,7 @@ async def test_return_from_payment_with_back_button(app_with_only_users):
     app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text = "10.00"
 
     app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_only_users.screenManager.current == "topUpPaymentScreen"
@@ -256,13 +256,13 @@ async def test_return_from_payment_with_cancel_button(app_with_only_users):
     app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text = "10.00"
 
     app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_only_users.screenManager.current == "topUpPaymentScreen"
 
     app_with_only_users.screenManager.current_screen.ids.cancelButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
@@ -299,13 +299,13 @@ async def test_add_hundred_credits(app_with_only_users):
     app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text = "100.00"
 
     app_with_only_users.screenManager.current_screen.ids.continueButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_only_users.screenManager.current == "topUpPaymentScreen"
 
     app_with_only_users.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_only_users.screenManager.current == "mainUserPage"
@@ -389,7 +389,7 @@ async def test_return_from_top_up_amount_with_back_button_with_buy_screen_as_ref
     await asyncio.sleep(0.5)
 
     app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app.screenManager.current == "topUpAmountScreen"
@@ -431,12 +431,12 @@ async def test_return_from_top_up_amount_with_cancel_button_with_buy_screen_as_r
     await asyncio.sleep(0.5)
 
     app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app.screenManager.current == "topUpAmountScreen"
 
-    app.screenManager.current_screen.ids.cancelButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.cancelButton.dispatch("on_release")
 
     assert app.screenManager.current == "buyScreen"
 
@@ -497,7 +497,7 @@ async def test_top_up_with_buy_screen_as_referee(
     await asyncio.sleep(0.5)
 
     app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app.screenManager.current == "topUpAmountScreen"
@@ -506,11 +506,11 @@ async def test_top_up_with_buy_screen_as_referee(
         f"{missing_credits:.2f}"
     )
 
-    app.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.continueButton.dispatch("on_release")
 
     assert app.screenManager.current == "topUpPaymentScreen"
 
-    app.screenManager.current_screen.ids.confirmButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.confirmButton.dispatch("on_release")
 
     assert app.screenManager.current == "buyScreen"
 
@@ -566,12 +566,12 @@ async def test_return_from_top_up_amount_with_back_button_with_wheel_of_snacks_s
 
     assert app.screenManager.current == "wheelOfSnacksScreen"
 
-    app.screenManager.current_screen.ids.spin_button.dispatch("on_press")
+    app.screenManager.current_screen.ids.spin_button.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
     app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app.screenManager.current == "topUpAmountScreen"
@@ -600,17 +600,17 @@ async def test_return_from_top_up_amount_with_cancel_button_with_wheel_of_snacks
 
     assert app.screenManager.current == "wheelOfSnacksScreen"
 
-    app.screenManager.current_screen.ids.spin_button.dispatch("on_press")
+    app.screenManager.current_screen.ids.spin_button.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
     app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app.screenManager.current == "topUpAmountScreen"
 
-    app.screenManager.current_screen.ids.cancelButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.cancelButton.dispatch("on_release")
 
     assert app.screenManager.current == "wheelOfSnacksScreen"
 
@@ -642,12 +642,12 @@ async def test_top_up_with_wheel_of_snacks_screen_as_referee(
     missing_credits = cost_to_gamble - current_patron.totalCredits
     assert missing_credits > 0  # Ensure some credits are missing
 
-    app.screenManager.current_screen.ids.spin_button.dispatch("on_press")
+    app.screenManager.current_screen.ids.spin_button.dispatch("on_release")
 
     await asyncio.sleep(0.5)
 
     app.screenManager.current_screen.insufficient_funds_popup.ids.topUpButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app.screenManager.current == "topUpAmountScreen"
@@ -656,11 +656,11 @@ async def test_top_up_with_wheel_of_snacks_screen_as_referee(
         f"{missing_credits:.2f}"
     )
 
-    app.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.continueButton.dispatch("on_release")
 
     assert app.screenManager.current == "topUpPaymentScreen"
 
-    app.screenManager.current_screen.ids.confirmButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.confirmButton.dispatch("on_release")
 
     assert app.screenManager.current == "wheelOfSnacksScreen"
 

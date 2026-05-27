@@ -17,7 +17,7 @@ async def test_login_by_selecting_user(app_with_only_users):
 
     for userButton in usersOnScreen:
         if userButton.first_name == "User2FirstName":
-            userButton.ids.clickableLayout.dispatch("on_press")
+            userButton.ids.clickableLayout.dispatch("on_release")
             break
 
     assert app_with_only_users.screenManager.current == "mainUserPage"

@@ -38,7 +38,7 @@
                 width: self.parent.width / 2.5
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.on_close()
+                on_release: root.on_close()
             Widget: # Horizontal Spacer
             GreenButton:
                 id: topUpButton
@@ -46,5 +46,5 @@
                 width: self.parent.width / 2.5
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.on_top_up()
+                on_release: root.on_top_up()
             

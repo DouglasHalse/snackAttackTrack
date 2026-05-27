@@ -51,7 +51,7 @@
                         height: self.width / 3
                         text_size: self.height / 2
                         text: "Create user"
-                        on_press: root.createUserPressed()
+                        on_release: root.createUserPressed()
                     Widget: # Horizontal Spacer
                 Widget: # Vertical Spacer
                     size_hint_y: None
@@ -99,7 +99,7 @@
                         height: self.width / 3
                         text_size: self.height / 2
                         text: "Link card"
-                        on_press: root.linkCardPressed()
+                        on_release: root.linkCardPressed()
                     Widget: # Horizontal Spacer
                 Widget: # Vertical Spacer
                     size_hint_y: None
@@ -116,5 +116,5 @@
                 height: self.width / 3
                 text_size: self.height / 2
                 text: "Close"
-                on_press: root.dismiss()
+                on_release: root.dismiss()
             Widget: # Horizontal Spacer

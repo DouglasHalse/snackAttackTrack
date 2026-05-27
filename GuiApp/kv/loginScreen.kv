@@ -8,7 +8,7 @@
     ClickableRoundedTwoColorGridLayout:
         id: clickableLayout
         cols: 1
-        on_press: root.Clicked()
+        on_release: root.Clicked()
         padding: [10, 10]
         AutoScrollingLabel:
             id:first_name_label
@@ -64,7 +64,7 @@
             Widget: # Vertical Spacer
             ClickableRoundedTwoColorGridLayout:
                 rows: 1
-                on_press: root.createNewUserButtonClicked()
+                on_release: root.createNewUserButtonClicked()
                 Label:
                     id: manageDeviceCancelLabel
                     text: 'Create new user'
