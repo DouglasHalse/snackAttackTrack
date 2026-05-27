@@ -29,7 +29,7 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.stolen_button_pressed()
+                on_release: root.stolen_button_pressed()
             Widget: # Horizontal Spacer
             RedButton:
                 id: expiredButton
@@ -37,7 +37,7 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.expired_button_pressed()
+                on_release: root.expired_button_pressed()
             Widget: # Horizontal Spacer
             RedButton:
                 id: damagedButton
@@ -45,7 +45,7 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.damaged_button_pressed()
+                on_release: root.damaged_button_pressed()
         GridLayout:
             rows: 1
             orientation: 'rl-tb'
@@ -57,5 +57,5 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.cancel_button_pressed()
+                on_release: root.cancel_button_pressed()
                 

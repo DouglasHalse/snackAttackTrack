@@ -38,7 +38,7 @@
         width: self.parent.height * 4
         Widget: # Horizontal Spacer
         BoxLayoutButton:
-            on_press: root.onSettingChanged()
+            on_release: root.onSettingChanged()
             size_hint: (None, None)
             height: self.parent.height
             width: self.height

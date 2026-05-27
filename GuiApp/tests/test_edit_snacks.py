@@ -185,7 +185,7 @@ async def test_edit_snack_cancel_navigation(app_on_edit_snack_screen):
 
     # Click back button
     edit_snack_screen = app_on_edit_snack_screen.screenManager.current_screen
-    edit_snack_screen.ids.cancelButton.dispatch("on_press")
+    edit_snack_screen.ids.cancelButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     # Should navigate back to edit snacks screen
@@ -204,7 +204,7 @@ async def test_edit_snack_change_to_empty_name_rejected(app_on_edit_snack_screen
     # Click back button
     edit_snack_screen = app_on_edit_snack_screen.screenManager.current_screen
     edit_snack_screen.ids.snackNameInput.setText("")
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_names_after = [
@@ -230,7 +230,7 @@ async def test_edit_snack_change_to_zero_quantity_rejected(app_on_edit_snack_scr
     # Click back button
     edit_snack_screen = app_on_edit_snack_screen.screenManager.current_screen
     edit_snack_screen.ids.snackQuantityInput.setText("0")
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_quantities_after = [
@@ -258,7 +258,7 @@ async def test_edit_snack_change_to_negative_quantity_rejected(
     # Click back button
     edit_snack_screen = app_on_edit_snack_screen.screenManager.current_screen
     edit_snack_screen.ids.snackQuantityInput.setText("-1")
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_quantities_after = [
@@ -284,7 +284,7 @@ async def test_edit_snack_change_to_empty_quantity_rejected(app_on_edit_snack_sc
     # Click back button
     edit_snack_screen = app_on_edit_snack_screen.screenManager.current_screen
     edit_snack_screen.ids.snackQuantityInput.setText("")
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_quantities_after = [
@@ -312,7 +312,7 @@ async def test_edit_snack_change_to_empty_price_rejected(
     # Click back button
     edit_snack_screen = app_on_edit_snack_screen.screenManager.current_screen
     edit_snack_screen.ids.snackPriceInput.setText("")
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_prices_after = [
@@ -340,7 +340,7 @@ async def test_edit_snack_change_to_negative_price_rejected(
     # Click back button
     edit_snack_screen = app_on_edit_snack_screen.screenManager.current_screen
     edit_snack_screen.ids.snackPriceInput.setText("-2.44")
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_prices_after = [
@@ -368,7 +368,7 @@ async def test_edit_snack_change_name(
     # Click back button
     edit_snack_screen = app_on_edit_snack_screen.screenManager.current_screen
     edit_snack_screen.ids.snackNameInput.setText("New Snack Name")
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_names_after = [
@@ -400,11 +400,11 @@ async def test_edit_snack_change_quantity_increased(
     snack_id_being_edited = edit_snack_screen.snack_to_edit.snackId
 
     edit_snack_screen.ids.snackQuantityInput.setText(str(snack_quantities_before + 5))
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     edit_snack_screen.added_snack_popup.ids.priceInput.setText("50.00")
-    edit_snack_screen.added_snack_popup.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.added_snack_popup.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_after_edit = app_on_edit_snack_screen.screenManager.database.getSnack(
@@ -443,10 +443,10 @@ async def test_edit_snack_change_quantity_decreased(
     snack_id_being_edited = edit_snack_screen.snack_to_edit.snackId
 
     edit_snack_screen.ids.snackQuantityInput.setText(str(snack_quantities_before - 5))
-    edit_snack_screen.ids.confirmButton.dispatch("on_press")
+    edit_snack_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
-    edit_snack_screen.remove_snack_reason_popup.ids.stolenButton.dispatch("on_press")
+    edit_snack_screen.remove_snack_reason_popup.ids.stolenButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     snack_after_edit = app_on_edit_snack_screen.screenManager.database.getSnack(
@@ -493,15 +493,15 @@ async def test_edit_snack_remove_snack(
 
     snack_to_be_removed = edit_snack_screen.snack_to_edit
 
-    edit_snack_screen.ids.removeButton.dispatch("on_press")
+    edit_snack_screen.ids.removeButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     edit_snack_screen.remove_snack_confirmation_popup.ids.remove_button.dispatch(
-        "on_press"
+        "on_release"
     )
     await asyncio.sleep(0.1)
 
-    edit_snack_screen.remove_snack_reason_popup.ids.damagedButton.dispatch("on_press")
+    edit_snack_screen.remove_snack_reason_popup.ids.damagedButton.dispatch("on_release")
     await asyncio.sleep(0.1)
 
     number_of_snacks_after = len(edit_snack_screen.manager.database.getAllSnacks())

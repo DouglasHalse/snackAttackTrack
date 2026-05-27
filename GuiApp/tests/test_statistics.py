@@ -627,11 +627,11 @@ async def test_user_statistics_with_gamble_transactions(app):
     assert app.screenManager.current == "topUpAmountScreen"
 
     app.screenManager.current_screen.ids.creditsToAdd.text = "10.00"
-    app.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.continueButton.dispatch("on_release")
     await asyncio.sleep(0.5)
     assert app.screenManager.current == "topUpPaymentScreen"
 
-    app.screenManager.current_screen.ids.confirmButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.5)
 
     # Should be back on main user page after top-up
@@ -650,7 +650,7 @@ async def test_user_statistics_with_gamble_transactions(app):
 
     # Press the spin button — this performs the gamble transaction synchronously
     # (database operations happen immediately, animation runs in background)
-    app.screenManager.current_screen.ids.spin_button.dispatch("on_press")
+    app.screenManager.current_screen.ids.spin_button.dispatch("on_release")
     await asyncio.sleep(0.5)
 
     # Navigate to user statistics to verify the gamble is reflected
@@ -706,11 +706,11 @@ async def test_store_statistics_with_gamble_transactions(app):
     assert app.screenManager.current == "topUpAmountScreen"
 
     app.screenManager.current_screen.ids.creditsToAdd.text = "10.00"
-    app.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.continueButton.dispatch("on_release")
     await asyncio.sleep(0.5)
     assert app.screenManager.current == "topUpPaymentScreen"
 
-    app.screenManager.current_screen.ids.confirmButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.5)
 
     # Should be back on main user page after top-up
@@ -728,7 +728,7 @@ async def test_store_statistics_with_gamble_transactions(app):
     await asyncio.sleep(0.3)
 
     # Press the spin button
-    app.screenManager.current_screen.ids.spin_button.dispatch("on_press")
+    app.screenManager.current_screen.ids.spin_button.dispatch("on_release")
     await asyncio.sleep(0.5)
 
     # Navigate to store statistics
@@ -774,12 +774,12 @@ async def test_store_statistics_skips_non_purchase_non_gamble(app):
 
     # Set the amount and press continue
     app.screenManager.current_screen.ids.creditsToAdd.text = "5.00"
-    app.screenManager.current_screen.ids.continueButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.continueButton.dispatch("on_release")
     await asyncio.sleep(0.5)
     assert app.screenManager.current == "topUpPaymentScreen"
 
     # Confirm the payment — this creates the TOP_UP transaction via the app
-    app.screenManager.current_screen.ids.confirmButton.dispatch("on_press")
+    app.screenManager.current_screen.ids.confirmButton.dispatch("on_release")
     await asyncio.sleep(0.5)
 
     # Should be back on main user page

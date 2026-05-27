@@ -49,19 +49,11 @@
             rows: 1
             size_hint: None, 1
             width: self.height*2
-            BoxLayoutButton:
+            RedButton:
                 id: logoutButton
-                canvas:
-                    Color:
-                        rgba: app.colors["red_button"]
-                    SmoothRoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                Label:
-                    text: 'Log out'
-                    font_size: self.height/2
-                    bold: True
-                    size_hint: (1, 1)
+                text: 'Log out'
+                size_hint: (1, 1)
+                text_size: self.height / 2
 
 <NavigationSettingsButton>:
     size_hint_x: None

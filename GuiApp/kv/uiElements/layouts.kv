@@ -3,23 +3,33 @@
 <RoundedTwoColorGridLayout>:
     canvas.before:
         Color:
-            rgba: 0, 0, 0, 0.10
+            rgba: 0, 0, 0, 0.20
         BoxShadow:
             pos: self.pos
             size: self.size
-            offset: 10, -10
-            blur_radius: 15
-            spread_radius: -5, -5
+            offset: -8 + root.press_offset, -8 + root.press_offset
+            blur_radius: 8 - root.press_offset
+            spread_radius: -1 - root.press_offset, -1 - root.press_offset
             border_radius: 10, 10, 10, 10
         Color:
-            rgba: (1, 1, 1, 1)
+            rgba: [c * 0.65 for c in (1, 1, 1, 1)]
         SmoothRoundedRectangle:
             pos: self.pos
             size: self.size
+        Color:
+            rgba: [c * 0.65 for c in app.colors["button"]]
+        SmoothRoundedRectangle:
+            pos: (self.pos[0], self.pos[1])
+            size: (self.width, self.height)
+        Color:
+            rgba: (1, 1, 1, 1)
+        SmoothRoundedRectangle:
+            pos: (self.x, self.y)
+            size: (self.width - root.press_offset, self.height - root.press_offset)
         Color:
             rgba: app.colors["button"]
         SmoothRoundedRectangle:
             pos: (self.pos[0] + 5, self.pos[1] + 5)
-            size: (self.width - 10, self.height - 10)
+            size: (self.width - 10 - root.press_offset, self.height - 10 - root.press_offset)
 
 <ClickableRoundedTwoColorGridLayout>:

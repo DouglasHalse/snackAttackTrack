@@ -31,14 +31,14 @@
                 width: self.parent.width / 3
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.remove_button_pressed()
+                on_release: root.remove_button_pressed()
             Widget: # Horizontal Spacer
             OrangeButton:
                 text: "Cancel"
                 width: self.parent.width / 3
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.cancel_button_pressed()
+                on_release: root.cancel_button_pressed()
             Widget: # Horizontal Spacer
             
             

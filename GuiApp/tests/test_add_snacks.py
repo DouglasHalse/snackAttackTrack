@@ -19,7 +19,7 @@ async def test_return_from_add_snack_with_cancel_button(app_on_add_snack_screen)
     assert app_on_add_snack_screen.screenManager.current == "addSnackScreen"
 
     app_on_add_snack_screen.screenManager.current_screen.ids.cancelButton.dispatch(
-        "on_press"
+        "on_release"
     )
     assert app_on_add_snack_screen.screenManager.current == "editSnacksScreen"
 
@@ -46,7 +46,7 @@ async def test_add_snack(app_on_add_snack_screen):
     )
 
     app_on_add_snack_screen.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_on_add_snack_screen.screenManager.current == "editSnacksScreen"
@@ -93,7 +93,7 @@ async def test_try_add_empty_name(app_on_add_snack_screen):
     )
 
     app_on_add_snack_screen.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_on_add_snack_screen.screenManager.current == "addSnackScreen"
@@ -128,7 +128,7 @@ async def test_try_add_zero_price(app_on_add_snack_screen):
     )
 
     app_on_add_snack_screen.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_on_add_snack_screen.screenManager.current == "addSnackScreen"
@@ -163,7 +163,7 @@ async def test_try_add_negative_price(app_on_add_snack_screen):
     )
 
     app_on_add_snack_screen.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_on_add_snack_screen.screenManager.current == "addSnackScreen"
@@ -198,7 +198,7 @@ async def test_try_add_negative_fee(app_on_add_snack_screen):
     )
 
     app_on_add_snack_screen.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_on_add_snack_screen.screenManager.current == "addSnackScreen"
@@ -233,7 +233,7 @@ async def test_try_add_zero_quantity(app_on_add_snack_screen):
     )
 
     app_on_add_snack_screen.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_on_add_snack_screen.screenManager.current == "addSnackScreen"
@@ -268,7 +268,7 @@ async def test_try_add_negative_quantity(app_on_add_snack_screen):
     )
 
     app_on_add_snack_screen.screenManager.current_screen.ids.confirmButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_on_add_snack_screen.screenManager.current == "addSnackScreen"

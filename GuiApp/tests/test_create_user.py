@@ -207,7 +207,7 @@ async def test_create_user_with_new_card_from_splash_screen(app_with_nothing):
     app_with_nothing.screenManager.RFIDReader.triggerFakeRead(card_id="5555555")
 
     app_with_nothing.screenManager.current_screen.create_or_link_card_popup.ids.createUserButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_nothing.screenManager.current == "createUserScreen"
@@ -249,7 +249,7 @@ async def test_create_user_with_new_card_from_login_screen(app_with_nothing):
     await asyncio.sleep(0.5)
     app_with_nothing.screenManager.RFIDReader.triggerFakeRead(card_id="4444444")
     app_with_nothing.screenManager.current_screen.create_or_link_card_popup.ids.createUserButton.dispatch(
-        "on_press"
+        "on_release"
     )
 
     assert app_with_nothing.screenManager.current == "createUserScreen"

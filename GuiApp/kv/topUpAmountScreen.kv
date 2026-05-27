@@ -127,7 +127,7 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.onCancel()
+                on_release: root.onCancel()
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
                 height: 100
@@ -137,7 +137,7 @@
                 width: self.parent.width / 4
                 height: self.width / 3
                 text_size: self.height / 2
-                on_press: root.onContinue()
+                on_release: root.onContinue()
             Widget: # Horizontal Spacer
                 size_hint: (1, None)
                 height: 100
