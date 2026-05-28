@@ -29,7 +29,7 @@
             Rectangle:
                 pos: self.pos
                 size: self.size
-        padding: 30
+        padding: [0, 30]
         spacing: 30
 
         Label:
@@ -43,7 +43,7 @@
         Widget: # Vertical Spacer
             size_hint_y: 0.1
         
-        ScrollView:
+        FastTouchScrollView:
             id: scrollView
             size_hint_y: 0.5
             do_scroll_y: False

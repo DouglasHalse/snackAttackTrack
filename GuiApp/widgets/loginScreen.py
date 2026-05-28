@@ -1,15 +1,10 @@
 from app_types import UserData
 from kivy.clock import Clock
-from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 from widgets.customScreenManager import CustomScreenManager
 from widgets.popups.createUserOrLinkCardPopup import CreateUserOrLinkCardPopup
 from widgets.settingsManager import SettingName
-
-
-class BoxLayoutButton(ButtonBehavior, BoxLayout):
-    pass
+from widgets.uiElements.buttons import BoxLayoutButton
 
 
 class LoginScreenUserWidget(BoxLayoutButton):
