@@ -8,6 +8,7 @@ import widgets.uiElements.labels
 import widgets.uiElements.layouts
 import widgets.uiElements.navigationHeader
 import widgets.uiElements.ParticleEmitter
+import widgets.uiElements.scrollviews
 import widgets.uiElements.StatsWidgets
 import widgets.uiElements.textInputs
 import widgets.uiElements.WheelOfSnacksWidget
