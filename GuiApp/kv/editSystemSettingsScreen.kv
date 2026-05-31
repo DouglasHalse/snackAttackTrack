@@ -1,6 +1,6 @@
 #:kivy 2.1.0     
 
-<LogLevelOption>:
+<EnumSettingOption>:
     background_normal: ''
     background_down: ''
     background_color: 1, 1, 1, 1
@@ -60,6 +60,7 @@
             Line:
                 rounded_rectangle: (self.x, self.y, self.width, self.height, 2, 2, 2, 2)
         Spinner:
+            option_cls: "EnumSettingOption"
             id: spinner
             font_size: self.height / 1.5
             color: 0, 0, 0, 1
