@@ -2,12 +2,16 @@ from datetime import datetime
 from enum import Enum
 
 from app_types import SnackData, Credits
+from logger import get_logger
 from snackReorderer import SnackReorderer
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
 from widgets.settingsManager import SettingName
+
+
+logger = get_logger(__name__)
 
 
 class ItemLocation(Enum):
@@ -65,12 +69,18 @@ class BuyScreen(GridLayoutScreen):
         self.snackDict[snackId][ItemLocation.SHOPPINGCART] += 1
         self.updateSnackInLists(snackId=snackId)
         self.updateTotalPrice()
+        snack = self.manager.database.getSnack(snackId)
+        logger.debug("Item added to cart: snack='%s' (ID=%s)", snack.snackName, snackId)
 
     def itemClickedInShoppingCart(self, snackId: int):
         self.snackDict[snackId][ItemLocation.SHOPPINGCART] -= 1
         self.snackDict[snackId][ItemLocation.INVENTORY] += 1
         self.updateSnackInLists(snackId=snackId)
         self.updateTotalPrice()
+        snack = self.manager.database.getSnack(snackId)
+        logger.debug(
+            "Item removed from cart: snack='%s' (ID=%s)", snack.snackName, snackId
+        )
 
     def updateSnackInLists(self, snackId: int):
         snackData = self.manager.database.getSnack(snackId)
@@ -211,6 +221,13 @@ class BuyScreen(GridLayoutScreen):
 
         if totalPrice > currentPatron.totalCredits:
             creditsNeeded = totalPrice - currentPatron.totalCredits
+            logger.warning(
+                "Insufficient funds for purchase: patronId=%s balance=%.2f needed=%.2f shortfall=%.2f",
+                currentPatron.patronId,
+                currentPatron.totalCredits,
+                totalPrice,
+                creditsNeeded,
+            )
             self.insufficient_funds_popup = InsufficientFundsPopup(
                 screen_manager=self.manager, credits_needed=creditsNeeded
             )
@@ -252,6 +269,16 @@ class BuyScreen(GridLayoutScreen):
 
         # Update current patron with new data
         self.manager.refreshCurrentPatron()
+
+        items_detail = ", ".join(
+            f"{s.snackName}x{s.quantity}" for s in snacksInShoppingCart
+        )
+        logger.info(
+            "Purchase completed: patronId=%s total=%.2f items=[%s]",
+            currentPatron.patronId,
+            totalPrice,
+            items_detail,
+        )
 
         CreditsAnimationPopup(
             title="Thank you for your purchase!",

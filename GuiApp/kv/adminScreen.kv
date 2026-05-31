@@ -16,6 +16,10 @@
     image_path: 'Images/user.png'
     text: 'Edit users'
 
+<LogOption>:
+    image_path: 'Images/health.png'
+    text: 'Logs'
+
 <AdminScreen>:
     rows: 2
     cols: 1
@@ -31,7 +35,7 @@
                 pos: self.pos
                 size: self.size
         rows: 2
-        cols: 2
+        cols: 3
         padding: 30
         spacing: 30
         SystemSettingsOption:
@@ -46,3 +50,6 @@
         EditUsersOption:
             id: editUsersOption
             on_release: root.onEditUsersButtonPressed
+        LogOption:
+            id: logOption
+            on_release: root.onLogButtonPressed

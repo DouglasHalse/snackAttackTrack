@@ -3,6 +3,10 @@ import platform
 import threading
 
 from kivy.clock import Clock
+from logger import get_logger
+
+
+logger = get_logger(__name__)
 
 
 # TODO make better
@@ -39,7 +43,7 @@ if mock_gpio():
     class GPIO:
         @staticmethod
         def cleanup():
-            print("GPIO::cleanup")
+            logger.debug("GPIO cleanup called")
 
 else:
     from mfrc522 import SimpleMFRC522
@@ -52,23 +56,25 @@ class RFIDReader:
         self.running = threading.Event()
         self.last_read_id = None
         self.callback = None
+        self._lock = threading.Lock()
 
     def triggerFakeRead(self, card_id="12345678"):
         """Trigger a fake RFID read."""
-        if card_id is None:
-            print("Will not trigger read, card_id is None")
-            return
+        with self._lock:
+            if card_id is None:
+                logger.warning("Will not trigger read, card_id is None")
+                return
 
-        if card_id == self.last_read_id:
-            print("Will not trigger read, card_id is is same as last")
-            return
+            if card_id == self.last_read_id:
+                logger.warning("Will not trigger read, card_id is same as last")
+                return
 
-        if not self.callback:
-            print("Will not trigger read, callback is None")
-            return
+            if not self.callback:
+                logger.warning("Will not trigger read, callback is None")
+                return
 
-        self.callback(card_id)
-        self.last_read_id = card_id
+            self.callback(card_id)
+            self.last_read_id = card_id
 
     def start(self, callback_function):
         """Start the RFID reader in a separate thread."""
@@ -90,22 +96,25 @@ class RFIDReader:
                         self.last_read_id = card_id
                     self.running.wait(0.1)  # Add a small sleep to reduce CPU load
             except RuntimeError as e:
-                print(f"Runtime error reading RFID: {e}")
+                logger.error("RFID runtime error: %s", e, exc_info=True)
             except IOError as e:
-                print(f"I/O error reading RFID: {e}")
+                logger.error("RFID I/O error: %s", e, exc_info=True)
             finally:
                 if platform.system() != "Windows":
                     GPIO.cleanup()
 
+        logger.info("RFID reader thread starting...")
         self.clearLastReadId()
         self.running.clear()
         self.reader_thread = threading.Thread(
             target=reader_task, daemon=True, name="RFID reader thread"
         )
         self.reader_thread.start()
+        logger.info("RFID reader thread started")
 
     def stop(self):
         """Stop the RFID reader."""
+        logger.info("Stopping RFID reader...")
         self.running.set()
         if self.reader_thread and self.reader_thread.is_alive():
             self.reader_thread.join()
@@ -113,6 +122,7 @@ class RFIDReader:
             GPIO.cleanup()
         self.clearLastReadId()
         self.callback = None
+        logger.info("RFID reader stopped")
 
     def clearLastReadId(self):
         self.last_read_id = None

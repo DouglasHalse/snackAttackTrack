@@ -1,10 +1,14 @@
 from datetime import datetime
 
 from app_types import Credits
+from logger import get_logger
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.insufficientFundsPopup import InsufficientFundsPopup
 from widgets.popups.WinPopup import WinPopup
 from widgets.settingsManager import SettingName
+
+
+logger = get_logger(__name__)
 
 
 class WheelOfSnacksScreen(GridLayoutScreen):
@@ -149,6 +153,11 @@ class WheelOfSnacksScreen(GridLayoutScreen):
         self.winPopup = WinPopup(
             won_item=snack.snackName, size=(self.width / 1.5, self.height / 2)
         )
+        logger.info(
+            "Gamble result: patronId=%s won='%s'",
+            self.manager.getCurrentPatron().patronId,
+            snack.snackName,
+        )
         self.winPopup.open()
 
         self.isSpinning = False
@@ -199,6 +208,12 @@ class WheelOfSnacksScreen(GridLayoutScreen):
         currentPatron = self.manager.getCurrentPatron()
         if currentPatron.totalCredits < cost_to_spin:
             credits_needed = cost_to_spin - currentPatron.totalCredits
+            logger.warning(
+                "Insufficient funds for gamble: patronId=%s balance=%.2f needed=%.2f",
+                currentPatron.patronId,
+                currentPatron.totalCredits,
+                cost_to_spin,
+            )
             self.insufficient_funds_popup = InsufficientFundsPopup(
                 screen_manager=self.manager, credits_needed=credits_needed
             )
@@ -212,6 +227,12 @@ class WheelOfSnacksScreen(GridLayoutScreen):
         # Spin validation passed
         #
 
+        logger.info(
+            "Gamble started: patronId=%s cost=%.2f",
+            currentPatron.patronId,
+            cost_to_spin,
+        )
+
         self.isSpinning = True
 
         exciting = self.manager.settingsManager.get_setting_value(
@@ -220,9 +241,19 @@ class WheelOfSnacksScreen(GridLayoutScreen):
 
         self.ids.spin_button.disabled = True
         won_snack = self.ids.wheel_widget.spin(exciting)
+        logger.info(
+            "Gamble result predetermined: patronId=%s will_win='%s' (waiting for animation)",
+            currentPatron.patronId,
+            won_snack.snackName,
+        )
 
         self.manager.database.subtractPatronCredits(
             patronID=currentPatron.patronId, creditsToSubtract=cost_to_spin
+        )
+        logger.info(
+            "Gamble bet deducted: patronId=%s amount=%.2f",
+            currentPatron.patronId,
+            cost_to_spin,
         )
 
         if won_snack.quantity == 1:

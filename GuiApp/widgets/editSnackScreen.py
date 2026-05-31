@@ -2,11 +2,15 @@ from decimal import InvalidOperation
 from kivy.properties import ObjectProperty
 
 from app_types import LostSnackReason, SnackData, Credits
+from logger import get_logger
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.addedSnackPricePopup import AddedSnackPricePopup
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.popups.removalReasonPopup import RemovalReasonPopup
 from widgets.popups.removeConfirmationPopup import RemoveConfirmationPopup
+
+
+logger = get_logger(__name__)
 
 
 class EditSnackScreen(GridLayoutScreen):
@@ -85,6 +89,15 @@ class EditSnackScreen(GridLayoutScreen):
                     reason=reason,
                     total_value=value_lost,
                 )
+                logger.info(
+                    "Snack quantity decreased: name='%s' old=%d new=%d removed=%d reason=%s value_lost=%.2f",
+                    self.snack_to_edit.snackName,
+                    self.snack_to_edit.quantity,
+                    newSnackQuantity,
+                    quantity_removed,
+                    reason.display_name(),
+                    value_lost,
+                )
                 self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
 
             self.remove_snack_reason_popup.bind(on_selection=on_reason_selected)
@@ -100,16 +113,49 @@ class EditSnackScreen(GridLayoutScreen):
                     quantity=quantity_added,
                     value=total_added_value,
                 )
+                logger.info(
+                    "Snack restocked via added-snack prompt: name='%s' old=%d new=%d added=%d total_paid=%.2f",
+                    self.snack_to_edit.snackName,
+                    self.snack_to_edit.quantity,
+                    newSnackQuantity,
+                    quantity_added,
+                    total_added_value,
+                )
                 self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
 
             self.added_snack_popup.bind(on_selection=on_price_confirmed)
             self.added_snack_popup.open()
         else:
+            logger.info(
+                "Snack edited (no qty change): name='%s' price -> %.2f",
+                self.snack_to_edit.snackName,
+                newSnackPrice,
+            )
             self.finishEditingSnack(newSnackName, newSnackQuantity, newSnackPrice)
 
     def finishEditingSnack(
         self, newSnackName: str, newSnackQuantity: int, newSnackPrice: float
     ):
+        old_price = self.snack_to_edit.pricePerItem
+        old_qty = self.snack_to_edit.quantity
+
+        if old_price != newSnackPrice:
+            logger.info(
+                "Snack '%s' (ID=%s) price changed: %.2f -> %.2f",
+                newSnackName,
+                self.snack_to_edit.snackId,
+                old_price,
+                newSnackPrice,
+            )
+        if old_qty != newSnackQuantity:
+            logger.info(
+                "Snack '%s' (ID=%s) quantity changed: %d -> %d",
+                newSnackName,
+                self.snack_to_edit.snackId,
+                old_qty,
+                newSnackQuantity,
+            )
+
         newSnackData = SnackData(
             snackId=self.snack_to_edit.snackId,
             snackName=newSnackName,
@@ -130,13 +176,23 @@ class EditSnackScreen(GridLayoutScreen):
             self.remove_snack_reason_popup = RemovalReasonPopup()
 
             def on_reason_selected(_, reason: LostSnackReason):
+                snack_name = self.snack_to_edit.snackName
+                snack_id = self.snack_to_edit.snackId
                 quantity_removed = self.snack_to_edit.quantity
                 value_lost = self.snack_to_edit.pricePerItem * quantity_removed
                 self.manager.database.add_lost_snack(
-                    snack_name=self.snack_to_edit.snackName,
+                    snack_name=snack_name,
                     quantity=quantity_removed,
                     reason=reason,
                     total_value=value_lost,
+                )
+                logger.warning(
+                    "Snack removed: snackId=%s name='%s' qty=%d value=%.2f reason=%s",
+                    snack_id,
+                    snack_name,
+                    quantity_removed,
+                    value_lost,
+                    reason.display_name(),
                 )
                 self.manager.database.removeSnack(self.snack_to_edit.snackId)
                 self.manager.transitionToScreen(

@@ -1,6 +1,72 @@
 #:kivy 2.1.0     
 
+<LogLevelOption>:
+    background_normal: ''
+    background_down: ''
+    background_color: 1, 1, 1, 1
+    color: 0, 0, 0, 1
+    font_size: self.height / 1.5
+    size_hint_y: None
+    height: 40
+    canvas.after:
+        Color:
+            rgba: 0, 0, 0, 1
+        Line:
+            rounded_rectangle: (self.x, self.y, self.width, self.height, 2, 2, 2, 2)
 
+<EnumSettingRow>:
+    rows: 1
+    size_hint: (1, None)
+    height: self.width / 12
+    padding: [20, 5]
+    canvas:
+        Color:
+            rgba: app.colors["secondary_background"]
+        SmoothRoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [(2, 2),(2, 2),(2, 2),(2, 2)]
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0.10
+        BoxShadow:
+            pos: self.pos
+            size: self.size
+            offset: 10, -10
+            blur_radius: 15
+            spread_radius: -5, -5
+            border_radius: 2, 2, 2, 2
+    Label:
+        id: settingName
+        text: "Enum setting"
+        text_size: self.size
+        halign: 'left'
+        valign: 'middle'
+        bold: True
+        font_size: self.height / 2
+    BoxLayout:
+        size_hint_x: None
+        width: self.parent.height * 4
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            SmoothRoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [(2, 2), (2, 2), (2, 2), (2, 2)]
+        canvas.after:
+            Color:
+                rgba: 0, 0, 0, 1
+            Line:
+                rounded_rectangle: (self.x, self.y, self.width, self.height, 2, 2, 2, 2)
+        Spinner:
+            id: spinner
+            font_size: self.height / 1.5
+            color: 0, 0, 0, 1
+            background_normal: ''
+            background_down: ''
+            background_color: 1, 1, 1, 1
+            size_hint: 1, 1
 
 <BoolSettingRow>:
     rows: 1

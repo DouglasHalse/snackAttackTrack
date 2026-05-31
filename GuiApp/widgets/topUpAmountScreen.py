@@ -1,8 +1,12 @@
 from decimal import InvalidOperation
 from app_types import Credits
+from logger import get_logger
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.uiElements.textInputs import TextInputPopup
+
+
+logger = get_logger(__name__)
 
 
 class TopUpAmountScreen(GridLayoutScreen):
@@ -27,6 +31,11 @@ class TopUpAmountScreen(GridLayoutScreen):
         return super().on_pre_leave(*args)
 
     def on_back(self, _):
+        patron = self.manager.getCurrentPatron()
+        if patron:
+            logger.info(
+                "Top-up cancelled via back button: patronId=%s", patron.patronId
+            )
         self.manager.transition_back_from_top_up()
 
     def on_focus(self, instance, value):
@@ -69,8 +78,19 @@ class TopUpAmountScreen(GridLayoutScreen):
             ErrorMessagePopup(errorMessage="Minimum amount is 1.0 Credits").open()
             return
 
+        logger.info(
+            "Top-up amount confirmed: patronId=%s amount=%.2f balance=%.2f",
+            self.manager.getCurrentPatron().patronId,
+            creditsToAdd,
+            self.manager.getCurrentPatron().totalCredits,
+        )
         self.manager.get_screen("topUpPaymentScreen").setAmountToBePayed(creditsToAdd)
         self.manager.transitionToScreen("topUpPaymentScreen")
 
     def onCancel(self, *largs):
+        patron = self.manager.getCurrentPatron()
+        if patron:
+            logger.info(
+                "Top-up cancelled via cancel button: patronId=%s", patron.patronId
+            )
         self.manager.transition_back_from_top_up()

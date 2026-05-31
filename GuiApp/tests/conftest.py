@@ -5,6 +5,7 @@
 from kivy.config import Config
 
 Config.set("kivy", "pause_on_minimize", "0")
+
 import asyncio
 import os
 import time
@@ -28,6 +29,34 @@ TEST_DB = "PytestDatabase.db"
 TEST_SETTINGS = "PytestSettings.json"
 
 Window.size = (1280, 800)
+
+import logging
+
+import pytest
+
+import logger as app_logger
+
+
+@pytest.fixture
+def log_dir(tmp_path):
+    """Set up a temporary log directory and patch logger constants."""
+    log_path = tmp_path / "logs"
+    log_path.mkdir()
+    app_logger.LOG_DIR = str(log_path)
+    app_logger.LOG_FILE = str(log_path / "snackattack.log")
+    yield log_path
+    app_logger.LOG_DIR = "logs"
+    app_logger.LOG_FILE = "logs/snackattack.log"
+
+
+@pytest.fixture
+def configured_logger(log_dir):
+    """Set up logging and clean up after."""
+    root = logging.getLogger()
+    root.handlers.clear()
+    app_logger.setup_logging(logging.DEBUG)
+    yield root
+    root.handlers.clear()
 
 
 def pytest_addoption(parser):

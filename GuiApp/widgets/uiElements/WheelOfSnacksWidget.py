@@ -1,7 +1,6 @@
 import math
 import random
 
-from app_types import SnackData
 from kivy.animation import Animation
 from kivy.clock import Clock
 from kivy.core.text import Label as CoreLabel
@@ -22,6 +21,12 @@ from kivy.graphics.stencil_instructions import (
 from kivy.properties import BooleanProperty, NumericProperty
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.widget import Widget
+
+from app_types import SnackData
+from logger import get_logger
+
+
+logger = get_logger(__name__)
 
 
 class WheelPointer(Widget):
@@ -408,7 +413,7 @@ class WheelOfSnacksWidget(AnchorLayout):
             endAngle = startAngle + self.sliceWidth
             if startAngle <= current_read_angle <= endAngle:
                 return snack
-        print("Snack not found!")
+        logger.warning("Snack not found at current wheel angle")
         return None
 
     def predict_snack_at_angle(self, read_angle, total_rotation):
@@ -418,7 +423,7 @@ class WheelOfSnacksWidget(AnchorLayout):
             endAngle = startAngle + self.sliceWidth
             if startAngle <= future_read_angle <= endAngle:
                 return snack
-        print("Snack not found!")
+        logger.warning("Snack not found at predicted wheel angle")
         return None
 
     def get_random_new_angle(self, exciting=False):
