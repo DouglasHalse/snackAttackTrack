@@ -1,4 +1,15 @@
 import argparse
+import logging
+import os
+
+from logger import get_logger, setup_logging
+from app_types import LogLevel
+from database import DatabaseConnector
+from kivy.app import App
+from kivy.core.window import Window
+from kivy.lang import Builder
+from kivy.modules import inspector
+from kivy.resources import resource_add_path
 
 # Disable all the unused-import violations due to .kv files
 # pylint: disable=unused-import
@@ -12,12 +23,6 @@ import widgets.uiElements.scrollviews
 import widgets.uiElements.StatsWidgets
 import widgets.uiElements.textInputs
 import widgets.uiElements.WheelOfSnacksWidget
-from database import DatabaseConnector
-from kivy.app import App
-from kivy.core.window import Window
-from kivy.lang import Builder
-from kivy.modules import inspector
-from kivy.resources import resource_add_path
 from widgets.addSnackScreen import AddSnackScreen
 from widgets.adminScreen import AdminScreen
 from widgets.buyScreen import BuyScreen
@@ -33,8 +38,9 @@ from widgets.linkCardScreen import LinkCardScreen
 from widgets.loginScreen import LoginScreen
 from widgets.mainUserScreen import MainUserScreen
 from widgets.ProfileScreen import ProfileScreen
-from widgets.settingsManager import SettingDataType, SettingName, SettingsManager
+from widgets.settingsManager import SettingName, SettingsManager
 from widgets.splashScreen import SplashScreenWidget
+from widgets.logScreen import LogScreen
 from widgets.StoreStatisticsScreen import StoreStatisticsScreen
 from widgets.topUpAmountScreen import TopUpAmountScreen
 from widgets.topUpPaymentScreen import TopUpPaymentScreen
@@ -48,6 +54,8 @@ resource_add_path("GuiApp")
 
 
 class snackAttackTrackApp(App):
+    logger = get_logger(__name__)
+
     def __init__(
         self,
         use_inspector=True,
@@ -99,93 +107,20 @@ class snackAttackTrackApp(App):
     def create_settings_manager(self, settings_path: str) -> SettingsManager:
         sm = SettingsManager(settings_path)
 
-        sm.add_setting_if_undefined(
-            settingName=SettingName.SPILL_FACTOR,
-            default_value=1.05,
-            datatype=SettingDataType.FLOAT,
-            min_value=1.0,
-            max_value=10.0,
+        sm.add_float_setting(SettingName.SPILL_FACTOR, 1.05, 1.0, 10.0)
+        sm.add_float_setting(SettingName.PURCHASE_FEE, 0.05, 0.0, 1.0)
+        sm.add_bool_setting(SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE, True)
+        sm.add_float_setting(SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 120.0, 20.0, 600.0)
+        sm.add_bool_setting(SettingName.AUTO_LOGOUT_AFTER_PURCHASE, False)
+        sm.add_string_setting(SettingName.PAYMENT_SWISH_NUMBER, "0723071057")
+        sm.add_bool_setting(SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE, True)
+        sm.add_float_setting(
+            SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_TIME, 10.0, 5.0, 600.0
         )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.PURCHASE_FEE,
-            default_value=0.05,
-            datatype=SettingDataType.FLOAT,
-            min_value=0.0,
-            max_value=1.0,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE,
-            default_value=True,
-            datatype=SettingDataType.BOOL,
-            min_value=0,
-            max_value=1,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.AUTO_LOGOUT_ON_IDLE_TIME,
-            default_value=120.0,
-            datatype=SettingDataType.FLOAT,
-            min_value=20.0,
-            max_value=600.0,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.AUTO_LOGOUT_AFTER_PURCHASE,
-            default_value=False,
-            datatype=SettingDataType.BOOL,
-            min_value=0,
-            max_value=1,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.PAYMENT_SWISH_NUMBER,
-            default_value="0723071057",
-            datatype=SettingDataType.STRING,
-            min_value=0,
-            max_value=0,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE,
-            default_value=True,
-            datatype=SettingDataType.BOOL,
-            min_value=0,
-            max_value=1,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_TIME,
-            default_value=10.0,
-            datatype=SettingDataType.FLOAT,
-            min_value=5.0,
-            max_value=600.0,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.ORDER_INVENTORY_BY_MOST_PURCHASED,
-            default_value=True,
-            datatype=SettingDataType.BOOL,
-            min_value=0,
-            max_value=1,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.ENABLE_GAMBLING,
-            default_value=True,
-            datatype=SettingDataType.BOOL,
-            min_value=0,
-            max_value=1,
-        )
-
-        sm.add_setting_if_undefined(
-            settingName=SettingName.EXCITING_GAMBLING,
-            default_value=True,
-            datatype=SettingDataType.BOOL,
-            min_value=0,
-            max_value=1,
-        )
+        sm.add_bool_setting(SettingName.ORDER_INVENTORY_BY_MOST_PURCHASED, True)
+        sm.add_bool_setting(SettingName.ENABLE_GAMBLING, True)
+        sm.add_bool_setting(SettingName.EXCITING_GAMBLING, True)
+        sm.add_enum_setting(SettingName.LOG_LEVEL, LogLevel.INFO, LogLevel)
 
         return sm
 
@@ -213,17 +148,37 @@ class snackAttackTrackApp(App):
         self.screenManager.add_widget(ProfileScreen(name="profileScreen"))
         self.screenManager.add_widget(UserStatisticsScreen(name="userStatisticsScreen"))
         self.screenManager.add_widget(StoreStatisticsScreen(name="storeStatsScreen"))
+        self.screenManager.add_widget(LogScreen(name="logScreen"))
 
         if self.use_inspector:
             inspector.create_inspector(Window, self.screenManager)
         return self.screenManager
 
     def on_stop(self):
+        self.logger.info("Application shutting down, closing database connection")
         self.screenManager.database.close()
         return super().on_stop()
 
+    def on_exception(self, error):
+        """
+        Kivy callback for unhandled exceptions in the event loop.
+        Logs the full traceback to the main log, then stops the app.
+        """
+        self.logger.critical(
+            "Unhandled exception in Kivy event loop: %s", error, exc_info=True
+        )
+        self.stop()
+        return True
+
 
 def main():
+    # Parse log level from env first, fallback to INFO
+    log_level_str = os.environ.get("SNACKATTACK_LOG_LEVEL", "INFO")
+    log_level = getattr(logging, log_level_str.upper(), logging.INFO)
+    setup_logging(log_level=log_level)
+    logger = get_logger(__name__)
+    logger.info("Snack Attack Track starting up")
+
     parser = argparse.ArgumentParser(description="Snack Attack Track Application")
     parser.add_argument(
         "--no-inspector", action="store_true", help="Run the app without the inspector"
@@ -238,6 +193,7 @@ def main():
     parser.add_argument("--hide-cursor", action="store_true", help="Hide the cursor")
 
     args = parser.parse_args()
+    logger.info("Command-line args: %s", vars(args))
 
     # Size of Raspberry pi touchscreen
     Window.size = (800, 480)
@@ -249,7 +205,21 @@ def main():
     else:
         app = snackAttackTrackApp(use_inspector=True)
 
+    # Apply log level from settings (overrides env var default)
+    setting_log_level = app.settingsManager.get_setting_value(
+        settingName=SettingName.LOG_LEVEL
+    )
+    log_level_value = logging.getLevelName(setting_log_level)
+    if not isinstance(log_level_value, int):
+        log_level_value = log_level
+    root_logger = logging.getLogger()
+    root_logger.setLevel(log_level_value)
+    for handler in root_logger.handlers:
+        handler.setLevel(log_level_value)
+
+    logger.info("Kivy app starting main loop (log_level=%s)", setting_log_level)
     app.run()
+    logger.info("Snack Attack Track shut down")
 
 
 if __name__ == "__main__":

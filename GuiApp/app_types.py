@@ -15,6 +15,22 @@ class LostSnackReason(Enum):
     EXPIRED = 2
     DAMAGED = 3
 
+    def display_name(self):
+        return self.name.title()
+
+
+class LogLevel(Enum):
+    """Log levels with a display name for the UI."""
+
+    DEBUG = "DEBUG"
+    INFO = "INFO"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
+
+    def display_name(self):
+        return self.name
+
 
 def transactionTypeToPresentableString(transactionType: TransactionType) -> str:
     if transactionType == TransactionType.PURCHASE:

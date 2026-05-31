@@ -3,6 +3,11 @@ import os
 from enum import Enum
 from typing import Any, Callable, Dict
 
+from logger import get_logger
+
+
+logger = get_logger(__name__)
+
 
 class SettingName(Enum):
     SPILL_FACTOR = "spill_factor"
@@ -16,6 +21,7 @@ class SettingName(Enum):
     ORDER_INVENTORY_BY_MOST_PURCHASED = "order_inventory_by_most_purchased"
     ENABLE_GAMBLING = "enable_gambling"
     EXCITING_GAMBLING = "exciting_gambling"
+    LOG_LEVEL = "log_level"
 
 
 def get_presentable_setting_name(settingName: SettingName):
@@ -27,6 +33,7 @@ class SettingDataType(Enum):
     FLOAT = "float"
     BOOL = "bool"
     STRING = "string"
+    ENUM = "enum"
 
 
 class SettingsManager:
@@ -36,7 +43,7 @@ class SettingsManager:
         self.callbacks: Dict[str, Callable[[Any], None]] = {}
         self.load_settings()
 
-    def add_setting_if_undefined(
+    def _add_setting(
         self,
         settingName: SettingName,
         default_value,
@@ -53,6 +60,46 @@ class SettingsManager:
                 "max_value": max_value,
             }
 
+    def add_bool_setting(self, settingName: SettingName, default: bool):
+        if not isinstance(default, bool):
+            raise ValueError(f"Default for '{settingName.value}' must be a bool")
+        self._add_setting(settingName, default, SettingDataType.BOOL, 0, 1)
+
+    def add_float_setting(
+        self,
+        settingName: SettingName,
+        default: float,
+        min_value: float,
+        max_value: float,
+    ):
+        if not isinstance(default, (float, int)):
+            raise ValueError(f"Default for '{settingName.value}' must be a number")
+        self._add_setting(
+            settingName, default, SettingDataType.FLOAT, min_value, max_value
+        )
+
+    def add_int_setting(
+        self, settingName: SettingName, default: int, min_value: int, max_value: int
+    ):
+        if not isinstance(default, int):
+            raise ValueError(f"Default for '{settingName.value}' must be an int")
+        self._add_setting(
+            settingName, default, SettingDataType.INT, min_value, max_value
+        )
+
+    def add_string_setting(self, settingName: SettingName, default: str):
+        if not isinstance(default, str):
+            raise ValueError(f"Default for '{settingName.value}' must be a string")
+        self._add_setting(settingName, default, SettingDataType.STRING, 0, 0)
+
+    def add_enum_setting(self, settingName: SettingName, default, enum_type):
+        if not isinstance(default, enum_type):
+            raise ValueError(
+                f"Default for '{settingName.value}' must be a member of "
+                f"{enum_type.__name__}"
+            )
+        self._add_setting(settingName, default.value, SettingDataType.ENUM, 0, 0)
+
     def get_setting_value(self, settingName: SettingName):
         return self.settings[settingName.value]["value"]
 
@@ -65,6 +112,7 @@ class SettingsManager:
 
     def set_setting_value(self, settingName: SettingName, value):
         if settingName.value in self.settings:
+            old_value = self.settings[settingName.value].get("value", None)
             setting = self.settings[settingName.value]
             datatype = setting["datatype"]
             min_value = setting["min_value"]
@@ -100,6 +148,12 @@ class SettingsManager:
                     )
 
             self.settings[settingName.value]["value"] = value
+            logger.info(
+                "Setting '%s' changed: '%s' -> '%s'",
+                settingName.value,
+                old_value,
+                value,
+            )
             self.save_settings()
             self._notify_setting_change(settingName, value)
         else:
@@ -132,16 +186,3 @@ class SettingsManager:
     def _notify_setting_change(self, settingName: SettingName, value):
         if settingName.value in self.callbacks:
             self.callbacks[settingName.value](value)
-
-
-# Example usage
-if __name__ == "__main__":
-
-    def on_spill_factor_change(new_value):
-        print(f"Spill factor changed to {new_value}")
-
-    settings_manager = SettingsManager("settings.json")
-    settings_manager.register_on_setting_change_callback(
-        SettingName.SPILL_FACTOR, on_spill_factor_change
-    )
-    settings_manager.set_setting_value(SettingName.SPILL_FACTOR, 10)

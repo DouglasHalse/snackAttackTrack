@@ -22,16 +22,6 @@ from typing import List
 LOG_DIR = "logs"
 LOG_FILE = os.path.join(LOG_DIR, "snackattack.log")
 
-# Mapping from display names to Python logging levels.
-# Used by both the startup code and the settings screen.
-LOG_LEVEL_MAP = {
-    "DEBUG": logging.DEBUG,
-    "INFO": logging.INFO,
-    "WARNING": logging.WARNING,
-    "ERROR": logging.ERROR,
-    "CRITICAL": logging.CRITICAL,
-}
-
 # Default format strings
 LOG_FORMAT = "[%(asctime)s] %(levelname)-8s [%(name)s] %(message)s"
 LOG_DATEFMT = "%Y-%m-%d %H:%M:%S"  # e.g. 2026-05-28 14:30:45

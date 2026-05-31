@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from GuiApp.widgets.settingsManager import SettingDataType, SettingName, SettingsManager
+from GuiApp.widgets.settingsManager import SettingName, SettingsManager
 
 # Fixtures are counted as redefine-outer-name
 # pylint: disable=redefined-outer-name
@@ -19,16 +19,12 @@ def settings_manager(settings_file):
 
 
 def test_add_setting_if_undefined(settings_manager):
-    settings_manager.add_setting_if_undefined(
-        SettingName.SPILL_FACTOR, 1.0, SettingDataType.FLOAT, 0.0, 10.0
-    )
+    settings_manager.add_float_setting(SettingName.SPILL_FACTOR, 1.0, 0.0, 10.0)
     assert settings_manager.get_setting_value(SettingName.SPILL_FACTOR) == 1.0
 
 
 def test_get_setting_value(settings_manager):
-    settings_manager.add_setting_if_undefined(
-        SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE, True, SettingDataType.BOOL, False, True
-    )
+    settings_manager.add_bool_setting(SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE, True)
     assert (
         settings_manager.get_setting_value(SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE)
         is True
@@ -36,8 +32,8 @@ def test_get_setting_value(settings_manager):
 
 
 def test_set_setting_value(settings_manager):
-    settings_manager.add_setting_if_undefined(
-        SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 30, SettingDataType.INT, 10, 60
+    settings_manager.add_float_setting(
+        SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 30.0, 10.0, 60.0
     )
     settings_manager.set_setting_value(SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 45)
     assert (
@@ -46,8 +42,8 @@ def test_set_setting_value(settings_manager):
 
 
 def test_set_setting_value_invalid_type(settings_manager):
-    settings_manager.add_setting_if_undefined(
-        SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 30, SettingDataType.INT, 10, 60
+    settings_manager.add_float_setting(
+        SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 30.0, 10.0, 60.0
     )
     with pytest.raises(ValueError):
         settings_manager.set_setting_value(
@@ -56,16 +52,16 @@ def test_set_setting_value_invalid_type(settings_manager):
 
 
 def test_set_setting_value_out_of_range(settings_manager):
-    settings_manager.add_setting_if_undefined(
-        SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 30, SettingDataType.INT, 10, 60
+    settings_manager.add_float_setting(
+        SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 30.0, 10.0, 60.0
     )
     with pytest.raises(ValueError):
         settings_manager.set_setting_value(SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 70)
 
 
 def test_reset_setting(settings_manager):
-    settings_manager.add_setting_if_undefined(
-        SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 30, SettingDataType.INT, 10, 60
+    settings_manager.add_float_setting(
+        SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 30.0, 10.0, 60.0
     )
     settings_manager.set_setting_value(SettingName.AUTO_LOGOUT_ON_IDLE_TIME, 45)
     settings_manager.reset_setting(SettingName.AUTO_LOGOUT_ON_IDLE_TIME)
@@ -79,7 +75,7 @@ def test_load_settings(settings_file):
         SettingName.SPILL_FACTOR.value: {
             "value": 1.0,
             "default_value": 1.0,
-            "datatype": SettingDataType.FLOAT.value,
+            "datatype": "float",
             "min_value": 0.0,
             "max_value": 10.0,
         }
@@ -92,9 +88,7 @@ def test_load_settings(settings_file):
 
 
 def test_save_settings(settings_manager, settings_file):
-    settings_manager.add_setting_if_undefined(
-        SettingName.SPILL_FACTOR, 1.0, SettingDataType.FLOAT, 0.0, 10.0
-    )
+    settings_manager.add_float_setting(SettingName.SPILL_FACTOR, 1.0, 0.0, 10.0)
     settings_manager.save_settings()
 
     with open(settings_file, "r", encoding="utf-8") as file:
@@ -112,9 +106,7 @@ def test_register_on_setting_change_callback(settings_manager):
     settings_manager.register_on_setting_change_callback(
         SettingName.SPILL_FACTOR, callback
     )
-    settings_manager.add_setting_if_undefined(
-        SettingName.SPILL_FACTOR, 1.0, SettingDataType.FLOAT, 0.0, 10.0
-    )
+    settings_manager.add_float_setting(SettingName.SPILL_FACTOR, 1.0, 0.0, 10.0)
     settings_manager.set_setting_value(SettingName.SPILL_FACTOR, 2.0)
     assert callback_called
 
@@ -129,9 +121,7 @@ def test_callback_invoked_with_correct_value(settings_manager):
     settings_manager.register_on_setting_change_callback(
         SettingName.SPILL_FACTOR, callback
     )
-    settings_manager.add_setting_if_undefined(
-        SettingName.SPILL_FACTOR, 1.0, SettingDataType.FLOAT, 0.0, 10.0
-    )
+    settings_manager.add_float_setting(SettingName.SPILL_FACTOR, 1.0, 0.0, 10.0)
     settings_manager.set_setting_value(SettingName.SPILL_FACTOR, 2.0)
     assert callback_value == 2.0
 
@@ -146,8 +136,6 @@ def test_callback_not_invoked_for_different_setting(settings_manager):
     settings_manager.register_on_setting_change_callback(
         SettingName.SPILL_FACTOR, callback
     )
-    settings_manager.add_setting_if_undefined(
-        SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE, True, SettingDataType.BOOL, False, True
-    )
+    settings_manager.add_bool_setting(SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE, True)
     settings_manager.set_setting_value(SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE, False)
     assert not callback_called

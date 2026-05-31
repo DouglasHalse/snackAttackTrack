@@ -1,7 +1,12 @@
+import logging
+
+from app_types import LogLevel
 from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.spinner import SpinnerOption
+from logger import get_logger
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.popups.removeConfirmationPopup import RemoveConfirmationPopup
@@ -55,7 +60,7 @@ class ButtonOptionRow(GridLayout):
         optionName: str,
         buttonText: str,
         settingManager: SettingsManager,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.settingManager: SettingsManager = settingManager
@@ -157,14 +162,64 @@ class StringSettingRow(GridLayout):
             ).open()
 
 
+class EnumSettingOption(SpinnerOption):
+    """Custom option class for the Enum Setting Spinner dropdown items."""
+
+
+class EnumSettingRow(GridLayout):
+    """A setting row with a dropdown (Spinner) to pick from enum options.
+
+    The spinner is populated with the display names of all enum members.
+    Selecting an item saves the corresponding enum value to the setting.
+    """
+
+    def __init__(
+        self,
+        settingName: SettingName,
+        settingManager: SettingsManager,
+        enum_type: type,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.settingManager: SettingsManager = settingManager
+        self.settingName: SettingName = settingName
+        self.enum_type = enum_type
+        self.ids["settingName"].text = get_presentable_setting_name(self.settingName)
+
+        # Populate the spinner with display names of all enum options
+        self.ids.spinner.values = [m.display_name() for m in list(self.enum_type)]
+        self.ids.spinner.bind(text=self._on_spinner_text)
+
+        self._update_display()
+
+    def _update_display(self):
+        current_value = self.settingManager.get_setting_value(
+            settingName=self.settingName
+        )
+        member = self.enum_type(current_value)
+        self.ids.spinner.text = member.display_name()
+
+    def _on_spinner_text(self, spinner, text):
+        """Called when the spinner selection changes."""
+        for member in list(self.enum_type):
+            if member.display_name() == text:
+                self.settingManager.set_setting_value(
+                    settingName=self.settingName, value=member.value
+                )
+                break
+
+
 class SettingsSection(GridLayout):
     def __init__(self, sectionName: str, **kwargs):
         super().__init__(**kwargs)
         self.ids["sectionNameLabel"].text = sectionName
 
 
+logger = get_logger(__name__)
+
+
 class EditSystemSettingsScreen(GridLayoutScreen):
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals,too-many-statements
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         Clock.schedule_once(lambda dt: self.init_settings())
@@ -301,12 +356,37 @@ class EditSystemSettingsScreen(GridLayoutScreen):
 
         historySection.ids["sectionContent"].add_widget(clearHistoryOption)
 
+        # Logging settings
+        loggingSection = SettingsSection(sectionName="Logging")
+        logLevelRow = EnumSettingRow(
+            settingName=SettingName.LOG_LEVEL,
+            settingManager=self.manager.settingsManager,
+            enum_type=LogLevel,
+        )
+        loggingSection.ids["sectionContent"].add_widget(logLevelRow)
+
+        # When the log level setting changes, update the active logger
+        def _update_log_level(value):
+            level = logging.getLevelName(value)
+            if not isinstance(level, int):
+                level = logging.INFO
+            root = logging.getLogger()
+            root.setLevel(level)
+            for handler in root.handlers:
+                handler.setLevel(level)
+
+        self.manager.settingsManager.register_on_setting_change_callback(
+            SettingName.LOG_LEVEL,
+            _update_log_level,
+        )
+
         # Add sections to the layout
         self.ids["settingsLayout"].add_widget(navigationSection)
         self.ids["settingsLayout"].add_widget(financialSection)
         self.ids["settingsLayout"].add_widget(buyScreenSection)
         self.ids["settingsLayout"].add_widget(gamblingSection)
         self.ids["settingsLayout"].add_widget(historySection)
+        self.ids["settingsLayout"].add_widget(loggingSection)
 
     # pylint: enable=too-many-locals
 
@@ -315,7 +395,7 @@ class EditSystemSettingsScreen(GridLayoutScreen):
             self.manager.database.clear_added_snacks()
             self.manager.database.clear_transactions()
             self.manager.database.clear_lost_snacks()
-            print("Clearing history...")
+            logger.info("Clearing history...")
 
         popup = RemoveConfirmationPopup(
             question_text="Are you sure you want to clear all history? This action cannot be undone.",
