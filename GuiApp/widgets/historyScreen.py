@@ -4,6 +4,10 @@ from widgets.popups.editSummaryPopup import EditSummaryPopup
 from widgets.popups.gambleSummaryPopup import GambleSummaryPopup
 from widgets.popups.purchaseSummaryPopup import PurchaseSummaryPopup
 from widgets.popups.topUpSummaryPopup import TopUpSummaryPopup
+from logger import get_logger
+
+
+logger = get_logger(__name__)
 
 
 class HistoryScreen(GridLayoutScreen):
@@ -49,6 +53,8 @@ class HistoryScreen(GridLayoutScreen):
         elif transaction.transactionType == TransactionType.GAMBLE:
             GambleSummaryPopup(historyData=transaction).open()
         else:
-            print(
-                f"History entry pressed: {transactionId} ({transaction.transactionType.value})"
+            logger.debug(
+                "History entry pressed: %s (%s)",
+                transactionId,
+                transaction.transactionType.value,
             )

@@ -19,6 +19,9 @@ settings.json
 # Generated qr code
 qr.png
 
+# Application logs
+logs/
+
 # Coverage reports
 .coverage
 htmlcov/

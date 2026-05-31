@@ -3,9 +3,13 @@ from decimal import InvalidOperation
 
 from app_types import UserData, Credits
 from kivy.properties import ObjectProperty
+from logger import get_logger
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.popups.removeConfirmationPopup import RemoveConfirmationPopup
+
+
+logger = get_logger(__name__)
 
 
 class EditUserScreen(GridLayoutScreen):
@@ -111,6 +115,15 @@ class EditUserScreen(GridLayoutScreen):
             patronId=self.user_to_edit.patronId, newUserData=newUserData
         )
 
+        logger.info(
+            "User edited: patronId=%s firstName='%s' lastName='%s' cardId='%s' credits=%.2f",
+            self.user_to_edit.patronId,
+            newFirstName,
+            newLastName,
+            newcardId,
+            newCredits,
+        )
+
         # Update current patron with new data
         self.manager.refreshCurrentPatron()
 
@@ -121,7 +134,12 @@ class EditUserScreen(GridLayoutScreen):
 
     def onRemove(self):
         def on_removed_callback(*args):
-            self.manager.database.removePatron(self.user_to_edit.patronId)
+            removed_id = self.user_to_edit.patronId
+            removed_name = self.user_to_edit.firstName
+            self.manager.database.removePatron(removed_id)
+            logger.warning(
+                "User removed: patronId=%s firstName='%s'", removed_id, removed_name
+            )
             self.manager.transitionToScreen(
                 "editUsersScreen", transitionDirection="right"
             )

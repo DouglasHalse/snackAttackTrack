@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime
 
 from DatabaseMigrator import DatabaseMigrator
+from logger import get_logger
 from app_types import (
     Credits,
     HistoryData,
@@ -16,12 +17,15 @@ from app_types import (
 # pylint: disable=too-many-public-methods
 
 
+logger = get_logger(__name__)
+
+
 class DatabaseConnector:
     def __init__(self, database_path: str = "database.db"):
         self.connection = sqlite3.connect(database_path)
         self.cursor = self.connection.cursor()
         if DatabaseMigrator.needs_migration(cursor=self.cursor):
-            print("Database migration needed. Migrating database...")
+            logger.info("Database migration needed. Migrating database...")
             DatabaseMigrator.migrate_database(
                 connection=self.connection, cursor=self.cursor
             )

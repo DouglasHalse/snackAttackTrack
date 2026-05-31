@@ -18,6 +18,10 @@ class EditUsersOption(ImageAndTextButton):
     pass
 
 
+class LogOption(ImageAndTextButton):
+    pass
+
+
 class AdminScreen(GridLayoutScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -28,6 +32,7 @@ class AdminScreen(GridLayoutScreen):
         self.ids.editUsersOption.bind(on_release=self.onEditUsersButtonPressed)
         self.ids.header.bind(on_back_button_pressed=self.onBackButtonPressed)
         self.ids.storeStatsOption.bind(on_release=self.onStoreStatsButtonPressed)
+        self.ids.logOption.bind(on_release=self.onLogButtonPressed)
 
     def onSystemSettingsButtonPressed(self, _):
         self.manager.transitionToScreen("editSystemSettingsScreen")
@@ -40,6 +45,9 @@ class AdminScreen(GridLayoutScreen):
 
     def onEditUsersButtonPressed(self, _):
         self.manager.transitionToScreen("editUsersScreen")
+
+    def onLogButtonPressed(self, _):
+        self.manager.transitionToScreen("logScreen")
 
     def onBackButtonPressed(self, _):
         self.manager.transitionToScreen("mainUserPage", transitionDirection="right")

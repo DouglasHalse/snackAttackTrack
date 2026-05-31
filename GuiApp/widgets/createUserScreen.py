@@ -1,5 +1,9 @@
 from kivy.uix.screenmanager import Screen
+from logger import get_logger
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
+
+
+logger = get_logger(__name__)
 
 
 class CreateUserScreen(Screen):
@@ -32,6 +36,7 @@ class CreateUserScreen(Screen):
             return
 
         self.manager.database.addPatron(firstName, lastName, cardId)
+        logger.info("User created: firstName='%s' lastName='%s'", firstName, lastName)
 
         self.manager.transitionToScreen("loginScreen", transitionDirection="right")
 

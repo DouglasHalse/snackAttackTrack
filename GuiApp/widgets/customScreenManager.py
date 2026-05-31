@@ -9,10 +9,13 @@ from kivy.uix.screenmanager import (
     SlideTransition,
 )
 from RFIDReader import RFIDReader
+from logger import get_logger
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.settingsManager import SettingName, SettingsManager
 
 # pylint: disable=too-many-instance-attributes
+
+logger = get_logger(__name__)
 
 
 class CustomScreenManager(ScreenManager):
@@ -45,8 +48,18 @@ class CustomScreenManager(ScreenManager):
                 )
 
     def login(self, patronId):
-        self._currentPatron = self.database.getPatronData(patronID=patronId)
+        patron = self.database.getPatronData(patronID=patronId)
+        if patron is None:
+            logger.warning("Login failed: no patron found for ID %s", patronId)
+            return
+        self._currentPatron = patron
         self.logged_in_user = self._currentPatron
+        logger.info(
+            "User logged in: %s %s (ID: %s)",
+            patron.firstName,
+            patron.lastName,
+            patron.patronId,
+        )
         if self.settingsManager.get_setting_value(
             settingName=SettingName.AUTO_LOGOUT_ON_IDLE_ENABLE
         ):
@@ -58,10 +71,25 @@ class CustomScreenManager(ScreenManager):
             )
 
     def auto_logout(self):
+        if self._currentPatron:
+            logger.info(
+                "Auto-logout triggered for %s %s",
+                self._currentPatron.firstName,
+                self._currentPatron.lastName,
+            )
+        else:
+            logger.info("Auto-logout triggered")
         self.logout()
         self.transitionToScreen("splashScreen", transitionDirection="right")
 
     def logout(self):
+        if self._currentPatron:
+            logger.info(
+                "User logged out: %s %s (ID: %s)",
+                self._currentPatron.firstName,
+                self._currentPatron.lastName,
+                self._currentPatron.patronId,
+            )
         self._currentPatron = None
         self.logged_in_user = None
 
@@ -84,6 +112,15 @@ class CustomScreenManager(ScreenManager):
         self.logged_in_user = self._currentPatron
 
     def transitionToScreen(self, screenName, transitionDirection: str = "left"):
+        old_screen = (
+            self.current if hasattr(self, "current") and self.current else "(none)"
+        )
+        logger.debug(
+            "Screen transition: %s -> %s (direction: %s)",
+            old_screen,
+            screenName,
+            transitionDirection,
+        )
         self.transition = SlideTransition(direction=transitionDirection)
         self.current = screenName
 

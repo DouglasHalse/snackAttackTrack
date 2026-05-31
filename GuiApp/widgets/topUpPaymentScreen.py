@@ -1,10 +1,14 @@
 from datetime import datetime
 
 from app_types import UserData, Credits
+from logger import get_logger
 from qrcode import make as makeQRCode
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.creditsAnimationPopup import CreditsAnimationPopup
 from widgets.settingsManager import SettingName
+
+
+logger = get_logger(__name__)
 
 
 class TopUpPaymentScreen(GridLayoutScreen):
@@ -38,14 +42,24 @@ class TopUpPaymentScreen(GridLayoutScreen):
         return super().on_pre_enter(*args)
 
     def onConfirm(self, *largs):
+        credits_before = self.userData.totalCredits
+        credits_after = credits_before + self.amount_to_be_payed
+
         self.manager.database.addTopUpTransaction(
             patronID=self.userData.patronId,
-            amountBeforeTransaction=self.userData.totalCredits,
-            amountAfterTransaction=self.userData.totalCredits + self.amount_to_be_payed,
+            amountBeforeTransaction=credits_before,
+            amountAfterTransaction=credits_after,
             transactionDate=datetime.now(),
         )
         self.manager.database.addCredits(
             self.userData.patronId, self.amount_to_be_payed
+        )
+
+        logger.info(
+            "Top-up succeeded: patronId=%s amount=%.2f new_balance=%.2f",
+            self.userData.patronId,
+            self.amount_to_be_payed,
+            credits_after,
         )
 
         # Update current patron with new data
@@ -53,8 +67,8 @@ class TopUpPaymentScreen(GridLayoutScreen):
 
         CreditsAnimationPopup(
             title="Thank you for your top-up!",
-            creditsBefore=self.userData.totalCredits,
-            creditsAfter=self.userData.totalCredits + self.amount_to_be_payed,
+            creditsBefore=credits_before,
+            creditsAfter=credits_after,
         ).open()
 
         self.manager.transition_back_from_top_up()

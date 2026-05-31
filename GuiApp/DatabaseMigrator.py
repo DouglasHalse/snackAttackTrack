@@ -2,6 +2,11 @@ import os
 import datetime
 import sqlite3
 
+from logger import get_logger
+
+
+logger = get_logger(__name__)
+
 
 class DatabaseMigrator:
 
@@ -22,9 +27,12 @@ class DatabaseMigrator:
                 raise sqlite3.OperationalError(
                     "Schema version not found in settings table."
                 )
-            return int(result[0])
+            version = int(result[0])
+            logger.debug("Found stored schema version: %d", version)
+            return version
         except sqlite3.OperationalError:
             # If the settings table doesn't exist, we assume it's version 1.
+            logger.debug("No schema version found in database, defaulting to version 1")
             return 1
 
     @staticmethod
@@ -38,23 +46,51 @@ class DatabaseMigrator:
             ).fetchone()
             is None
         ):
+            logger.debug("No data tables found, migration not needed")
             return False
 
-        return stored_version < DatabaseMigrator.CURRENT_SCHEMA_VERSION
+        if stored_version >= DatabaseMigrator.CURRENT_SCHEMA_VERSION:
+            logger.debug(
+                "Database already at current version %d, no migration needed",
+                stored_version,
+            )
+            return False
+
+        logger.info(
+            "Migration needed: v%d -> v%d (%s)",
+            stored_version,
+            DatabaseMigrator.CURRENT_SCHEMA_VERSION,
+            DatabaseMigrator.SCHEMA_VERSIONS.get(
+                DatabaseMigrator.CURRENT_SCHEMA_VERSION, "Unknown"
+            ),
+        )
+        return True
 
     @staticmethod
     def create_backup(connection: sqlite3.Connection):
         backup_path = f"database_backup_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.db"
-        if os.path.exists(backup_path):
-            os.remove(backup_path)
-        target = sqlite3.connect(backup_path)
-        connection.backup(target=target, pages=0, progress=None)
-        target.close()
-        print("Database backup created as " + backup_path)
+        try:
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+            target = sqlite3.connect(backup_path)
+            connection.backup(target=target, pages=0, progress=None)
+            target.close()
+            logger.info("Database backup created as %s", backup_path)
+        except Exception as e:
+            logger.error("Failed to create database backup: %s", e, exc_info=True)
+            raise
 
     @staticmethod
     def migrate_database(connection, cursor):
         current_version = DatabaseMigrator.get_stored_database_version(cursor)
+        logger.info(
+            "Starting database migration from v%d to v%d (%s)",
+            current_version,
+            DatabaseMigrator.CURRENT_SCHEMA_VERSION,
+            DatabaseMigrator.SCHEMA_VERSIONS.get(
+                DatabaseMigrator.CURRENT_SCHEMA_VERSION, "Unknown"
+            ),
+        )
         DatabaseMigrator.create_backup(connection)  # Create a backup before migrating
 
         for version in range(
@@ -62,12 +98,33 @@ class DatabaseMigrator:
         ):
             method = getattr(DatabaseMigrator, f"migration_{version}", None)
             if method:
-                method(connection, cursor)
+                description = DatabaseMigrator.SCHEMA_VERSIONS.get(version, "Unknown")
+                logger.info(
+                    'Running migration v%d: "%s"',
+                    version,
+                    description,
+                )
+                try:
+                    method(connection, cursor)
+                except Exception as e:
+                    logger.critical(
+                        "Migration v%d FAILED: %s",
+                        version,
+                        e,
+                        exc_info=True,
+                    )
+                    raise
                 cursor.execute(
                     "UPDATE settings SET value = ? WHERE name = 'schema_version'",
                     (version,),
                 )
                 connection.commit()
+                logger.info("Migration v%d completed successfully", version)
+
+        logger.info(
+            "Migration complete: database now at version %d",
+            DatabaseMigrator.CURRENT_SCHEMA_VERSION,
+        )
 
     @staticmethod
     def migration_2(connection, cursor):

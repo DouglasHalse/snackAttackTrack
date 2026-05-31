@@ -1,0 +1,58 @@
+#:kivy 2.1.0
+
+<LogScreen>:
+    rows: 2
+    cols: 1
+    NavigationHeader:
+        id: header
+        use_settings_button: False
+        page_name: "Application Logs"
+    GridLayout:
+        cols: 1
+        padding: [10, 5]
+        spacing: 5
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        RoundedTwoColorGridLayout:
+            rows: 1
+            padding: 5
+            ScrollView:
+                id: logScrollView
+                do_scroll_x: True
+                do_scroll_y: True
+                Label:
+                    id: logContent
+                    text: ""
+                    font_size: self.width / 60
+                    markup: True
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    text_size: self.width - 20, None
+                    padding: [10, 5]
+                    color: (0.05, 0.05, 0.05, 1)
+        GridLayout:
+            rows: 1
+            cols: 5
+            size_hint_y: None
+            height: self.minimum_height
+            spacing: 5
+            padding: [20, 5]
+            Widget:
+            OrangeButton:
+                id: copyUsbButton
+                text: "Copy to USB"
+                height: self.parent.width * 0.1
+                width: self.height * 3
+                text_size: self.height / 2
+            Widget:
+            RedButton:
+                id: clearLogsButton
+                text: "Clear Logs"
+                height: self.parent.width * 0.1
+                width: self.height * 3
+                text_size: self.height / 2
+            Widget:

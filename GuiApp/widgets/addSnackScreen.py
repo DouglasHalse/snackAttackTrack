@@ -1,9 +1,13 @@
 import decimal
 
+from logger import get_logger
 from widgets.GridLayoutScreen import GridLayoutScreen
 from widgets.popups.errorMessagePopup import ErrorMessagePopup
 from widgets.settingsManager import SettingName
 from app_types import Credits
+
+
+logger = get_logger(__name__)
 
 
 class AddSnackScreen(GridLayoutScreen):
@@ -115,6 +119,13 @@ class AddSnackScreen(GridLayoutScreen):
             snack_name=snackName,
             quantity=quantity,
             value=totalPrice,
+        )
+        logger.info(
+            "Snack added: name='%s' qty=%d price=%.2f total_paid=%.2f",
+            snackName,
+            quantity,
+            pricePerItem,
+            totalPrice,
         )
         self.manager.transitionToScreen("editSnacksScreen", transitionDirection="right")
 
