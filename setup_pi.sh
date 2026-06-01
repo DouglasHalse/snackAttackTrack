@@ -3,7 +3,7 @@
 # Update apt
 sudo apt update
 
-# Install dependencies for kivy
+# Install dependencies for kivy + udisks2 for USB auto-mount
 sudo apt -y install python3-setuptools git-core python3-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev pkg-config libgl1-mesa-dev libgles2-mesa-dev \
    libgstreamer1.0-dev \
    gstreamer1.0-plugins-{bad,base,good,ugly} \
@@ -33,9 +33,8 @@ then
     exit 1
 fi
 
-# Install requirements-dev in venv
-./venv/bin/python -m pip install -r requirements-dev.txt
+# Install Pi requirements in venv (includes RFID reader module)
+./venv/bin/python -m pip install -r requirements-raspberry-pi.txt
 
 echo "Setup complete"
-echo "If you wish to run the GUI from Visual studio code, select the interpreter /venv/Scripts/python"
-echo "To run the GUI, run the command: 'bash runGuiUbuntu.sh'"
+echo "To run the GUI, run the command: 'bash run.sh'"

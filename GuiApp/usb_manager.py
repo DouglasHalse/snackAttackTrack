@@ -196,7 +196,7 @@ class USBManager:
         """Mount a removable device using udisksctl (udisks2).
 
         udisks2 is the standard Linux disk management service. On Raspberry Pi
-        it is installed by the setup script (setupDevEnvironmentUbuntu.sh) and
+        it is installed by the setup script (setup.sh) and
         works without sudo via polkit for the local console user.
 
         Args:
@@ -211,7 +211,7 @@ class USBManager:
         if not shutil.which("udisksctl"):
             raise NoUSBDeviceError(
                 "USB drive detected but could not be mounted automatically. "
-                "Please run the setup script: 'bash setupDevEnvironmentUbuntu.sh'"
+                "Please run the setup script: 'bash setup.sh'"
             )
 
         logger.debug("Mounting %s via udisksctl", device_path)
@@ -360,7 +360,7 @@ class USBManager:
             if any_unmounted or block_devices:
                 raise NoUSBDeviceError(
                     "USB drive detected but could not be mounted automatically. "
-                    "Please run the setup script: 'bash setupDevEnvironmentUbuntu.sh'"
+                    "Please run the setup script: 'bash setup.sh'"
                 )
             raise NoUSBDeviceError(
                 "No USB drive detected. Please insert a USB drive and try again."

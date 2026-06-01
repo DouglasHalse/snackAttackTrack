@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Change to the script's directory (works from any path)
+cd "$(dirname "$0")"
+
 # Verify venv exists
 if [[ ! -d ./venv ]]
 then
@@ -17,5 +20,5 @@ then
     exit 1
 fi
 
-# Run GUI
-python GuiApp/main.py
+# Run GUI with Pi production settings
+python GuiApp/main.py -- --no-inspector --rotate-screen 180 --hide-cursor
