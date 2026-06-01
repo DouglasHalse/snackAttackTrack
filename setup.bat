@@ -21,6 +21,6 @@ REM Install the required packages
 
 echo:
 echo "If you wish to run the GUI from Visual studio code, select the interpreter from the venv folder"
-echo "To run the GUI, run the command: runGuiWindows.bat"
+echo "To run the GUI, run the command: run.bat"
 
 pause

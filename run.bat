@@ -1,7 +1,7 @@
 echo off
 
 if not exist %~dp0venv\ (
-    echo "Please run setupDevEnvironmentWindows.bat first"
+    echo "Please run setup.bat first"
     pause
     exit 1
 ) 

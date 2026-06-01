@@ -27,7 +27,7 @@ Clone the repository either with GUI or following terminal commands
 
 ```shell
 git clone https://github.com/DouglasHalse/snackAttackTrack.git
-.\setupDevEnvironmentWindows.bat
+.\setup.bat
 ```
 
 #### Start GUI with debugging (with Visual Studio Code)
@@ -39,7 +39,7 @@ git clone https://github.com/DouglasHalse/snackAttackTrack.git
 
 #### Start GUI without debugging
 
-Run `runGuiWindows.bat`
+Run `run.bat`
 
 ### Linux
 
@@ -57,7 +57,7 @@ Clone the repository either with GUI or following terminal commands
 
 ```shell
 git clone https://github.com/DouglasHalse/snackAttackTrack.git
-bash setupDevEnvironmentUbuntu.sh
+bash setup.sh
 ```
 
 #### Start GUI with debugging (with Visual Studio Code)
@@ -69,7 +69,37 @@ bash setupDevEnvironmentUbuntu.sh
 
 #### Start GUI without debugging
 
-1. Run `bash runGuiUbuntu.sh` in a terminal
+1. Run `bash run.sh` in a terminal
+
+### Raspberry Pi
+
+#### Prerequisites
+
+1. Raspberry Pi OS (Lite or Desktop)
+2. Python 3.9 or Python 3.10
+
+#### Installation
+
+```shell
+git clone https://github.com/DouglasHalse/snackAttackTrack.git
+bash setup_pi.sh
+```
+
+This installs the Pi-specific dependencies including the RFID reader module and udisks2 for USB auto-mount.
+
+#### Running on startup (optional)
+
+To start the app automatically on boot, add the following to crontab:
+
+```shell
+crontab -e
+```
+
+Add the line:
+
+```
+@reboot /home/pi/snackAttackTrack/run.sh
+```
 
 ### Debugging gui layouts
 1. Press <kbd>^ Ctrl</kbd> + <kbd>E</kbd> to start kivy inspector

@@ -301,7 +301,7 @@ class TestAutoMountDrive:
 
         with pytest.raises(NoUSBDeviceError) as exc:
             USBManager._auto_mount_drive("/dev/sda1")
-        assert "setupDevEnvironmentUbuntu.sh" in str(exc.value)
+        assert "setup.sh" in str(exc.value)
 
     def test_raises_when_mount_fails(self, monkeypatch):
         """When udisksctl returns non-zero, NoUSBDeviceError should be raised."""
@@ -422,7 +422,7 @@ class TestDetectAndMountLinuxDrives:
             lambda d: (_ for _ in ()).throw(
                 NoUSBDeviceError(
                     "USB drive detected but could not be mounted automatically. "
-                    "Please run the setup script: 'bash setupDevEnvironmentUbuntu.sh'"
+                    "Please run the setup script: 'bash setup.sh'"
                 )
             ),
         )
@@ -430,7 +430,7 @@ class TestDetectAndMountLinuxDrives:
 
         with pytest.raises(NoUSBDeviceError) as exc:
             USBManager._detect_and_mount_linux_drives()
-        assert "setupDevEnvironmentUbuntu.sh" in str(exc.value)
+        assert "setup.sh" in str(exc.value)
 
 
 class TestDetectDrivesLinux:
