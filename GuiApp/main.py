@@ -5,6 +5,15 @@ import os
 from logger import get_logger, setup_logging
 from app_types import LogLevel
 from database import DatabaseConnector
+
+# -- Kivy config MUST be set before any other Kivy imports --
+# pylint: disable=wrong-import-position,wrong-import-order,ungrouped-imports
+from kivy.config import Config
+
+Config.set("input", "mouse", "mouse")
+Config.set("input", "mtdev_%(name)s", "probesysfs,provider=mtdev")
+Config.set("input", "hid_%(name)s", "probesysfs,provider=hidinput")
+
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
@@ -122,6 +131,7 @@ class snackAttackTrackApp(App):
         sm.add_bool_setting(SettingName.ENABLE_GAMBLING, True)
         sm.add_bool_setting(SettingName.EXCITING_GAMBLING, True)
         sm.add_enum_setting(SettingName.LOG_LEVEL, LogLevel.INFO, LogLevel)
+        sm.add_bool_setting(SettingName.DEBUG_AUTO_LOGOUT_TIMER, False)
 
         return sm
 

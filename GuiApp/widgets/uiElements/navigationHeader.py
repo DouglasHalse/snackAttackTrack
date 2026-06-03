@@ -13,6 +13,7 @@ class NavigationHeader(GridLayout):
     __events__ = ("on_back_button_pressed", "on_logout_button_pressed")
     use_settings_button = BooleanProperty(False)
     page_name = StringProperty(None, allownone=True)
+    idle_timer_text = StringProperty("")
 
     def __init__(
         self,
@@ -33,6 +34,7 @@ class NavigationHeader(GridLayout):
                 value.totalCredits if value else 0.0
             )
         )
+        app.screenManager.bind(idle_timer_remaining=self._update_debug_timer)
         self.ids.backButton.bind(
             on_release=lambda instance: self.dispatch("on_back_button_pressed")
         )
@@ -73,6 +75,13 @@ class NavigationHeader(GridLayout):
 
     def set_current_credits(self, current_credits):
         self.ids.patronCreditsLabel.text = f"Your credits: {current_credits:.2f}"
+
+    def _update_debug_timer(self, instance, value):
+        """Update the debug timer label when the remaining time changes."""
+        if value > 0:
+            self.idle_timer_text = f"Auto-logout:\n{value:.1f}s"
+        else:
+            self.idle_timer_text = ""
 
 
 class NavigationBackButton(BoxLayoutButton):

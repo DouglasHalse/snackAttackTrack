@@ -22,6 +22,7 @@ class SettingName(Enum):
     ENABLE_GAMBLING = "enable_gambling"
     EXCITING_GAMBLING = "exciting_gambling"
     LOG_LEVEL = "log_level"
+    DEBUG_AUTO_LOGOUT_TIMER = "debug_auto_logout_timer"
 
 
 def get_presentable_setting_name(settingName: SettingName):
