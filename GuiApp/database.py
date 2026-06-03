@@ -510,8 +510,8 @@ class DatabaseConnector:
 
         self.cursor.execute(
             """
-            INSERT INTO Patrons (FirstName, LastName, EmployeeID)
-            VALUES (?, ?, ?)
+            INSERT INTO Patrons (FirstName, LastName, EmployeeID, TotalCredits)
+            VALUES (?, ?, ?, 0)
             """,
             (first_name, last_name, employee_id),
         )

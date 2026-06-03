@@ -5,8 +5,10 @@
 from kivy.config import Config
 
 Config.set("kivy", "pause_on_minimize", "0")
+
 import asyncio
 import os
+import sqlite3
 import time
 
 import pytest_asyncio
@@ -22,7 +24,55 @@ from GuiApp.widgets.editSnacksScreen import EditSnacksScreen
 # Disable too-many-public-methods for test class
 # pylint: disable=too-many-public-methods
 
+TEST_DB = "PytestDatabase.db"
+TEST_SETTINGS = "PytestSettings.json"
+TEST_LEGACY = os.environ.get("TEST_LEGACY_DB") == "1"
+
 Window.size = (1280, 800)
+
+
+V1_SCHEMA = (
+    "CREATE TABLE IF NOT EXISTS Patrons ("
+    "PatronID INTEGER PRIMARY KEY AUTOINCREMENT, "
+    "FirstName TEXT NOT NULL, LastName TEXT NOT NULL, EmployeeID TEXT NOT NULL, "
+    "TotalCredits REAL NOT NULL DEFAULT 0.0); "
+    "CREATE TABLE IF NOT EXISTS Snacks ("
+    "ItemID INTEGER PRIMARY KEY AUTOINCREMENT, "
+    "ItemName TEXT NOT NULL, Quantity INTEGER NOT NULL, ImageID TEXT NOT NULL, "
+    "PricePerItem REAL NOT NULL); "
+    "CREATE TABLE IF NOT EXISTS Transactions ("
+    "TransactionID INTEGER PRIMARY KEY AUTOINCREMENT, "
+    "TransactionType TEXT NOT NULL, PatronID INTEGER NOT NULL, "
+    "TransactionDate TEXT NOT NULL, AmountBeforeTransaction REAL NOT NULL, "
+    "AmountAfterTransaction REAL NOT NULL, "
+    "FOREIGN KEY(PatronID) REFERENCES Patrons(PatronID)); "
+    "CREATE TABLE IF NOT EXISTS TransactionItems ("
+    "TransactionItemId INTEGER PRIMARY KEY AUTOINCREMENT, "
+    "TransactionID INTEGER NOT NULL, ItemName TEXT NOT NULL, "
+    "Quantity INTEGER NOT NULL, PricePerItem REAL NOT NULL, "
+    "FOREIGN KEY(TransactionID) REFERENCES Transactions(TransactionID)); "
+    "CREATE TABLE IF NOT EXISTS AddedSnacks ("
+    "AddedID INTEGER PRIMARY KEY AUTOINCREMENT, "
+    "SnackName TEXT NOT NULL, AddedDate TEXT NOT NULL, "
+    "Quantity INTEGER NOT NULL, Value REAL NOT NULL); "
+    "CREATE TABLE IF NOT EXISTS LostSnacks ("
+    "LostID INTEGER PRIMARY KEY AUTOINCREMENT, "
+    "SnackName TEXT NOT NULL, Reason INTEGER NOT NULL, "
+    "LostDate TEXT NOT NULL, Quantity INTEGER NOT NULL, Value REAL NOT NULL);"
+)
+
+
+def _seed_v1_database(db_path: str):
+    """
+    Create a database with the v1 schema (REAL credits) and no settings
+    table, so the app's auto-migration runs on startup.
+    No seed rows — tests add their own data after migration.
+    """
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.executescript(V1_SCHEMA)
+    conn.commit()
+    conn.close()
 
 
 async def tear_down(event_loop):
@@ -40,7 +90,7 @@ async def tear_down(event_loop):
     except Exception:  # pylint: disable=broad-exception-caught
         pass
 
-    for path in ("PytestDatabase.db", "PytestSettings.json"):
+    for path in (TEST_DB, TEST_SETTINGS):
         _remove_if_exists(path)
 
 
@@ -58,12 +108,15 @@ def _remove_if_exists(path, retries=3, delay=0.2):
 
 @pytest_asyncio.fixture
 async def app_with_nothing():
-    _remove_if_exists("PytestDatabase.db")
-    _remove_if_exists("PytestSettings.json")
+    _remove_if_exists(TEST_DB)
+    _remove_if_exists(TEST_SETTINGS)
+
+    if TEST_LEGACY:
+        _seed_v1_database(TEST_DB)
 
     app = snackAttackTrackApp(
-        settings_path="PytestSettings.json",
-        database_path="PytestDatabase.db",
+        settings_path=TEST_SETTINGS,
+        database_path=TEST_DB,
     )
     # start the Kivy event loop in background so tests can drive it
     asyncio.create_task(app.async_run(), name="kivy_event_loop")
@@ -89,7 +142,7 @@ async def app_with_only_users(app_with_nothing):
         first_name="User3FirstName", last_name="User3LastName", employee_id="555555555"
     )
 
-    # Give user 3 20 credits so they can buy snacks in tests
+    # Give user 3 credits so they can buy snacks in tests
     app_with_nothing.screenManager.database.addCredits(
         userId=app_with_nothing.screenManager.database.getPatronIdByCardId("555555555"),
         amount=Credits("11.00"),

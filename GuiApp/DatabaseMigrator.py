@@ -86,7 +86,9 @@ class DatabaseMigrator:
         )
 
         # Change TotalCredits from REAL to INTEGER for Patrons (hundreths of a credit)
-        cursor.execute("ALTER TABLE Patrons ADD COLUMN TotalCredits_temp INTEGER")
+        cursor.execute(
+            "ALTER TABLE Patrons ADD COLUMN TotalCredits_temp INTEGER NOT NULL DEFAULT 0"
+        )
         cursor.execute(
             "UPDATE Patrons SET TotalCredits_temp = CAST(TotalCredits * 100 AS INTEGER)"
         )
