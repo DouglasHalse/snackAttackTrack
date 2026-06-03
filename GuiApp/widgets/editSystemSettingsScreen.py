@@ -380,6 +380,14 @@ class EditSystemSettingsScreen(GridLayoutScreen):
             _update_log_level,
         )
 
+        # Debug settings
+        debugSection = SettingsSection(sectionName="Debug")
+        debugAutoLogoutTimer = BoolSettingRow(
+            settingName=SettingName.DEBUG_AUTO_LOGOUT_TIMER,
+            settingManager=self.manager.settingsManager,
+        )
+        debugSection.ids["sectionContent"].add_widget(debugAutoLogoutTimer)
+
         # Add sections to the layout
         self.ids["settingsLayout"].add_widget(navigationSection)
         self.ids["settingsLayout"].add_widget(financialSection)
@@ -387,6 +395,7 @@ class EditSystemSettingsScreen(GridLayoutScreen):
         self.ids["settingsLayout"].add_widget(gamblingSection)
         self.ids["settingsLayout"].add_widget(historySection)
         self.ids["settingsLayout"].add_widget(loggingSection)
+        self.ids["settingsLayout"].add_widget(debugSection)
 
     # pylint: enable=too-many-locals
 
