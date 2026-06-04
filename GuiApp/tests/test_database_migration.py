@@ -6,8 +6,11 @@ import time
 
 import pytest
 
+from tests.SchemaBuilder import SchemaBuilder
+
 from GuiApp.database import DatabaseConnector, LostSnackReason, TransactionType
 from GuiApp.DatabaseMigrator import DatabaseMigrator
+
 
 # pylint: disable=redefined-outer-name
 # pylint: disable=too-many-locals
@@ -633,3 +636,205 @@ def test_migrate_database_version_1_database(version_1_database):
     # Clean up only the backup file(s) created by this test
     for backup_path in new_backups:
         os.remove(backup_path)
+
+
+# ── V2 → V3 migration tests ──────────────────────────────
+
+
+def _get_column_default(cursor, table, column):
+    """Get the default value of a column via PRAGMA table_info."""
+    cursor.execute(f"PRAGMA table_info('{table}')")
+    for col in cursor.fetchall():
+        if col[1] == column:
+            return col[4]
+    return None
+
+
+@pytest.fixture
+def version_2_database():
+    """Create a temporary v2 (buggy) database for testing migration_3."""
+    db_path = "test_version_2_database.db"
+    _remove_if_exists(db_path)
+    SchemaBuilder.build(db_path, "v2")
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    yield conn, cursor
+
+    cursor.close()
+    conn.close()
+    _remove_if_exists(db_path)
+
+
+@pytest.fixture
+def version_3_database():
+    """Create a temporary v3 (correct) database for testing migration_3 no-op."""
+    db_path = "test_version_3_database.db"
+    _remove_if_exists(db_path)
+    SchemaBuilder.build(db_path, "v3")
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    yield conn, cursor
+
+    cursor.close()
+    conn.close()
+    _remove_if_exists(db_path)
+
+
+def test_schema_builder_v2_state(version_2_database):
+    """Verify SchemaBuilder produces the expected v2 buggy schema."""
+    _, cursor = version_2_database
+
+    # TotalCredits should be bare INTEGER (no DEFAULT 0)
+    assert _get_column_default(cursor, "Patrons", "TotalCredits") is None
+
+    # One row should have NULL TotalCredits
+    cursor.execute("SELECT COUNT(*) FROM Patrons WHERE TotalCredits IS NULL")
+    assert cursor.fetchone()[0] == 1
+
+    # Schema version should be 2
+    version = DatabaseMigrator.get_stored_database_version(cursor)
+    assert version == 2
+
+
+def test_schema_builder_v3_state(version_3_database):
+    """Verify SchemaBuilder produces the expected v3 correct schema."""
+    _, cursor = version_3_database
+
+    # TotalCredits should have DEFAULT 0
+    assert _get_column_default(cursor, "Patrons", "TotalCredits") == "0"
+
+    # No rows should have NULL TotalCredits
+    cursor.execute("SELECT COUNT(*) FROM Patrons WHERE TotalCredits IS NULL")
+    assert cursor.fetchone()[0] == 0
+
+    # Schema version should be 3
+    version = DatabaseMigrator.get_stored_database_version(cursor)
+    assert version == 3
+
+
+def test_migration_2_to_3_fixes_default(version_2_database):
+    """Migrate v2→v3: verify DEFAULT 0 added, NULLs fixed, FK preserved."""
+    conn, cursor = version_2_database
+
+    # Snapshot data before migration
+    cursor.execute("SELECT * FROM Patrons ORDER BY PatronID")
+    patrons_before = cursor.fetchall()
+    assert len(patrons_before) == 4  # 3 regular + 1 NULL-test patron
+    null_patron = patrons_before[3]
+    assert null_patron[4] is None  # TotalCredits is NULL
+
+    # Perform migration
+    DatabaseMigrator.migration_3(conn, cursor)
+    conn.commit()
+
+    # TotalCredits should now have DEFAULT 0
+    assert _get_column_default(cursor, "Patrons", "TotalCredits") == "0"
+
+    # NULL row should now have 0
+    cursor.execute("SELECT TotalCredits FROM Patrons WHERE EmployeeID = 'NULLTEST'")
+    assert cursor.fetchone()[0] == 0
+
+    # Non-NULL values preserved
+    cursor.execute("SELECT TotalCredits FROM Patrons WHERE PatronID = 1")
+    assert cursor.fetchone()[0] == 551004
+    cursor.execute("SELECT TotalCredits FROM Patrons WHERE PatronID = 2")
+    assert cursor.fetchone()[0] == 22194
+
+    # All patron rows preserved
+    cursor.execute("SELECT COUNT(*) FROM Patrons")
+    assert cursor.fetchone()[0] == 4
+
+    # FK: Transactions still reference valid patrons
+    cursor.execute(
+        "SELECT COUNT(*) FROM Transactions t JOIN Patrons p ON t.PatronID = p.PatronID"
+    )
+    assert cursor.fetchone()[0] == 6  # All 6 transactions still valid
+
+
+def test_migration_3_is_noop_on_clean_v3(version_3_database):
+    """Run migration_3 on an already-correct v3 DB — should do nothing."""
+    conn, cursor = version_3_database
+
+    assert _get_column_default(cursor, "Patrons", "TotalCredits") == "0"
+    cursor.execute("SELECT * FROM Patrons ORDER BY PatronID")
+    data_before = cursor.fetchall()
+
+    DatabaseMigrator.migration_3(conn, cursor)
+    conn.commit()
+
+    # Default still present
+    assert _get_column_default(cursor, "Patrons", "TotalCredits") == "0"
+
+    # Data unchanged
+    cursor.execute("SELECT * FROM Patrons ORDER BY PatronID")
+    data_after = cursor.fetchall()
+    assert data_after == data_before
+
+
+def test_migration_3_rollback_on_failure(version_2_database):
+    """If migration_3 fails during table recreation, rollback preserves data."""
+    conn, cursor = version_2_database
+
+    # Snapshot data before
+    cursor.execute("SELECT * FROM Patrons ORDER BY PatronID")
+    data_before = cursor.fetchall()
+    assert _get_column_default(cursor, "Patrons", "TotalCredits") is None
+
+    # Lock the database via a second connection to force a failure
+    conn2 = sqlite3.connect("test_version_2_database.db")
+    cursor2 = conn2.cursor()
+    cursor2.execute("BEGIN")
+    cursor2.execute(
+        "INSERT INTO Patrons (FirstName, LastName, EmployeeID, TotalCredits) "
+        "VALUES ('Lock', 'Test', 'LOCK', 0)"
+    )
+
+    with pytest.raises(sqlite3.OperationalError):
+        DatabaseMigrator.migration_3(conn, cursor)
+
+    conn.rollback()
+    conn2.rollback()
+    conn2.close()
+
+    # Data should be intact
+    cursor.execute("SELECT * FROM Patrons ORDER BY PatronID")
+    data_after = cursor.fetchall()
+    assert data_after == data_before
+
+    # Default should NOT have been added
+    assert _get_column_default(cursor, "Patrons", "TotalCredits") is None
+
+
+def test_full_v1_to_v3_migration(version_1_database):
+    """
+    Full migration path v1→v2→v3 using the existing v1 database fixture.
+    Verifies data integrity through all migrations.
+    """
+    conn, cursor = version_1_database
+
+    # Verify starting at v1
+    assert DatabaseMigrator.get_stored_database_version(cursor) == 1
+
+    # Run full migration pipeline
+    DatabaseMigrator.migrate_database(conn, cursor)
+
+    # Should end at v3
+    version = DatabaseMigrator.get_stored_database_version(cursor)
+    assert version == DatabaseMigrator.CURRENT_SCHEMA_VERSION  # 3
+
+    # TotalCredits should have DEFAULT 0
+    assert _get_column_default(cursor, "Patrons", "TotalCredits") == "0"
+
+    # All credit values should be INTEGER (hundreths)
+    cursor.execute("SELECT TotalCredits FROM Patrons WHERE PatronID = 1")
+    assert isinstance(cursor.fetchone()[0], int)
+
+    # FK integrity preserved
+    cursor.execute("SELECT COUNT(*) FROM Transactions")
+    txn_count = cursor.fetchone()[0]
+    cursor.execute(
+        "SELECT COUNT(*) FROM Transactions t JOIN Patrons p ON t.PatronID = p.PatronID"
+    )
+    assert cursor.fetchone()[0] == txn_count

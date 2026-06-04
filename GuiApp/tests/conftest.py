@@ -9,12 +9,14 @@ import asyncio
 import os
 import time
 
+import pytest
 import pytest_asyncio
 from kivy.core.window import Window
 
 from app_types import Credits
 from GuiApp.main import snackAttackTrackApp
 from GuiApp.widgets.editSnacksScreen import EditSnacksScreen
+from tests.SchemaBuilder import SchemaBuilder
 
 # Fixtures are counted as redefine-outer-name
 # pylint: disable=redefined-outer-name
@@ -22,7 +24,20 @@ from GuiApp.widgets.editSnacksScreen import EditSnacksScreen
 # Disable too-many-public-methods for test class
 # pylint: disable=too-many-public-methods
 
+TEST_DB = "PytestDatabase.db"
+TEST_SETTINGS = "PytestSettings.json"
+
 Window.size = (1280, 800)
+
+
+def pytest_addoption(parser):
+    """Add the --schema-version option for testing different migration paths."""
+    parser.addoption(
+        "--schema-version",
+        default="v3",
+        choices=["v1", "v2", "v3"],
+        help="Schema version to start from: v1, v2, or v3 (default: v3)",
+    )
 
 
 async def tear_down(event_loop):
@@ -40,7 +55,7 @@ async def tear_down(event_loop):
     except Exception:  # pylint: disable=broad-exception-caught
         pass
 
-    for path in ("PytestDatabase.db", "PytestSettings.json"):
+    for path in (TEST_DB, TEST_SETTINGS):
         _remove_if_exists(path)
 
 
@@ -56,14 +71,25 @@ def _remove_if_exists(path, retries=3, delay=0.2):
                 time.sleep(delay)
 
 
+@pytest.fixture(scope="session")
+def schema_version(request):
+    """Return the --schema-version option value (v1, v2, or v3)."""
+    return request.config.getoption("--schema-version")
+
+
 @pytest_asyncio.fixture
-async def app_with_nothing():
-    _remove_if_exists("PytestDatabase.db")
-    _remove_if_exists("PytestSettings.json")
+async def app_with_nothing(schema_version):
+    _remove_if_exists(TEST_DB)
+    _remove_if_exists(TEST_SETTINGS)
+
+    # Build a pre-migration database if schema_version is not v3
+    # (schema only, no seed data — fixtures add their own data)
+    if schema_version != "v3":
+        SchemaBuilder.build(TEST_DB, schema_version, seed=False)
 
     app = snackAttackTrackApp(
-        settings_path="PytestSettings.json",
-        database_path="PytestDatabase.db",
+        settings_path=TEST_SETTINGS,
+        database_path=TEST_DB,
     )
     # start the Kivy event loop in background so tests can drive it
     asyncio.create_task(app.async_run(), name="kivy_event_loop")

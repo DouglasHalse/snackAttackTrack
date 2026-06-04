@@ -5,11 +5,12 @@ import sqlite3
 
 class DatabaseMigrator:
 
-    CURRENT_SCHEMA_VERSION = 2
+    CURRENT_SCHEMA_VERSION = 3
 
     SCHEMA_VERSIONS = {
         1: "Initial schema version",  # Initial version, no schema version table is created yet.
         2: "Add schema version tracking and change to credits datatype to hundreths of a credit (integer)",
+        3: "Fix Patrons.TotalCredits DEFAULT 0 for databases migrated with old migration_2",
     }
 
     @staticmethod
@@ -156,3 +157,48 @@ class DatabaseMigrator:
         )
 
         connection.commit()
+
+    @staticmethod
+    def migration_3(connection, cursor):
+        """
+        Fix Patrons.TotalCredits to have DEFAULT 0.
+
+        The original migration_2 used `ALTER TABLE ... ADD COLUMN
+        TotalCredits_temp INTEGER` without NOT NULL DEFAULT 0, so databases
+        migrated before that fix ended up with TotalCredits as bare INTEGER
+        (no default). This migration recreates the Patrons table to add the
+        missing DEFAULT 0.
+        """
+        # Check if the fix is already applied (idempotent)
+        cursor.execute("PRAGMA table_info('Patrons')")
+        for col in cursor.fetchall():
+            name, dflt_value = col[1], col[4]
+            if name == "TotalCredits" and dflt_value == "0":
+                return  # Already correct
+
+        # Recreate Patrons table with DEFAULT 0 in a transaction
+        cursor.execute("PRAGMA foreign_keys = OFF")
+        try:
+            cursor.execute("BEGIN")
+            cursor.execute(
+                "CREATE TABLE Patrons_new ("
+                "PatronID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "FirstName TEXT NOT NULL, LastName TEXT NOT NULL, "
+                "EmployeeID TEXT NOT NULL, "
+                "TotalCredits INTEGER NOT NULL DEFAULT 0)"
+            )
+            # Use IFNULL to convert any existing NULLs to 0
+            cursor.execute(
+                "INSERT INTO Patrons_new "
+                "(PatronID, FirstName, LastName, EmployeeID, TotalCredits) "
+                "SELECT PatronID, FirstName, LastName, EmployeeID, "
+                "IFNULL(TotalCredits, 0) FROM Patrons"
+            )
+            cursor.execute("DROP TABLE Patrons")
+            cursor.execute("ALTER TABLE Patrons_new RENAME TO Patrons")
+            connection.commit()
+        except BaseException:
+            connection.rollback()
+            raise
+        finally:
+            cursor.execute("PRAGMA foreign_keys = ON")
