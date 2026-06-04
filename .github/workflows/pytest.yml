@@ -13,6 +13,10 @@ on:
 jobs:
   pytest:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        schema_version: [v1, v2, v3]
+      fail-fast: false
 
     steps:
       - name: Checkout code
@@ -70,23 +74,26 @@ jobs:
           sudo apt-get install -y libsdl2-2.0-0 libsdl2-dev libgles2-mesa-dev libgl1-mesa-dev libgl1-mesa-dri mesa-utils \
             gstreamer1.0-plugins-base
 
-      - name: Run pytest under Xvfb
+      - name: Run pytest under Xvfb (${{ matrix.schema_version }})
         run: |
           # start Xvfb automatically around the command
-          xvfb-run -a -s "-screen 0 1280x720x24" python -m pytest -vv -s --cov=GuiApp --cov-branch --cov-report=html --cov-report=xml --cov-report=term-missing --junitxml=junit.xml
+          xvfb-run -a -s "-screen 0 1280x720x24" python -m pytest -vv -s \
+            --schema-version=${{ matrix.schema_version }} \
+            --cov=GuiApp --cov-branch --cov-report=html --cov-report=xml \
+            --cov-report=term-missing --junitxml=junit-${{ matrix.schema_version }}.xml
 
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: pytest-results
-          path: junit.xml
+          name: pytest-results-${{ matrix.schema_version }}
+          path: junit-${{ matrix.schema_version }}.xml
 
       - name: Upload coverage HTML report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coverage-report
+          name: coverage-report-${{ matrix.schema_version }}
           path: htmlcov/
 
       - name: Extract coverage percentage

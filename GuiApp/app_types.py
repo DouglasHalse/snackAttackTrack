@@ -109,6 +109,8 @@ class Credits(Decimal):
 
     @classmethod
     def from_hundredths(cls, hundredths: int) -> "Credits":
+        if hundredths is None:
+            return cls("0.00")
         return cls(hundredths / 100)
 
 
