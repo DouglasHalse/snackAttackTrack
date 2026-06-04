@@ -7,18 +7,16 @@ All tests are non-Kivy, function-scoped, and use tmp_path for isolation.
 import errno
 import os
 import shutil
-import subprocess
 from io import StringIO
 
 import pytest
-
 from usb_manager import (
-    USBManager,
-    USBError,
     NoUSBDeviceError,
-    USBPermissionError,
-    USBDiskFullError,
     USBCopyError,
+    USBDiskFullError,
+    USBError,
+    USBManager,
+    USBPermissionError,
 )
 
 
@@ -135,6 +133,7 @@ class TestIsWritableMount:
 
     def test_unwritable_directory(self, tmp_path, monkeypatch):
         """An unwritable directory should return False."""
+
         # Mock open to fail with PermissionError
         def failing_open(*args, **kwargs):
             raise PermissionError("Permission denied")
@@ -250,79 +249,6 @@ class TestGetRemovableBlockDevices:
         assert len(devices) == 0
 
 
-class TestAutoMountDrive:
-    """Test the _auto_mount_drive static method."""
-
-    # pylint: disable=protected-access
-
-    def test_udisksctl_success(self, monkeypatch):
-        """udisksctl should return the parsed mount point."""
-        monkeypatch.setattr(
-            shutil,
-            "which",
-            lambda cmd: "/usr/bin/udisksctl" if cmd == "udisksctl" else None,
-        )
-
-        class FakeResult:
-            returncode = 0
-            stdout = "Mounted /dev/sda1 at /media/pi/KINGSTON.\n"
-            stderr = ""
-
-        monkeypatch.setattr(subprocess, "run", lambda *a, **kw: FakeResult())
-        monkeypatch.setattr(USBManager, "_resolve_mount_point", lambda d: None)
-
-        result = USBManager._auto_mount_drive("/dev/sda1")
-        assert result == "/media/pi/KINGSTON"
-
-    def test_skips_parse_and_uses_proc_mounts(self, monkeypatch):
-        """When stdout parsing fails, _resolve_mount_point fallback should work."""
-        monkeypatch.setattr(
-            shutil,
-            "which",
-            lambda cmd: "/usr/bin/udisksctl" if cmd == "udisksctl" else None,
-        )
-
-        class FakeResult:
-            returncode = 0
-            stdout = "Mounted /dev/sda1\n"  # No "at /path" pattern
-            stderr = ""
-
-        monkeypatch.setattr(subprocess, "run", lambda *a, **kw: FakeResult())
-        monkeypatch.setattr(
-            USBManager, "_resolve_mount_point", lambda d: "/media/pi/USB"
-        )
-
-        result = USBManager._auto_mount_drive("/dev/sda1")
-        assert result == "/media/pi/USB"
-
-    def test_raises_when_udisksctl_not_installed(self, monkeypatch):
-        """When udisksctl is not available, NoUSBDeviceError should be raised."""
-        monkeypatch.setattr(shutil, "which", lambda cmd: None)
-
-        with pytest.raises(NoUSBDeviceError) as exc:
-            USBManager._auto_mount_drive("/dev/sda1")
-        assert "setup.sh" in str(exc.value)
-
-    def test_raises_when_mount_fails(self, monkeypatch):
-        """When udisksctl returns non-zero, NoUSBDeviceError should be raised."""
-        monkeypatch.setattr(
-            shutil,
-            "which",
-            lambda cmd: "/usr/bin/udisksctl" if cmd == "udisksctl" else None,
-        )
-
-        class FakeResult:
-            returncode = 1
-            stdout = ""
-            stderr = "Permission denied"
-
-        monkeypatch.setattr(subprocess, "run", lambda *a, **kw: FakeResult())
-
-        with pytest.raises(NoUSBDeviceError) as exc:
-            USBManager._auto_mount_drive("/dev/sda1")
-        assert "Permission denied" in str(exc.value)
-
-
 class TestScanMountDirectoriesFallback:
     """Test the _scan_mount_directories_fallback static method."""
 
@@ -364,8 +290,8 @@ class TestScanMountDirectoriesFallback:
         assert result == []
 
 
-class TestDetectAndMountLinuxDrives:
-    """Test the _detect_and_mount_linux_drives static method."""
+class TestDetectLinuxDrives:
+    """Test the _detect_linux_drives static method."""
 
     # pylint: disable=protected-access
 
@@ -379,11 +305,11 @@ class TestDetectAndMountLinuxDrives:
         monkeypatch.setattr(USBManager, "_is_writable_mount", lambda p: True)
         monkeypatch.setattr(USBManager, "_scan_mount_directories_fallback", lambda: [])
 
-        result = USBManager._detect_and_mount_linux_drives()
+        result = USBManager._detect_linux_drives()
         assert "/media/pi/USB" in result
 
-    def test_auto_mounts_unmounted(self, monkeypatch):
-        """An unmounted removable device should be auto-mounted."""
+    def test_mounts_unmounted_device(self, monkeypatch):
+        """An unmounted device should be auto-mounted via _try_mount_drive."""
         monkeypatch.setattr(
             USBManager,
             "_get_removable_block_devices",
@@ -391,14 +317,14 @@ class TestDetectAndMountLinuxDrives:
         )
         monkeypatch.setattr(
             USBManager,
-            "_auto_mount_drive",
-            lambda d: "/media/pi/AUTOMOUNT",
+            "_try_mount_drive",
+            lambda d: ("/mnt/snackattack_usb", ""),
         )
         monkeypatch.setattr(USBManager, "_is_writable_mount", lambda p: True)
         monkeypatch.setattr(USBManager, "_scan_mount_directories_fallback", lambda: [])
 
-        result = USBManager._detect_and_mount_linux_drives()
-        assert "/media/pi/AUTOMOUNT" in result
+        result = USBManager._detect_linux_drives()
+        assert "/mnt/snackattack_usb" in result
 
     def test_raises_no_device_when_none_found(self, monkeypatch):
         """When no removable devices exist, NoUSBDeviceError should be raised."""
@@ -406,31 +332,8 @@ class TestDetectAndMountLinuxDrives:
         monkeypatch.setattr(USBManager, "_scan_mount_directories_fallback", lambda: [])
 
         with pytest.raises(NoUSBDeviceError) as exc:
-            USBManager._detect_and_mount_linux_drives()
-        assert "No USB drive detected" in str(exc.value)
-
-    def test_raises_when_all_mount_attempts_fail(self, monkeypatch):
-        """When devices exist but auto-mount fails, should suggest setup script."""
-        monkeypatch.setattr(
-            USBManager,
-            "_get_removable_block_devices",
-            lambda: [("/dev/sda1", None)],
-        )
-        monkeypatch.setattr(
-            USBManager,
-            "_auto_mount_drive",
-            lambda d: (_ for _ in ()).throw(
-                NoUSBDeviceError(
-                    "USB drive detected but could not be mounted automatically. "
-                    "Please run the setup script: 'bash setup.sh'"
-                )
-            ),
-        )
-        monkeypatch.setattr(USBManager, "_scan_mount_directories_fallback", lambda: [])
-
-        with pytest.raises(NoUSBDeviceError) as exc:
-            USBManager._detect_and_mount_linux_drives()
-        assert "setup.sh" in str(exc.value)
+            USBManager._detect_linux_drives()
+        assert "Devices detected" in str(exc.value)
 
 
 class TestDetectDrivesLinux:
@@ -443,7 +346,7 @@ class TestDetectDrivesLinux:
         monkeypatch.setattr("platform.system", lambda: "Linux")
         monkeypatch.setattr(
             USBManager,
-            "_detect_and_mount_linux_drives",
+            "_detect_linux_drives",
             lambda: ["/media/pi/USB"],
         )
 
@@ -455,14 +358,14 @@ class TestDetectDrivesLinux:
         monkeypatch.setattr("platform.system", lambda: "Linux")
         monkeypatch.setattr(
             USBManager,
-            "_detect_and_mount_linux_drives",
+            "_detect_linux_drives",
             lambda: (_ for _ in ()).throw(
                 NoUSBDeviceError(
-                    "No USB drive detected. Please insert a USB drive and try again."
+                    "Devices detected: none. Insert a USB drive and try again."
                 )
             ),
         )
 
         with pytest.raises(NoUSBDeviceError) as exc:
             USBManager.detect_drives()
-        assert "No USB drive detected" in str(exc.value)
+        assert "Devices detected" in str(exc.value)
