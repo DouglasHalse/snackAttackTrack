@@ -1,4 +1,5 @@
 from widgets.GridLayoutScreen import GridLayoutScreen
+from widgets.settingsManager import SettingName
 
 
 class EditSnacksScreen(GridLayoutScreen):
@@ -12,6 +13,18 @@ class EditSnacksScreen(GridLayoutScreen):
         self.manager.transitionToScreen("adminScreen", transitionDirection="right")
 
     def on_pre_enter(self, *args):
+        # Check for low inventory
+        threshold = self.manager.settingsManager.get_setting_value(
+            settingName=SettingName.LOW_INVENTORY_THRESHOLD
+        )
+        low_inventory_snacks = self.manager.database.getLowInventorySnacks(threshold)
+
+        if low_inventory_snacks:
+            from widgets.popups.lowInventoryAlertPopup import LowInventoryAlertPopup
+
+            LowInventoryAlertPopup(snacks=low_inventory_snacks).open()
+
+        # Populate snacks table
         snacks = self.manager.database.getAllSnacks()
 
         for snack in snacks:
