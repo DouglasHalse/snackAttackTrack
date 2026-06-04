@@ -12,13 +12,11 @@ Provides:
 
 import os
 import platform
-import re
 import shutil
 import subprocess
 from typing import List, Optional, Tuple
 
 from logger import get_logger
-
 
 logger = get_logger(__name__)
 
@@ -41,6 +39,23 @@ class USBPermissionError(USBError):
 
 class USBDiskFullError(USBError):
     """Raised when the destination drive does not have enough space."""
+
+
+def _run_mount_cmd(cmd: List[str]) -> Optional[str]:
+    """Run a mount command via subprocess, returning stderr on failure or None on success."""
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+        if result.returncode == 0:
+            return None
+        return result.stderr.strip() or result.stdout.strip() or "no output"
+    except OSError as e:
+        return str(e)
 
 
 class USBManager:
@@ -192,68 +207,6 @@ class USBManager:
         return None
 
     @staticmethod
-    def _auto_mount_drive(device_path: str) -> str:
-        """Mount a removable device using udisksctl (udisks2).
-
-        udisks2 is the standard Linux disk management service. On Raspberry Pi
-        it is installed by the setup script (setup.sh) and
-        works without sudo via polkit for the local console user.
-
-        Args:
-            device_path: The device path to mount (e.g. /dev/sda1).
-
-        Returns:
-            The mount point path where the device was mounted.
-
-        Raises:
-            NoUSBDeviceError: If udisks2 is not installed or mounting fails.
-        """
-        if not shutil.which("udisksctl"):
-            raise NoUSBDeviceError(
-                "USB drive detected but could not be mounted automatically. "
-                "Please run the setup script: 'bash setup.sh'"
-            )
-
-        logger.debug("Mounting %s via udisksctl", device_path)
-        try:
-            result = subprocess.run(
-                ["udisksctl", "mount", "-b", device_path, "--no-user-interaction"],
-                capture_output=True,
-                text=True,
-                timeout=15,
-                check=False,
-            )
-        except (subprocess.TimeoutExpired, OSError) as e:
-            raise NoUSBDeviceError(f"Failed to mount USB drive: {e}") from e
-
-        if result.returncode != 0:
-            raise NoUSBDeviceError(
-                f"Failed to mount USB drive: " f"{result.stderr.strip()}"
-            )
-
-        # Parse output: "Mounted /dev/sda1 at /media/pi/KINGSTON."
-        match = re.search(r"at\s+(/.+?)\.?\s*$", result.stdout)
-        if match:
-            mount_point = match.group(1).strip()
-            logger.info("Mounted %s at %s", device_path, mount_point)
-            return mount_point
-
-        # Fallback: re-check /proc/mounts
-        mount_point = USBManager._resolve_mount_point(device_path)
-        if mount_point:
-            logger.info(
-                "Mounted %s at %s (from /proc/mounts)",
-                device_path,
-                mount_point,
-            )
-            return mount_point
-
-        raise NoUSBDeviceError(
-            f"USB drive was mounted but could not determine mount point. "
-            f"Output: {result.stdout.strip()}"
-        )
-
-    @staticmethod
     def _scan_mount_directories_fallback() -> List[str]:
         # pylint: disable=too-many-nested-blocks
         """Fallback: scan common mount directories up to 2 levels deep.
@@ -289,20 +242,31 @@ class USBManager:
         return candidates
 
     @staticmethod
-    def _detect_and_mount_linux_drives() -> List[str]:
-        # pylint: disable=too-many-branches,too-many-nested-blocks
-        """Detect and optionally auto-mount removable drives on Linux.
+    def _try_mount_drive(device_path: str) -> Tuple[Optional[str], str]:
+        """Mount a USB drive."""
+        target = "/mnt/snackattack_usb"
+        cmd = f"sudo mkdir -p {target} && sudo mount {device_path} {target}"
+        logger.info("Running: %s", cmd)
+        rc = os.system(cmd)
+        if rc == 0:
+            logger.info("Mounted %s at %s", device_path, target)
+            return target, ""
+        return None, f"mount failed (exit code {rc})"
 
-        1. Enumerate removable block devices via /sys/block + /proc/mounts.
-        2. If already mounted and writable, use as-is.
-        3. If not mounted, attempt auto-mount via udisksctl.
-        4. Fallback: scan common mount directories.
+    @staticmethod
+    def _detect_linux_drives() -> List[str]:
+        # pylint: disable=too-many-branches
+        """Detect connected removable USB drives on Linux.
+
+        USB drives are auto-mounted by a udev rule (installed by
+        setup_pi.sh) to /media/snackattack_usb when inserted.
+        This method finds drives that are already mounted.
 
         Returns:
             List of writable mount point paths.
 
         Raises:
-            NoUSBDeviceError: If no drives found or all mount attempts fail.
+            NoUSBDeviceError: If no mounted removable drives are found.
         """
         candidates: List[str] = []
 
@@ -312,7 +276,8 @@ class USBManager:
             [d for d, _ in block_devices],
         )
 
-        any_unmounted = False
+        unmounted_devices = []
+        last_mount_error = ""
         for device_path, mount_point in block_devices:
             if mount_point:
                 if USBManager._is_writable_mount(mount_point):
@@ -329,23 +294,15 @@ class USBManager:
                         mount_point,
                     )
             else:
-                any_unmounted = True
-                logger.debug("Attempting to auto-mount %s", device_path)
-                try:
-                    mnt = USBManager._auto_mount_drive(device_path)
-                    if USBManager._is_writable_mount(mnt):
-                        candidates.append(mnt)
-                        logger.info("Auto-mounted: %s at %s", device_path, mnt)
-                    else:
-                        logger.warning(
-                            "Auto-mounted %s at %s but it is not writable",
-                            device_path,
-                            mnt,
-                        )
-                except NoUSBDeviceError:
-                    logger.debug(
-                        "Failed to auto-mount %s — all methods exhausted",
-                        device_path,
+                unmounted_devices.append(device_path)
+                mnt, err = USBManager._try_mount_drive(device_path)
+                if mnt and USBManager._is_writable_mount(mnt):
+                    candidates.append(mnt)
+                    logger.info("Mounted %s at %s", device_path, mnt)
+                else:
+                    last_mount_error = err or "unknown error"
+                    logger.warning(
+                        "Could not mount %s: %s", device_path, last_mount_error
                     )
 
         if not candidates:
@@ -357,14 +314,13 @@ class USBManager:
                     seen.add(os.path.realpath(fb))
 
         if not candidates:
-            if any_unmounted or block_devices:
-                raise NoUSBDeviceError(
-                    "USB drive detected but could not be mounted automatically. "
-                    "Please run the setup script: 'bash setup.sh'"
-                )
-            raise NoUSBDeviceError(
-                "No USB drive detected. Please insert a USB drive and try again."
-            )
+            info = f"Devices detected: {unmounted_devices or 'none'}. "
+            if unmounted_devices:
+                info += f"Mount failed: {last_mount_error}. "
+                info += "Try 'sudo mount DEVICE /media/snackattack_usb' manually."
+            else:
+                info += "Insert a USB drive and try again."
+            raise NoUSBDeviceError(info)
 
         return candidates
 
@@ -373,8 +329,8 @@ class USBManager:
         """
         Detect connected removable USB drives.
 
-        On Linux, uses /sys/block + /proc/mounts for accurate detection
-        and auto-mounts unmounted drives via udisksctl / pmount / sudo.
+        On Linux, uses /sys/block + /proc/mounts to find already-mounted
+        removable drives, and attempts sudo mount for unmounted ones.
 
         Returns:
             List of paths to detected removable drive roots.
@@ -385,7 +341,7 @@ class USBManager:
         if platform.system() == "Windows":
             drives = USBManager._detect_windows_drives()
         else:
-            drives = USBManager._detect_and_mount_linux_drives()
+            drives = USBManager._detect_linux_drives()
 
         if not drives:
             raise NoUSBDeviceError(

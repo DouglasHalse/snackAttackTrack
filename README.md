@@ -57,7 +57,7 @@ Clone the repository either with GUI or following terminal commands
 
 ```shell
 git clone https://github.com/DouglasHalse/snackAttackTrack.git
-bash setup.sh
+bash setup_pi.sh
 ```
 
 #### Start GUI with debugging (with Visual Studio Code)
@@ -85,7 +85,7 @@ git clone https://github.com/DouglasHalse/snackAttackTrack.git
 bash setup_pi.sh
 ```
 
-This installs the Pi-specific dependencies including the RFID reader module and udisks2 for USB auto-mount.
+This installs the Pi-specific dependencies including the RFID reader module.
 
 #### Running on startup (optional)
 

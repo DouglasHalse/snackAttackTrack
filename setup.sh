@@ -8,7 +8,7 @@ sudo apt -y install python3-setuptools git-core python3-dev libsdl2-dev libsdl2-
    libgstreamer1.0-dev \
    gstreamer1.0-plugins-{bad,base,good,ugly} \
    libmtdev-dev \
-   xclip xsel libjpeg-dev python3-venv udisks2
+   xclip xsel libjpeg-dev python3-venv
 
 # Check if venv already exists
 if [ -d "./venv" ]

@@ -7,6 +7,7 @@ from kivy.config import Config
 Config.set("kivy", "pause_on_minimize", "0")
 
 import asyncio
+import logging
 import os
 import time
 
@@ -30,9 +31,6 @@ TEST_SETTINGS = "PytestSettings.json"
 
 Window.size = (1280, 800)
 
-import logging
-
-import pytest
 
 import logger as app_logger
 

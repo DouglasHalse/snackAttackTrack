@@ -14,6 +14,7 @@ from kivy.resources import resource_add_path
 # Disable all the unused-import violations due to .kv files
 # pylint: disable=unused-import
 import widgets.clickableTable
+import widgets.logLine
 import widgets.uiElements.buttons
 import widgets.uiElements.labels
 import widgets.uiElements.layouts
