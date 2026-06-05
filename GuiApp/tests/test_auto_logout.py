@@ -2,11 +2,11 @@
 Reproduce and verify the buy-screen auto-logout bug.
 
 The auto-logout timer is set in CustomScreenManager.login().
-It gets reset on every touch via _on_window_touch() → _reset_idle_timer().
+It gets reset on every touch via the touch-dedup monkey-patch → _reset_idle_timer().
 This test verifies that:
   1. The timer exists after login
-  2. _on_window_touch() is called and resets the timer
-  3. Touches to ClickableTable items (on the buy screen) trigger _on_window_touch
+  2. A touch event arrives and resets the timer via the dedup handler
+  3. Touches to ClickableTable items (on the buy screen) trigger the touch dedup handler (which calls _reset_idle_timer)
 """
 # pylint: disable=protected-access
 import asyncio
@@ -71,7 +71,7 @@ async def test_buy_screen_touches_reset_timer(app_on_buy_screen):
 
     # Now test that when itemClickedInInventory is called, the timer is
     # NOT directly reset by that method. The timer reset happens via
-    # Window.on_touch_down → _on_window_touch → _reset_idle_timer,
+    # the Window.on_touch_down dedup handler → _reset_idle_timer,
     # which fires on the DOWN event before itemClickedInInventory runs.
     # Verify this expected behavior: itemClickedInInventory does NOT
     # reset the timer by itself.
@@ -94,12 +94,12 @@ async def test_buy_screen_touches_reset_timer(app_on_buy_screen):
     await asyncio.sleep(0.05)
 
     # itemClickedInInventory doesn't reset the timer — it's just business logic.
-    # The timer reset happens via the Window.on_touch_down handler BEFORE this
+    # The timer reset happens via the Window.on_touch_down dedup handler BEFORE this
     # runs. So the timer ID should be the same (no reset from this call).
     timer_after_click = id(app.screenManager.log_out_timer)
     assert timer_before_click == timer_after_click, (
         "itemClickedInInventory should not reset the timer "
-        "(reset happens via Window.on_touch_down \u2192 _on_window_touch)"
+        "(reset happens via Window.on_touch_down dedup handler)"
     )
     # The timer reset will happen on the NEXT touch DOWN event
 

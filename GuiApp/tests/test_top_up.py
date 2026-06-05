@@ -666,3 +666,62 @@ async def test_top_up_with_wheel_of_snacks_screen_as_referee(
 
     current_patron = app.screenManager.getCurrentPatron()
     assert current_patron.totalCredits >= cost_to_gamble
+
+
+@pytest.mark.asyncio
+async def test_virtual_keyboard_does_not_double_characters(app_with_only_users):
+    """Verify that pressing a single key produces exactly one character
+    (regression test: on_key_up was double-bound, causing "5"→"55")."""
+
+    # Navigate to top-up amount screen
+    app_with_only_users.screenManager.RFIDReader.triggerFakeRead(card_id="123456789")
+    assert app_with_only_users.screenManager.current == "mainUserPage"
+
+    app_with_only_users.screenManager.current_screen.ids.topUpOption.dispatch(
+        "on_release"
+    )
+    await asyncio.sleep(0.5)
+    assert app_with_only_users.screenManager.current == "topUpAmountScreen"
+
+    # Focus the creditsToAdd field → opens the virtual keyboard popup
+    app_with_only_users.screenManager.current_screen.ids.creditsToAdd.focus = True
+    assert (
+        app_with_only_users.screenManager.current_screen.credit_input_popup is not None
+    )
+    await asyncio.sleep(1.5)
+
+    popup = app_with_only_users.screenManager.current_screen.credit_input_popup
+    vkb = popup.ids.virtualKeyboard
+
+    # Press "5" once — should insert exactly one "5"
+    vkb.dispatch("on_key_up", "5", *[])
+    await asyncio.sleep(0.1)
+    assert (
+        popup.ids.textInput.getText() == "5"
+    ), f"Expected '5' after one press, got '{popup.ids.textInput.getText()}'"
+
+    # Press "0" once — should append, giving "50"
+    vkb.dispatch("on_key_up", "0", *[])
+    await asyncio.sleep(0.1)
+    assert (
+        popup.ids.textInput.getText() == "50"
+    ), f"Expected '50' after two presses, got '{popup.ids.textInput.getText()}'"
+
+    # Press "." then "0" "0" — should give "50.00"
+    vkb.dispatch("on_key_up", ".", *[])
+    await asyncio.sleep(0.1)
+    vkb.dispatch("on_key_up", "0", *[])
+    await asyncio.sleep(0.1)
+    vkb.dispatch("on_key_up", "0", *[])
+    await asyncio.sleep(0.1)
+    assert (
+        popup.ids.textInput.getText() == "50.00"
+    ), f"Expected '50.00', got '{popup.ids.textInput.getText()}'"
+
+    # Dismiss the popup and verify the amount is transferred correctly
+    vkb.dispatch("on_key_up", "enter", *[])
+    await asyncio.sleep(0.5)
+    assert (
+        app_with_only_users.screenManager.current_screen.ids.creditsToAdd.text
+        == "50.00"
+    )

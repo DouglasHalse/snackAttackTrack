@@ -11,6 +11,11 @@ from database import DatabaseConnector
 from kivy.config import Config
 
 Config.set("input", "mouse", "mouse")
+# Disable the generic %(name)s probe — on Raspberry Pi this creates
+# probesysfs,provider=hidinput in config.ini which duplicates the
+# specific mtdev and hidinput providers configured below, generating
+# two touch events per tap.
+Config.set("input", "%(name)s", "")
 Config.set("input", "mtdev_%(name)s", "probesysfs,provider=mtdev")
 Config.set("input", "hid_%(name)s", "probesysfs,provider=hidinput")
 

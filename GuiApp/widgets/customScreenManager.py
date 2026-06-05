@@ -1,3 +1,5 @@
+from time import monotonic as time_monotonic
+
 from app_types import UserData
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -15,7 +17,67 @@ from widgets.settingsManager import SettingName, SettingsManager
 
 # pylint: disable=too-many-instance-attributes
 
+# Touch deduplication state — shared via module-level refs so the
+# Window.on_touch_down monkey-patch can consume duplicates before
+# they reach any widget (fixes mtdev + hidinput overlap on Pi).
+_DEDUP_MAX_INTERVAL = (
+    0.08  # seconds — provider overlap is typically <10ms; human double-tap is >200ms
+)
+_DEDUP_MAX_DISTANCE = (
+    30  # pixels — jitter radius for same-physical-tap across multiple providers
+)
+_touch_dedup_state = {"time": 0.0, "pos": (0.0, 0.0)}
+_screen_manager_ref = None
+_dedup_hit_count = 0
+_DEDUP_LOG_INITIAL = 5  # log each of the first N dedups to confirm it's working
+_DEDUP_LOG_INTERVAL = 100  # thereafter, log every Nth dedup as a heartbeat
+
 logger = get_logger(__name__)
+
+
+def _install_touch_dedup():
+    """Monkey-patch Window.on_touch_down to filter duplicate touch events
+    from overlapping Kivy input providers (e.g. mtdev + hidinput on
+    Raspberry Pi). Returns True for duplicates so they never reach widgets."""
+    original = Window.on_touch_down
+
+    def _dedup_on_touch_down(touch):
+        now = time_monotonic()
+        x, y = touch.x, touch.y
+        lx, ly = _touch_dedup_state["pos"]
+        elapsed = now - _touch_dedup_state["time"]
+        dist = ((x - lx) ** 2 + (y - ly) ** 2) ** 0.5
+        # Same physical tap detected by overlapping providers (mtdev + hidinput)
+        if elapsed < _DEDUP_MAX_INTERVAL and dist < _DEDUP_MAX_DISTANCE:
+            global _dedup_hit_count  # pylint: disable=global-statement
+            _dedup_hit_count += 1
+            if _dedup_hit_count <= _DEDUP_LOG_INITIAL:
+                logger.debug(
+                    "Touch dedup #%d consumed duplicate (%.2fms, %.0fpx)",
+                    _dedup_hit_count,
+                    elapsed * 1000,
+                    dist,
+                )
+            elif _dedup_hit_count % _DEDUP_LOG_INTERVAL == 0:
+                logger.debug(
+                    "Touch dedup active — %d duplicates consumed so far",
+                    _dedup_hit_count,
+                )
+            return True  # Consume duplicate so it never reaches widgets
+        _touch_dedup_state["time"] = now
+        _touch_dedup_state["pos"] = (x, y)
+        # Reset the idle timer on genuine touches.
+        if _screen_manager_ref is not None:
+            # pylint: disable-next=protected-access
+            _screen_manager_ref._reset_idle_timer()
+        return original(touch)
+
+    Window.on_touch_down = _dedup_on_touch_down
+    logger.info(
+        "Touch dedup installed (max interval=%.0fms, max distance=%.0fpx)",
+        _DEDUP_MAX_INTERVAL * 1000,
+        _DEDUP_MAX_DISTANCE,
+    )
 
 
 class CustomScreenManager(ScreenManager):
@@ -31,7 +93,10 @@ class CustomScreenManager(ScreenManager):
         self.transition: ObjectProperty
         self.database = database
         self.RFIDReader = RFIDReader()
-        Window.bind(on_touch_down=self._on_window_touch)
+        global _screen_manager_ref  # pylint: disable=global-statement
+        if _screen_manager_ref is None:
+            _screen_manager_ref = self
+            _install_touch_dedup()
         self.log_out_timer = None
         self._logout_deadline = 0
         self._idle_display_event = None
@@ -108,10 +173,6 @@ class CustomScreenManager(ScreenManager):
             self._start_debug_display()
         elif not value:
             self._stop_debug_display()
-
-    def _on_window_touch(self, _window, _touch):
-        """Called on every touch to the screen. Resets the idle timer."""
-        self._reset_idle_timer()
 
     def login(self, patronId):
         patron = self.database.getPatronData(patronID=patronId)
