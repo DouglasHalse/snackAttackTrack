@@ -19,7 +19,8 @@ import time
 from typing import List
 
 
-LOG_DIR = "logs"
+_LOGGER_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_DIR = os.path.join(os.path.dirname(_LOGGER_DIR), "logs")
 LOG_FILE = os.path.join(LOG_DIR, "snackattack.log")
 
 # Default format strings
