@@ -19,6 +19,9 @@ class LoginScreenUserWidget(ButtonBehavior, BoxLayout):
         self.last_name = userData.lastName
 
     def Clicked(self, *largs):
+        # Suppress login if the user was scrolling, not tapping
+        if self.screenManager.current_screen.scroll_did_occur:
+            return
         self.screenManager.login(self.userData.patronId)
         self.screenManager.transitionToScreen("mainUserPage")
 
@@ -27,9 +30,11 @@ class LoginScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.create_or_link_card_popup = None
+        self.scroll_did_occur = False
 
     def on_pre_enter(self, *args):
         self.AddUsersToLoginScreen()
+        self.ids["scrollView"].bind(on_scroll_move=self._on_user_list_scrolled)
         self.ids["scrollView"].scroll_x = 0.5
 
         if self.manager.settingsManager.get_setting_value(
@@ -56,6 +61,7 @@ class LoginScreen(Screen):
 
     def on_leave(self, *args):
         Clock.unschedule(self.goToSplashScreen)
+        self.ids["scrollView"].unbind(on_scroll_move=self._on_user_list_scrolled)
         self.ids["LoginScreenUserGridLayout"].clear_widgets()
         return super().on_leave(*args)
 
@@ -75,6 +81,8 @@ class LoginScreen(Screen):
         self.manager.transitionToScreen("splashScreen", transitionDirection="right")
 
     def on_touch_down(self, touch):
+        self.scroll_did_occur = False  # Reset scroll flag each touch sequence
+
         # Reset timer for returning to splash screen
         if self.manager.settingsManager.get_setting_value(
             settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE
@@ -93,6 +101,9 @@ class LoginScreen(Screen):
                 self.ids["LoginScreenUserGridLayout"].add_widget(
                     LoginScreenUserWidget(userData=userData, screenManager=self.manager)
                 )
+
+    def _on_user_list_scrolled(self, *args):
+        self.scroll_did_occur = True
 
     def createNewUserButtonClicked(self, *largs):
         self.manager.transitionToScreen("createUserScreen")
