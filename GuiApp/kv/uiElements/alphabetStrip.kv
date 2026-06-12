@@ -1,0 +1,24 @@
+#:kivy 2.1.0
+
+<LetterLabel>:
+    # Live binding — font size scales with the AlphabetStrip's width.
+    # LetterLabel's parent chain: LetterLabel → _letter_row → AlphabetStrip
+    font_size: max(12, (self.parent.parent.width / self.parent.parent.letter_count) if self.parent and self.parent.parent and self.parent.parent.letter_count else 12)
+    text_size: self.size
+    color: (0, 0, 0, 0.8)
+
+<AlphabetStrip>:
+    # Floating preview label — appears above the touch point
+    Label:
+        id: floating_preview
+        text: root.floating_text
+        opacity: root.floating_opacity
+        font_size: max(20, (root.width / 10))
+        bold: True
+        color: (0, 0, 0, 1)
+        halign: "center"
+        valign: "middle"
+        size_hint: (None, None)
+        size: (self.texture_size[0] + 20, self.texture_size[1] + 10)
+        pos_hint: {"center_x": 0.5}
+        y: root.floating_y

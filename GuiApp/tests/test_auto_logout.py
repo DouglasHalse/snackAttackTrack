@@ -26,7 +26,13 @@ async def test_auto_logout_timer_created_on_login(app_with_only_users):
     assert app.screenManager.current == "loginScreen"
 
     # Click User3 to login
-    users = app.screenManager.current_screen.ids["LoginScreenUserGridLayout"].children
+    users = [
+        c
+        for c in app.screenManager.current_screen.ids[
+            "LoginScreenUserGridLayout"
+        ].children
+        if hasattr(c, "first_name")
+    ]
     target = [u for u in users if u.first_name == "User3FirstName"]
     assert len(target) == 1
     target[0].ids.clickableLayout.dispatch("on_release")
@@ -115,7 +121,13 @@ async def test_auto_logout_fires_when_no_touch(app_with_only_users):
     app.screenManager.current_screen.onPressed()
     assert app.screenManager.current == "loginScreen"
 
-    users = app.screenManager.current_screen.ids["LoginScreenUserGridLayout"].children
+    users = [
+        c
+        for c in app.screenManager.current_screen.ids[
+            "LoginScreenUserGridLayout"
+        ].children
+        if hasattr(c, "first_name")
+    ]
     target = [u for u in users if u.first_name == "User3FirstName"]
     target[0].ids.clickableLayout.dispatch("on_release")
     await asyncio.sleep(0.3)
@@ -146,7 +158,13 @@ async def test_on_activity_survives_exceptions(app_with_only_users):
     app.screenManager.current_screen.onPressed()
     assert app.screenManager.current == "loginScreen"
 
-    users = app.screenManager.current_screen.ids["LoginScreenUserGridLayout"].children
+    users = [
+        c
+        for c in app.screenManager.current_screen.ids[
+            "LoginScreenUserGridLayout"
+        ].children
+        if hasattr(c, "first_name")
+    ]
     target = [u for u in users if u.first_name == "User3FirstName"]
     target[0].ids.clickableLayout.dispatch("on_release")
     await asyncio.sleep(0.3)

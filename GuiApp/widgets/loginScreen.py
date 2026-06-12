@@ -1,4 +1,5 @@
 from app_types import UserData
+from kivy.animation import Animation
 from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
@@ -31,11 +32,16 @@ class LoginScreen(Screen):
         super().__init__(**kwargs)
         self.create_or_link_card_popup = None
         self.scroll_did_occur = False
+        self._screen_active = False
+        self._letter_widget_map = {}
 
     def on_pre_enter(self, *args):
+        self._screen_active = True
         self.AddUsersToLoginScreen()
         self.ids["scrollView"].bind(on_scroll_move=self._on_user_list_scrolled)
         self.ids["scrollView"].scroll_x = 0.5
+
+        self.ids["alphabetStrip"].set_available_letters(self._letter_widget_map.keys())
 
         if self.manager.settingsManager.get_setting_value(
             settingName=SettingName.GO_TO_SPLASH_SCREEN_ON_IDLE_ENABLE
@@ -60,7 +66,9 @@ class LoginScreen(Screen):
         return super().on_pre_leave(*args)
 
     def on_leave(self, *args):
+        self._screen_active = False
         Clock.unschedule(self.goToSplashScreen)
+        Clock.unschedule(self._do_alphabet_scroll)
         self.ids["scrollView"].unbind(on_scroll_move=self._on_user_list_scrolled)
         self.ids["LoginScreenUserGridLayout"].clear_widgets()
         return super().on_leave(*args)
@@ -96,14 +104,57 @@ class LoginScreen(Screen):
 
     def AddUsersToLoginScreen(self):
         userDataList = self.manager.database.getAllPatrons()
+        self._letter_widget_map.clear()
         if userDataList:
+            userDataList.sort(key=lambda u: u.firstName.lower())
             for userData in userDataList:
-                self.ids["LoginScreenUserGridLayout"].add_widget(
-                    LoginScreenUserWidget(userData=userData, screenManager=self.manager)
+                widget = LoginScreenUserWidget(
+                    userData=userData, screenManager=self.manager
                 )
+                self.ids["LoginScreenUserGridLayout"].add_widget(widget)
+                first_letter = userData.firstName[0].upper()
+                if first_letter not in self._letter_widget_map:
+                    self._letter_widget_map[first_letter] = widget
 
     def _on_user_list_scrolled(self, *args):
         self.scroll_did_occur = True
+
+    # ------------------------------------------------------------------
+    # Alphabet quick-scroll
+    # ------------------------------------------------------------------
+
+    def get_user_widget_for_letter(self, letter: str):
+        """Return the first user widget whose first name starts with *letter*."""
+        return self._letter_widget_map.get(letter)
+
+    def on_alphabet_letter_selected(self, letter: str):
+        """Scroll the carousel to centre the first user whose first
+        name starts with *letter*."""
+        widget = self._letter_widget_map.get(letter)
+        if widget is None:
+            return
+        sv = self.ids["scrollView"]
+        sv.cancel_active_scroll()
+
+        target_widget = widget
+        Clock.schedule_once(lambda dt, w=target_widget: self._do_alphabet_scroll(w), 0)
+
+    def _do_alphabet_scroll(self, widget):
+        """Scroll so the target widget is centered in the viewport."""
+        if not self._screen_active:
+            return
+        sv = self.ids["scrollView"]
+        grid = self.ids["LoginScreenUserGridLayout"]
+        content_w = max(0, grid.width - sv.width)
+        if content_w <= 0:
+            return
+        widget_center = widget.x + widget.width / 2
+        target = (widget_center - sv.width / 2) / content_w
+        target = max(0, min(target, 1))
+        Animation(scroll_x=target, d=0.3, t="out_quad").start(sv)
+
+    def back_button_pressed(self, *args):
+        self.manager.transitionToScreen("splashScreen", transitionDirection="right")
 
     def createNewUserButtonClicked(self, *largs):
         self.manager.transitionToScreen("createUserScreen")
