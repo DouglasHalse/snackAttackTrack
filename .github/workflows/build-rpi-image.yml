@@ -1,0 +1,272 @@
+name: Build Raspberry Pi Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_name:
+        description: 'Name for the output image'
+        required: false
+        default: 'snackattack-rpi'
+      pi_version:
+        description: 'Target Raspberry Pi version'
+        required: false
+        default: 'pi4'
+        type: choice
+        options:
+          - pi3
+          - pi4
+          - pi5
+  release:
+    types: [published]
+
+env:
+  IMAGE_NAME: snackattack-rpi
+
+jobs:
+  build-image:
+    name: Build SnackAttack Raspberry Pi Image
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            coreutils \
+            quilt \
+            parted \
+            qemu-user-static \
+            debootstrap \
+            zerofree \
+            zip \
+            dosfstools \
+            libarchive-tools \
+            libcap2-bin \
+            grep \
+            rsync \
+            xz-utils \
+            file \
+            git \
+            curl \
+            bc \
+            gpg \
+            pigz
+
+      - name: Clone pi-gen
+        run: |
+          git clone --depth 1 https://github.com/RPi-Distro/pi-gen.git
+          cd pi-gen
+          echo "Pi-gen cloned successfully"
+
+      - name: Configure pi-gen
+        run: |
+          cd pi-gen
+          
+          # Create config file
+          cat > config << EOF
+          IMG_NAME="${{ github.event.inputs.image_name || env.IMAGE_NAME }}"
+          RELEASE="bookworm"
+          DEPLOY_ZIP=1
+          LOCALE_DEFAULT="en_US.UTF-8"
+          TARGET_HOSTNAME="snackattack"
+          KEYBOARD_KEYMAP="us"
+          KEYBOARD_LAYOUT="English (US)"
+          TIMEZONE_DEFAULT="Europe/Stockholm"
+          FIRST_USER_NAME="pi"
+          FIRST_USER_PASS="snackattack"
+          ENABLE_SSH=1
+          STAGE_LIST="stage0 stage1 stage2"
+          EOF
+          
+          echo "Config created:"
+          cat config
+
+      - name: Create SnackAttack stage
+        run: |
+          cd pi-gen
+          
+          # Skip stages we don't need (desktop environments)
+          touch ./stage3/SKIP ./stage4/SKIP ./stage5/SKIP
+          touch ./stage4/SKIP_IMAGES ./stage5/SKIP_IMAGES
+          
+          # Create custom stage for SnackAttack
+          mkdir -p stage2/99-snackattack/files
+          
+          # Copy setup scripts
+          cp ../rpi-setup/quick-deploy.sh stage2/99-snackattack/files/
+          cp ../rpi-setup/setup-autostart.sh stage2/99-snackattack/files/
+          cp ../rpi-setup/setup-production.sh stage2/99-snackattack/files/
+          
+          # Create the run script for this stage
+          cat > stage2/99-snackattack/00-run.sh << 'RUNSCRIPT'
+          #!/bin/bash -e
+          
+          # Install required packages
+          on_chroot << CHROOT
+          apt-get update
+          apt-get install -y \
+              python3-pip \
+              python3-dev \
+              git \
+              libsdl2-dev \
+              libsdl2-image-dev \
+              libsdl2-mixer-dev \
+              libsdl2-ttf-dev \
+              pkg-config \
+              libgl1-mesa-dev \
+              libgles2-mesa-dev \
+              libmtdev-dev \
+              xclip \
+              xsel \
+              libjpeg-dev \
+              libfreetype6-dev \
+              libpng-dev \
+              xinit \
+              x11-xserver-utils \
+              matchbox-window-manager \
+              unclutter
+          CHROOT
+          RUNSCRIPT
+          chmod +x stage2/99-snackattack/00-run.sh
+          
+          # Create script to clone and setup SnackAttack
+          cat > stage2/99-snackattack/01-run.sh << 'RUNSCRIPT'
+          #!/bin/bash -e
+          
+          on_chroot << CHROOT
+          # Clone SnackAttack repository
+          cd /home/pi
+          git clone https://github.com/${{ github.repository }}.git snackAttackTrack
+          chown -R 1000:1000 snackAttackTrack
+          
+          # Install Python dependencies
+          cd snackAttackTrack
+          pip3 install --break-system-packages -r requirements-raspberry-pi.txt || \
+          pip3 install -r requirements-raspberry-pi.txt
+          CHROOT
+          RUNSCRIPT
+          chmod +x stage2/99-snackattack/01-run.sh
+          
+          # Create autostart configuration script
+          cat > stage2/99-snackattack/02-run.sh << 'RUNSCRIPT'
+          #!/bin/bash -e
+          
+          on_chroot << CHROOT
+          # Configure auto-login
+          mkdir -p /etc/systemd/system/getty@tty1.service.d
+          cat > /etc/systemd/system/getty@tty1.service.d/autologin.conf << EOF
+          [Service]
+          ExecStart=
+          ExecStart=-/sbin/agetty --autologin pi --noclear %I \\\$TERM
+          EOF
+          
+          # Create xinitrc
+          cat > /home/pi/.xinitrc << 'XINITRC'
+          #!/bin/bash
+          # Disable screen blanking
+          xset s off
+          xset -dpms
+          xset s noblank
+          
+          # Hide cursor after 5 seconds of inactivity
+          unclutter -idle 5 &
+          
+          # Start window manager
+          matchbox-window-manager -use_titlebar no &
+          
+          # Launch SnackAttack
+          cd /home/pi/snackAttackTrack/GuiApp
+          python3 main.py
+          XINITRC
+          chmod +x /home/pi/.xinitrc
+          chown 1000:1000 /home/pi/.xinitrc
+          
+          # Configure auto-start X
+          cat >> /home/pi/.bash_profile << 'BASHPROFILE'
+          
+          # Auto-start X on login to tty1
+          if [ -z "\$DISPLAY" ] && [ "\$XDG_VTNR" -eq 1 ]; then
+              startx
+          fi
+          BASHPROFILE
+          chown 1000:1000 /home/pi/.bash_profile
+          CHROOT
+          RUNSCRIPT
+          chmod +x stage2/99-snackattack/02-run.sh
+          
+          echo "SnackAttack stage created"
+
+      - name: Build image
+        run: |
+          cd pi-gen
+          sudo ./build.sh
+        timeout-minutes: 120
+
+      - name: Compress image
+        run: |
+          cd pi-gen/deploy
+          IMAGE_FILE=$(ls *.img 2>/dev/null | head -1)
+          if [ -n "$IMAGE_FILE" ]; then
+            echo "Compressing $IMAGE_FILE..."
+            xz -9 -T0 "$IMAGE_FILE"
+            echo "IMAGE_PATH=pi-gen/deploy/${IMAGE_FILE}.xz" >> $GITHUB_ENV
+            echo "Image compressed: ${IMAGE_FILE}.xz"
+          else
+            echo "Looking for zip file..."
+            ZIP_FILE=$(ls *.zip 2>/dev/null | head -1)
+            if [ -n "$ZIP_FILE" ]; then
+              echo "IMAGE_PATH=pi-gen/deploy/$ZIP_FILE" >> $GITHUB_ENV
+              echo "Found zip: $ZIP_FILE"
+            fi
+          fi
+          ls -la
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.inputs.image_name || env.IMAGE_NAME }}-${{ github.sha }}
+          path: |
+            pi-gen/deploy/*.img.xz
+            pi-gen/deploy/*.zip
+          retention-days: 14
+
+      - name: Upload to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            pi-gen/deploy/*.img.xz
+            pi-gen/deploy/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-summary:
+    name: Build Summary
+    runs-on: ubuntu-latest
+    needs: build-image
+    
+    steps:
+      - name: Summary
+        run: |
+          echo "## 🍓 Raspberry Pi Image Build Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Image Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image Name:** ${{ github.event.inputs.image_name || env.IMAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Based on:** Raspberry Pi OS Lite (Bookworm)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Default User:** pi" >> $GITHUB_STEP_SUMMARY
+          echo "- **Default Password:** snackattack" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Features" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Auto-login enabled" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ SnackAttack pre-installed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Auto-starts on boot" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ SSH enabled" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Usage" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download the image from the artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "2. Flash to SD card using Raspberry Pi Imager or balenaEtcher" >> $GITHUB_STEP_SUMMARY
+          echo "3. Insert SD card into Raspberry Pi and power on" >> $GITHUB_STEP_SUMMARY
+          echo "4. SnackAttack will launch automatically!" >> $GITHUB_STEP_SUMMARY
