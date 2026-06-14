@@ -49,6 +49,12 @@ class AutoScrollingLabel(GridLayout):
             Clock.unschedule(self.updateText)
             Clock.schedule_once(self.resetAndStartAnimation, self.postAnimationTime)
 
+    def reset(self):
+        """Cancel scrolling and re-initialise (used when RecycleView recycles this label)."""
+        Clock.unschedule(self.updateText)
+        Clock.unschedule(self.resetAndStartAnimation)
+        Clock.schedule_once(self.initLabelWidth, 0)
+
     def resetAndStartAnimation(self, dt):
         self.ids.label.x = self.startPosition
         self.timeOfStart = time() + self.animationStartDelay

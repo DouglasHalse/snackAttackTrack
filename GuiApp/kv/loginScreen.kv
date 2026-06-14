@@ -67,26 +67,24 @@
                     halign: 'center'
                     valign: 'middle'
         Widget:
-        # ── Carousel area ───────────────────────────────────────
-        FastTouchScrollView:
-            id: scrollView
+        # ── Carousel area (RecycleView) ─────────────────────────────────
+        RecycleView:
+            id: userRecycleView
             size_hint_y: None
             height: 150 * self.width / 800
             size_hint_x: 1
             do_scroll_y: False
-            scroll_type: ['content']
             bar_width: 0
-            effect_cls: 'ScrollEffect'
-            scroll_timeout: 200
-            scroll_distance: 15
-            GridLayout:
-                id: LoginScreenUserGridLayout
-                rows: 1
+            viewclass: 'LoginScreenUserWidget'
+            RecycleBoxLayout:
+                id: userLayout
+                orientation: 'horizontal'
                 spacing: 15
                 padding: [0, 10]
+                default_size: None, self.height
+                default_size_hint: None, 1
                 size_hint_x: None
                 size_hint_y: 1
-                width: self.minimum_width
         Widget:
         # ── Alphabet strip ──────────────────────────────────────
         AlphabetStrip:

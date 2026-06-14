@@ -30,4 +30,4 @@ class SplashScreenWidget(Screen):
         self.manager.transitionToScreen("mainUserPage")
 
     def onPressed(self):
-        self.manager.transitionToScreen("loginScreen")
+        self.manager.transitionToScreen("perfTestScreen")

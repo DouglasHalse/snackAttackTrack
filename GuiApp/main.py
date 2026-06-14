@@ -39,6 +39,7 @@ import widgets.uiElements.StatsWidgets
 import widgets.uiElements.textInputs
 import widgets.uiElements.WheelOfSnacksWidget
 import widgets.uiElements.alphabetStrip  # noqa: F401; registers .kv
+import widgets.perfTestScreen  # noqa: F401; registers .kv
 from widgets.addSnackScreen import AddSnackScreen
 from widgets.adminScreen import AdminScreen
 from widgets.buyScreen import BuyScreen
@@ -53,6 +54,7 @@ from widgets.historyScreen import HistoryScreen
 from widgets.linkCardScreen import LinkCardScreen
 from widgets.loginScreen import LoginScreen
 from widgets.mainUserScreen import MainUserScreen
+from widgets.perfTestScreen import PerfTestScreen
 from widgets.ProfileScreen import ProfileScreen
 from widgets.settingsManager import SettingName, SettingsManager
 from widgets.splashScreen import SplashScreenWidget
@@ -145,6 +147,7 @@ class snackAttackTrackApp(App):
         Builder.load_file("kv/main.kv")
         self.screenManager.add_widget(SplashScreenWidget(name="splashScreen"))
         self.screenManager.add_widget(LoginScreen(name="loginScreen"))
+        self.screenManager.add_widget(PerfTestScreen(name="perfTestScreen"))
         self.screenManager.add_widget(MainUserScreen(name="mainUserPage"))
         self.screenManager.add_widget(CreateUserScreen(name="createUserScreen"))
         self.screenManager.add_widget(AdminScreen(name="adminScreen"))

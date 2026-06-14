@@ -1,0 +1,70 @@
+#:kivy 2.1.0
+
+# Minimal viewclass for scroll jolt testing — plain Label, no AutoScrollingLabel,
+# no ClickableRoundedTwoColorGridLayout, no PressAnimator.
+<PerfTestLabel@Label>:
+    size_hint_x: None
+    size_hint_y: 1
+    width: self.height
+    canvas.before:
+        Color:
+            rgba: 0.2, 0.6, 0.8, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    color: 'white'
+    bold: True
+    halign: 'center'
+    valign: 'middle'
+    padding: [20, 10]
+
+<PerfTestScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        canvas:
+            Color:
+                rgba: app.colors["background"]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        padding: [0, 0, 0, 20]
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: self.width / 10
+            padding: 10
+
+            Button:
+                text: 'Back to splash'
+                size_hint_x: None
+                width: self.height * 2.5
+                on_release: root.back_pressed()
+
+            Label:
+                text: 'Perf Test — 20 plain Labels'
+                halign: 'left'
+                valign: 'middle'
+                font_size: self.height * 0.5
+                color: 'black'
+                bold: True
+
+        Widget:
+
+        RecycleView:
+            id: rv
+            size_hint_y: None
+            height: 150 * self.width / 800
+            size_hint_x: 1
+            do_scroll_y: False
+            viewclass: 'PerfTestLabel'
+            RecycleBoxLayout:
+                orientation: 'horizontal'
+                spacing: 15
+                padding: [0, 10]
+                default_size: None, self.height
+                default_size_hint: None, 1
+                size_hint_x: None
+                size_hint_y: 1
+
+        Widget:
