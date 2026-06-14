@@ -79,8 +79,7 @@ jobs:
           # start Xvfb automatically around the command
           xvfb-run -a -s "-screen 0 1280x720x24" python -m pytest -vv -s \
             --schema-version=${{ matrix.schema_version }} \
-            --cov=GuiApp --cov-branch --cov-report=html --cov-report=xml \
-            --cov-report=term-missing --junitxml=junit-${{ matrix.schema_version }}.xml
+            --junitxml=junit-${{ matrix.schema_version }}.xml
 
       - name: Upload pytest test results
         uses: actions/upload-artifact@v4
@@ -88,38 +87,3 @@ jobs:
         with:
           name: pytest-results-${{ matrix.schema_version }}
           path: junit-${{ matrix.schema_version }}.xml
-
-      - name: Upload coverage HTML report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-report-${{ matrix.schema_version }}
-          path: htmlcov/
-
-      - name: Extract coverage percentage
-        if: always()
-        id: coverage
-        run: |
-          import xml.etree.ElementTree as ET
-          tree = ET.parse("coverage.xml")
-          root = tree.getroot()
-          line_rate = float(root.attrib["line-rate"])
-          coverage_pct = round(line_rate * 100, 1)
-          print(f"Coverage: {coverage_pct}%")
-          # Write to GITHUB_OUTPUT for use in next step
-          import os
-          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"coverage_pct={coverage_pct}\n")
-        shell: python
-
-      - name: Update coverage badge
-        if: always()
-        uses: schneegans/dynamic-badges-action@v1.7.0
-        with:
-          auth: ${{ secrets.GIST_TOKEN }}
-          gistID: 96b0d2232509808bb39c8fd3a4435cc3
-          filename: coverage.json
-          label: coverage
-          message: ${{ steps.coverage.outputs.coverage_pct || 'N/A' }}%
-          color: brightgreen
-          namedLogo: pytest
