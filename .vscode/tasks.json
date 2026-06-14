@@ -1,0 +1,133 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "perf: full transition test",
+            "type": "shell",
+            "command": "${workspaceFolder}/venv/Scripts/python.exe",
+            "args": [
+                "${workspaceFolder}/scripts/perf_test_all_transitions.py",
+                "--runs", "${input:numRuns}"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "perf: compare with HEAD",
+            "type": "shell",
+            "command": "${workspaceFolder}/venv/Scripts/python.exe",
+            "args": [
+                "${workspaceFolder}/scripts/compare_perf_results.py",
+                "--runs", "${input:numRuns}"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "perf: compare with main",
+            "type": "shell",
+            "command": "${workspaceFolder}/venv/Scripts/python.exe",
+            "args": [
+                "${workspaceFolder}/scripts/compare_perf_results.py",
+                "--baseline", "main",
+                "--runs", "${input:numRuns}"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "perf: compare saved JSON files",
+            "type": "shell",
+            "command": "${workspaceFolder}/venv/Scripts/python.exe",
+            "args": [
+                "${workspaceFolder}/scripts/compare_perf_results.py",
+                "${input:beforeFile}",
+                "${input:afterFile}"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "perf: save baseline",
+            "type": "shell",
+            "command": "${workspaceFolder}/venv/Scripts/python.exe",
+            "args": [
+                "${workspaceFolder}/scripts/perf_test_all_transitions.py",
+                "--runs", "${input:numRuns}",
+                "--output", "${workspaceFolder}/scripts/baseline.json"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "numRuns",
+            "type": "promptString",
+            "description": "Number of test runs",
+            "default": "1"
+        },
+        {
+            "id": "beforeFile",
+            "type": "promptString",
+            "description": "Path to the before JSON file",
+            "default": "${workspaceFolder}/scripts/baseline.json"
+        },
+        {
+            "id": "afterFile",
+            "type": "promptString",
+            "description": "Path to the after JSON file",
+            "default": "${workspaceFolder}/scripts/after.json"
+        }
+    ]
+}
