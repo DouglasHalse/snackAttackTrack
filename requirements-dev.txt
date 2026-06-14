@@ -8,3 +8,4 @@ matplotlib
 numpy
 pytest-cov
 pytest-asyncio
+distro

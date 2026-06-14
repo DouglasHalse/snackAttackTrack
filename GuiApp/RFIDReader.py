@@ -1,3 +1,4 @@
+import distro
 import os
 import platform
 import threading
@@ -8,10 +9,23 @@ from logger import get_logger
 
 logger = get_logger(__name__)
 
+def _mock_mfrc_devices():
+    class SimpleMFRC522:
+        def read_id_no_block(self):
+            pass
+    class GPIO:
+        @staticmethod
+        def cleanup():
+            logger.debug("GPIO cleanup called")
+    return SimpleMFRC522, GPIO
 
 # TODO make better
 def mock_gpio() -> bool:
     if platform.system() == "Windows":
+        return True
+
+    if platform.system().lower() == "linux" and distro.id().lower() != "raspbian":
+        logger.debug("Linux but not raspbian detected")
         return True
 
     if os.getenv("MOCK_RFID_READER") in [
@@ -35,19 +49,16 @@ def mock_gpio() -> bool:
 
 
 if mock_gpio():
-    # Fake class for emulation
-    class SimpleMFRC522:
-        def read_id_no_block(self):
-            pass
-
-    class GPIO:
-        @staticmethod
-        def cleanup():
-            logger.debug("GPIO cleanup called")
-
+    SimpleMFRC522, GPIO = _mock_mfrc_devices()
 else:
-    from mfrc522 import SimpleMFRC522
-    from RPi import GPIO
+    try:
+        from mfrc522 import SimpleMFRC522
+        from RPi import GPIO
+    except ImportError:
+        logger.warn("Import error! Mocking MFRC522 instead")
+        SimpleMFRC522, GPIO = _mock_mfrc_devices()
+
+
 
 
 class RFIDReader:
