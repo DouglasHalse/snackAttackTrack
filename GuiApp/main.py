@@ -38,7 +38,8 @@ import widgets.uiElements.scrollviews
 import widgets.uiElements.StatsWidgets
 import widgets.uiElements.textInputs
 import widgets.uiElements.WheelOfSnacksWidget
-import widgets.uiElements.alphabetStrip  # noqa: F401; registers .kv
+import widgets.uiElements.alphabetStrip
+import widgets.uiElements.interactiveRecycleView
 from widgets.addSnackScreen import AddSnackScreen
 from widgets.adminScreen import AdminScreen
 from widgets.buyScreen import BuyScreen

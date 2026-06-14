@@ -10,7 +10,7 @@ async def test_create_user_cancel(app_with_nothing):
     app_with_nothing.screenManager.current_screen.onPressed()
 
     assert app_with_nothing.screenManager.current == "loginScreen"
-    app_with_nothing.screenManager.current_screen.createNewUserButtonClicked()
+    app_with_nothing.screenManager.current_screen.create_new_user_clicked()
 
     assert app_with_nothing.screenManager.current == "createUserScreen"
     app_with_nothing.screenManager.current_screen.ids.cancelButton.dispatch(
@@ -31,7 +31,7 @@ async def test_create_user_blank_first_and_last_name(app_with_nothing):
     app_with_nothing.screenManager.current_screen.onPressed()
 
     assert app_with_nothing.screenManager.current == "loginScreen"
-    app_with_nothing.screenManager.current_screen.createNewUserButtonClicked()
+    app_with_nothing.screenManager.current_screen.create_new_user_clicked()
 
     assert app_with_nothing.screenManager.current == "createUserScreen"
     app_with_nothing.screenManager.current_screen.registerUser()
@@ -55,7 +55,7 @@ async def test_create_user_blank_first_name(app_with_nothing):
     app_with_nothing.screenManager.current_screen.onPressed()
 
     assert app_with_nothing.screenManager.current == "loginScreen"
-    app_with_nothing.screenManager.current_screen.createNewUserButtonClicked()
+    app_with_nothing.screenManager.current_screen.create_new_user_clicked()
 
     assert app_with_nothing.screenManager.current == "createUserScreen"
     app_with_nothing.screenManager.current_screen.ids.lastNameInput.setText("LastName")
@@ -80,7 +80,7 @@ async def test_create_user_blank_last_name(app_with_nothing):
     app_with_nothing.screenManager.current_screen.onPressed()
 
     assert app_with_nothing.screenManager.current == "loginScreen"
-    app_with_nothing.screenManager.current_screen.createNewUserButtonClicked()
+    app_with_nothing.screenManager.current_screen.create_new_user_clicked()
 
     assert app_with_nothing.screenManager.current == "createUserScreen"
 
@@ -108,7 +108,7 @@ async def test_create_user(app_with_nothing):
     app_with_nothing.screenManager.current_screen.onPressed()
 
     assert app_with_nothing.screenManager.current == "loginScreen"
-    app_with_nothing.screenManager.current_screen.createNewUserButtonClicked()
+    app_with_nothing.screenManager.current_screen.create_new_user_clicked()
 
     assert app_with_nothing.screenManager.current == "createUserScreen"
     app_with_nothing.screenManager.current_screen.ids.firstNameInput.setText(
@@ -138,7 +138,7 @@ async def test_create_user_with_card_id(app_with_nothing):
     app_with_nothing.screenManager.current_screen.onPressed()
 
     assert app_with_nothing.screenManager.current == "loginScreen"
-    app_with_nothing.screenManager.current_screen.createNewUserButtonClicked()
+    app_with_nothing.screenManager.current_screen.create_new_user_clicked()
 
     assert app_with_nothing.screenManager.current == "createUserScreen"
     app_with_nothing.screenManager.current_screen.ids.firstNameInput.setText(
@@ -174,7 +174,7 @@ async def test_create_user_with_used_card(app_with_only_users):
     app_with_only_users.screenManager.current_screen.onPressed()
 
     assert app_with_only_users.screenManager.current == "loginScreen"
-    app_with_only_users.screenManager.current_screen.createNewUserButtonClicked()
+    app_with_only_users.screenManager.current_screen.create_new_user_clicked()
 
     assert app_with_only_users.screenManager.current == "createUserScreen"
     app_with_only_users.screenManager.current_screen.ids.firstNameInput.setText(

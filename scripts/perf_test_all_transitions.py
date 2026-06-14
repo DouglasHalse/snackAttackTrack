@@ -58,14 +58,16 @@ async def wait_for_screen(app, screen_name, timeout=SCREEN_CHANGE_TIMEOUT):
 
 
 def click_first_user_widget(app):
-    grid = app.screenManager.current_screen.ids.get("LoginScreenUserGridLayout")
-    if not grid:
+    """Trigger login with the first user in the RecycleView data."""
+    screen = app.screenManager.current_screen
+    rv = screen.ids.get("userRecycleView")
+    if not rv or not rv.data:
         return False
-    for child in reversed(grid.children):
-        if hasattr(child, "Clicked"):
-            child.Clicked()
-            return True
-    return False
+    # Use the data directly since RecycleView views may not exist yet
+    first = rv.data[0]
+    screen.manager.login(first["patron_id"])
+    screen.manager.transitionToScreen("mainUserPage")
+    return True
 
 
 def build_transitions(app):  # pylint: disable=too-many-locals,too-many-statements

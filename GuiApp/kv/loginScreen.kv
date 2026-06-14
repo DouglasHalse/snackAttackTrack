@@ -8,7 +8,6 @@
     ClickableRoundedTwoColorGridLayout:
         id: clickableLayout
         cols: 1
-        on_release: root.Clicked()
         padding: [10, 10]
         AutoScrollingLabel:
             id: first_name_label
@@ -31,7 +30,6 @@
                 size: self.size
         padding: [0, 0, 0, 20]
 
-        # ── Top bar: title + create button ──────────────────────
         BoxLayout:
             orientation: 'horizontal'
             size_hint_y: None
@@ -58,7 +56,7 @@
                 size_hint_x: None
                 rows: 1
                 width: self.height * 3
-                on_release: root.createNewUserButtonClicked()
+                on_release: root.create_new_user_clicked()
                 Label:
                     text: 'Create new user'
                     bold: True
@@ -67,28 +65,27 @@
                     halign: 'center'
                     valign: 'middle'
         Widget:
-        # ── Carousel area ───────────────────────────────────────
-        FastTouchScrollView:
-            id: scrollView
+        InteractiveRecycleView:
+            id: userRecycleView
             size_hint_y: None
             height: 150 * self.width / 800
             size_hint_x: 1
             do_scroll_y: False
-            scroll_type: ['content']
             bar_width: 0
-            effect_cls: 'ScrollEffect'
-            scroll_timeout: 200
-            scroll_distance: 15
-            GridLayout:
-                id: LoginScreenUserGridLayout
-                rows: 1
+            viewclass: 'LoginScreenUserWidget'
+            RecycleBoxLayout:
+                id: userLayout
+                orientation: 'horizontal'
                 spacing: 15
                 padding: [0, 10]
+                default_size: None, self.height
+                default_size_hint: None, 1
                 size_hint_x: None
                 size_hint_y: 1
+                initial_width: self.height - self.padding[1] - self.padding[3]
+                initial_height: self.height - self.padding[1] - self.padding[3]
                 width: self.minimum_width
         Widget:
-        # ── Alphabet strip ──────────────────────────────────────
         AlphabetStrip:
             id: alphabetStrip
             size_hint_y: None
