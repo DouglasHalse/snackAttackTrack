@@ -4,9 +4,12 @@ from kivy.clock import Clock
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
+from logger import get_logger
 from widgets.customScreenManager import CustomScreenManager
 from widgets.popups.createUserOrLinkCardPopup import CreateUserOrLinkCardPopup
 from widgets.settingsManager import SettingName
+
+logger = get_logger(__name__)
 
 
 class LoginScreenUserWidget(ButtonBehavior, BoxLayout):
@@ -22,12 +25,28 @@ class LoginScreenUserWidget(ButtonBehavior, BoxLayout):
     def Clicked(self, *largs):
         # Suppress login if the user was scrolling, not tapping
         if self.screenManager.current_screen.scroll_did_occur:
+            logger.debug(
+                "Login click REJECTED for %s %s (patronId=%s) — scroll detected",
+                self.first_name,
+                self.last_name,
+                self.userData.patronId,
+            )
             return
+        logger.debug(
+            "Login click ACCEPTED for %s %s (patronId=%s)",
+            self.first_name,
+            self.last_name,
+            self.userData.patronId,
+        )
         self.screenManager.login(self.userData.patronId)
         self.screenManager.transitionToScreen("mainUserPage")
 
 
 class LoginScreen(Screen):
+    # Minimum horizontal drag distance (in pixels) before we consider the
+    # user to have intentionally scrolled rather than tapped.
+    _SCROLL_PX_THRESHOLD = 5
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.create_or_link_card_popup = None
@@ -116,8 +135,19 @@ class LoginScreen(Screen):
                 if first_letter not in self._letter_widget_map:
                     self._letter_widget_map[first_letter] = widget
 
-    def _on_user_list_scrolled(self, *args):
-        self.scroll_did_occur = True
+    def _on_user_list_scrolled(self, scroll_view, touch, *args):
+        # touch.ox is the origin x at touch-down, touch.x is current.
+        # Only flag as a scroll once the total horizontal drag exceeds
+        # the pixel threshold. This prevents tiny accidental movements
+        # during a tap from suppressing the click.
+        drag = abs(touch.x - touch.ox)
+        if drag > self._SCROLL_PX_THRESHOLD and not self.scroll_did_occur:
+            self.scroll_did_occur = True
+            logger.debug(
+                "Scroll flagged (drag=%.1f px, threshold=%d px)",
+                drag,
+                self._SCROLL_PX_THRESHOLD,
+            )
 
     # ------------------------------------------------------------------
     # Alphabet quick-scroll
