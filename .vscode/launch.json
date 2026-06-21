@@ -13,6 +13,17 @@
             "justMyCode": true
         },
         {
+            "name": "Python: Run Snack Attack Track Qt PoC",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "QtApp.main",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "KIVY_NO_ARGS": "1"
+            }
+        },
+        {
             "name": "Python: Run current file",
             "type": "debugpy",
             "request": "launch",
