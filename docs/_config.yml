@@ -1,0 +1,7 @@
+# GitHub Pages Configuration for Snack Attack Track™
+
+theme: jekyll-theme-minimal
+title: Snack Attack Track™
+description: Open-source touchscreen kiosk software for smart snack management on Raspberry Pi
+show_downloads: true
+google_analytics: # Add your GA tracking ID here if desired

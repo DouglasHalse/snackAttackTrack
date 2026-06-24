@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Snack Attack Track™ - Open-source touchscreen kiosk software for snack inventory management and sales tracking on Raspberry Pi">
+    <meta name="keywords" content="snack kiosk, raspberry pi, inventory management, touchscreen, python, kivy">
+    <title>Snack Attack Track™ - Smart Snack Kiosk Software</title>
+    <style>
+        :root {
+            --primary: #A5E7EA;
+            --secondary: #087F8C;
+            --accent: #FCACC4;
+            --green: #5CB338;
+            --dark: #1a1a1a;
+            --light: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--light);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header .tagline {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--secondary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+
+        .feature-card h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            margin: 4rem 0;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .tech-badge {
+            background: var(--primary);
+            color: var(--dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            height: 400px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-size: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .quick-start {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .quick-start pre {
+            background: var(--dark);
+            color: var(--green);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .quick-start code {
+            font-family: 'Courier New', monospace;
+        }
+
+        footer {
+            background: var(--dark);
+            color: var(--light);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .hardware-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .hardware-item {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--primary);
+        }
+
+        .hardware-item h4 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            header .tagline {
+                font-size: 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🍫 Snack Attack Track™</h1>
+        <p class="tagline">Open-Source Touchscreen Kiosk Software for Smart Snack Management</p>
+        <div class="cta-buttons">
+            <a href="https://github.com/DouglasHalse/snackAttackTrack" class="btn btn-primary">View on GitHub</a>
+            <a href="https://github.com/DouglasHalse/snackAttackTrack/releases" class="btn btn-secondary">Download</a>
+            <a href="#quick-start" class="btn btn-secondary">Get Started</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="stats">
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Open Source</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">⚡</div>
+                <div class="stat-label">Fast Boot (10-15s)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">🔒</div>
+                <div class="stat-label">PIN Security</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">🎯</div>
+                <div class="stat-label">Kiosk Ready</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>✨ Features</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>User Management</h3>
+                    <p>Create and manage user accounts with RFID card linking. Secure 4-digit PIN authentication for enhanced security.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>Inventory Tracking</h3>
+                    <p>Real-time snack inventory monitoring with low-stock alerts and automated reordering suggestions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3>Credit System</h3>
+                    <p>Built-in credit management with top-up functionality and transaction history tracking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Analytics & Reports</h3>
+                    <p>Comprehensive user and store statistics with sales history and financial reporting.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎰</div>
+                    <h3>Gamification</h3>
+                    <p>Optional wheel of snacks feature for engaging user experience and promotions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Secure Admin Panel</h3>
+                    <p>Protected admin access with separate PIN for system settings and user management.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <h3>Guest Mode</h3>
+                    <p>Allow guest browsing without account creation for quick demonstrations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Touchscreen Optimized</h3>
+                    <p>Full touchscreen support with responsive UI designed for kiosk deployments.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Auto-Start on Boot</h3>
+                    <p>Configured for Raspberry Pi OS Lite with automatic launch on system boot.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🖥️ Screenshots</h2>
+            <div class="screenshot-placeholder">
+                📸 Beautiful touchscreen interface coming soon!
+            </div>
+        </section>
+
+        <section>
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-stack">
+                <span class="tech-badge">Python 3.9+</span>
+                <span class="tech-badge">Kivy 2.3.1</span>
+                <span class="tech-badge">SQLite</span>
+                <span class="tech-badge">Raspberry Pi OS</span>
+                <span class="tech-badge">pytest</span>
+                <span class="tech-badge">GitHub Actions</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>💻 Hardware Requirements</h2>
+            <div class="hardware-list">
+                <div class="hardware-item">
+                    <h4>Recommended Setup</h4>
+                    <ul>
+                        <li>Raspberry Pi 4B (4GB RAM)</li>
+                        <li>Official 7" Touchscreen</li>
+                        <li>16GB+ microSD Card</li>
+                        <li>RFID Reader (Optional)</li>
+                    </ul>
+                </div>
+                <div class="hardware-item">
+                    <h4>Minimum Requirements</h4>
+                    <ul>
+                        <li>Raspberry Pi 3B+</li>
+                        <li>HDMI Display</li>
+                        <li>8GB microSD Card</li>
+                        <li>Keyboard/Mouse</li>
+                    </ul>
+                </div>
+                <div class="hardware-item">
+                    <h4>Development Setup</h4>
+                    <ul>
+                        <li>Windows/Linux/macOS</li>
+                        <li>Python 3.9+</li>
+                        <li>Git</li>
+                        <li>Optional: VMware/VirtualBox</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="quick-start">
+            <h2>🚀 Quick Start</h2>
+            
+            <div class="quick-start">
+                <h3>Raspberry Pi Deployment</h3>
+                <p>One-command setup on Raspberry Pi OS Lite:</p>
+                <pre><code># SSH into your Raspberry Pi
+ssh pi@raspberrypi.local
+
+# Run the automated setup
+curl -sSL https://raw.githubusercontent.com/DouglasHalse/snackAttackTrack/main/rpi-setup/quick-deploy.sh | bash
+
+# Reboot to auto-start
+sudo reboot</code></pre>
+            </div>
+
+            <div class="quick-start">
+                <h3>Development Setup (Windows)</h3>
+                <pre><code># Clone the repository
+git clone https://github.com/DouglasHalse/snackAttackTrack.git
+cd snackAttackTrack
+
+# Run setup script
+.\setupDevEnvironmentWindows.bat
+
+# Launch the application
+.\runGuiWindows.bat</code></pre>
+            </div>
+
+            <div class="quick-start">
+                <h3>Development Setup (Linux/macOS)</h3>
+                <pre><code># Clone the repository
+git clone https://github.com/DouglasHalse/snackAttackTrack.git
+cd snackAttackTrack
+
+# Run setup script
+bash setupDevEnvironmentUbuntu.sh
+
+# Launch the application
+bash runGuiUbuntu.sh</code></pre>
+            </div>
+
+            <div class="quick-start">
+                <h3>Testing with VMware/VirtualBox</h3>
+                <p>Want to test without Raspberry Pi hardware? See our <a href="https://github.com/DouglasHalse/snackAttackTrack/blob/main/rpi-setup/testing-with-vmware.md" target="_blank">VMware Testing Guide</a></p>
+            </div>
+        </section>
+
+        <section>
+            <h2>📚 Documentation</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>📖 User Guide</h3>
+                    <p>Complete guide for end users on purchasing snacks, managing credits, and viewing transaction history.</p>
+                    <a href="https://github.com/DouglasHalse/snackAttackTrack#readme" class="btn btn-secondary" style="margin-top: 1rem;">Read More</a>
+                </div>
+                <div class="feature-card">
+                    <h3>🔧 Admin Manual</h3>
+                    <p>Instructions for managing inventory, users, system settings, and viewing store statistics.</p>
+                    <a href="https://github.com/DouglasHalse/snackAttackTrack#security" class="btn btn-secondary" style="margin-top: 1rem;">Admin Docs</a>
+                </div>
+                <div class="feature-card">
+                    <h3>🚀 Deployment Guide</h3>
+                    <p>Step-by-step instructions for deploying to Raspberry Pi with auto-start configuration.</p>
+                    <a href="https://github.com/DouglasHalse/snackAttackTrack/tree/main/rpi-setup" class="btn btn-secondary" style="margin-top: 1rem;">Deploy Now</a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>🤝 Contributing</h2>
+            <p style="text-align: center; font-size: 1.1rem; max-width: 800px; margin: 0 auto;">
+                Snack Attack Track™ is open source and welcomes contributions! Whether you're fixing bugs, 
+                adding features, or improving documentation, we'd love your help.
+            </p>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="https://github.com/DouglasHalse/snackAttackTrack/issues" class="btn btn-primary">Report Issues</a>
+                <a href="https://github.com/DouglasHalse/snackAttackTrack/pulls" class="btn btn-secondary">Submit Pull Request</a>
+            </div>
+        </section>
+
+        <section>
+            <h2>📜 License</h2>
+            <p style="text-align: center; font-size: 1.1rem;">
+                Snack Attack Track™ is released under an open-source license. 
+                See the <a href="https://github.com/DouglasHalse/snackAttackTrack/blob/main/LICENSE" target="_blank">LICENSE</a> file for details.
+            </p>
+        </section>
+    </div>
+
+    <footer>
+        <p>Made with ❤️ by the Snack Attack Track Team</p>
+        <p style="margin-top: 1rem;">
+            <a href="https://github.com/DouglasHalse/snackAttackTrack">GitHub</a> • 
+            <a href="https://github.com/DouglasHalse/snackAttackTrack/issues">Issues</a> • 
+            <a href="https://github.com/DouglasHalse/snackAttackTrack/discussions">Discussions</a>
+        </p>
+        <p style="margin-top: 1rem; opacity: 0.7; font-size: 0.9rem;">
+            &copy; 2025 Snack Attack Track™. All rights reserved.
+        </p>
+    </footer>
+</body>
+</html>
