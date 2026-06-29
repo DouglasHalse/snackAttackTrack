@@ -26,21 +26,17 @@ async def test_auto_logout_timer_created_on_login(app_with_only_users):
     assert app.screenManager.current == "loginScreen"
 
     # Click User3 to login
-    users = [
-        c
-        for c in app.screenManager.current_screen.ids[
-            "LoginScreenUserGridLayout"
-        ].children
-        if hasattr(c, "first_name")
-    ]
-    target = [u for u in users if u.first_name == "User3FirstName"]
+    rv = app.screenManager.current_screen.ids["userRecycleView"]
+    target = [e for e in rv.data if e["first_name"] == "User3FirstName"]
     assert len(target) == 1
-    target[0].ids.clickableLayout.dispatch("on_release")
+    screen = app.screenManager.current_screen
+    screen.manager.login(target[0]["patron_id"])
+    screen.manager.transitionToScreen("mainUserPage")
     await asyncio.sleep(0.3)
 
     assert app.screenManager.current == "mainUserPage"
     assert app.screenManager.log_out_timer is not None
-    print("  ✅ Timer exists after login")
+    print("  Timer exists after login")
 
     # Save the timer id to check it gets replaced on activity
     timer_id_1 = id(app.screenManager.log_out_timer)
@@ -121,22 +117,17 @@ async def test_auto_logout_fires_when_no_touch(app_with_only_users):
     app.screenManager.current_screen.onPressed()
     assert app.screenManager.current == "loginScreen"
 
-    users = [
-        c
-        for c in app.screenManager.current_screen.ids[
-            "LoginScreenUserGridLayout"
-        ].children
-        if hasattr(c, "first_name")
-    ]
-    target = [u for u in users if u.first_name == "User3FirstName"]
-    target[0].ids.clickableLayout.dispatch("on_release")
+    rv = app.screenManager.current_screen.ids["userRecycleView"]
+    target = [e for e in rv.data if e["first_name"] == "User3FirstName"]
+    assert len(target) == 1
+    screen = app.screenManager.current_screen
+    screen.manager.login(target[0]["patron_id"])
+    screen.manager.transitionToScreen("mainUserPage")
     await asyncio.sleep(0.3)
     assert app.screenManager.current == "mainUserPage"
     assert app.screenManager._currentPatron is not None
 
     # Manually trigger auto-logout by calling the timer callback
-    # The timer is a ClockEvent; we can't call it directly,
-    # but we can call auto_logout() which is what the timer does
     app.screenManager.auto_logout()
     await asyncio.sleep(0.3)
 
@@ -158,15 +149,12 @@ async def test_on_activity_survives_exceptions(app_with_only_users):
     app.screenManager.current_screen.onPressed()
     assert app.screenManager.current == "loginScreen"
 
-    users = [
-        c
-        for c in app.screenManager.current_screen.ids[
-            "LoginScreenUserGridLayout"
-        ].children
-        if hasattr(c, "first_name")
-    ]
-    target = [u for u in users if u.first_name == "User3FirstName"]
-    target[0].ids.clickableLayout.dispatch("on_release")
+    rv = app.screenManager.current_screen.ids["userRecycleView"]
+    target = [e for e in rv.data if e["first_name"] == "User3FirstName"]
+    assert len(target) == 1
+    screen = app.screenManager.current_screen
+    screen.manager.login(target[0]["patron_id"])
+    screen.manager.transitionToScreen("mainUserPage")
     await asyncio.sleep(0.3)
     assert app.screenManager.current == "mainUserPage"
 
